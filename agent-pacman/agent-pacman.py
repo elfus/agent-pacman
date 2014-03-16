@@ -23,11 +23,14 @@ def main():
     # visible on the monitor.
     screen = pygame.display.set_mode(size)
 
-
+    screen.blit(pacman_background,pacman_rect)
     while 1:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+
+            # Fill the background that was erased by the ball
+            screen.blit(pacman_background,ballrect,ballrect)
 
             ballrect = ballrect.move(speed)
             if ballrect.left < 0 or ballrect.right > width:
@@ -35,8 +38,7 @@ def main():
             if ballrect.top < 0 or ballrect.bottom > height:
                 speed[1] = -speed[1]
 
-            # Fill the background first
-            screen.blit(pacman_background,pacman_rect)
+
             # Draw the ball image onto the screen. We pass the blit method a
             # source Surface to copy from, and a position to place the source
             # onto the destination.
