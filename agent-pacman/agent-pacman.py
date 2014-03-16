@@ -23,6 +23,10 @@ def main():
     # visible on the monitor.
     screen = pygame.display.set_mode(size)
 
+    # Convert the pixel formats to that of the same type as our screen.
+    ball = ball.convert_alpha() # Convert_alpha keeps the alpha channel in the pixel
+    pacman_background = pacman_background.convert() # Removes alpha channel
+
     screen.blit(pacman_background,pacman_rect)
     while 1:
         for event in pygame.event.get():
