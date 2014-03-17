@@ -1,13 +1,16 @@
 #! /usr/bin/python
+import os
+import math
+
 __author__ = 'aortegag'
 
 import pygame
-import pygame.constants
 from pygame.locals import *
 
-OFFSET = 3
+OFFSET = 1
 X_AXIS = 0
 Y_AXIS = 1
+
 
 def handle_event(event):
     """
@@ -25,6 +28,7 @@ def handle_event(event):
     elif event.key == pygame.K_d:
         direction = [OFFSET, 0]
     return direction
+
 
 def handle_input():
     """
@@ -44,11 +48,71 @@ def handle_input():
 
     return direction
 
+
+def load_image(name):
+    """ Load image and return image object"""
+    fullname = os.path.join('res', name)
+    try:
+        image = pygame.image.load(fullname)
+        if image.get_alpha() is None:
+            image = image.convert()
+        else:
+            image = image.convert_alpha()
+    except pygame.error, message:
+        print 'Cannot load image:', fullname
+        raise SystemExit, message
+    return image, image.get_rect()
+
+
+class Ghost(pygame.sprite.Sprite):
+    """A Ghost that will move across the screen
+    Returns: ball object
+    Functions: update, calcnewpos
+    Attributes: area, vector"""
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_image("rojo.png")
+        screen = pygame.display.get_surface()
+        self.area = screen.get_rect()
+        self.stop()
+        print 'Constructor'
+
+    def update(self):
+        newpos = self.rect.move(self.movepos)
+        if self.area.contains(newpos):
+            self.rect = newpos
+        pygame.event.pump()
+
+    def stop(self):
+        self.movepos = [0,0]
+        self.state = "still"
+
+    def movedirection(self,direction):
+        self.movepos = direction
+
+    def moveup(self):
+        self.movepos = [0, -OFFSET]
+        self.state = "moveup"
+
+    def movedown(self):
+        self.movepos = [0, OFFSET]
+        self.state = "movedown"
+
+
+    def moveleft(self):
+        self.movepos = [-OFFSET, 0]
+        self.state = "moveleft"
+
+    def moveright(self):
+        self.movepos = [OFFSET, 0]
+        self.state = "moveright"
+
+    def __del__(self):
+        print 'Destructor'
+
+
 def main():
     pygame.init()
-
-    ball = pygame.image.load("res/rojo.png")
-    ballrect = ball.get_rect()
 
     pacman_background = pygame.image.load("res/tableropacman.jpg")
     pacman_rect = pacman_background.get_rect()
@@ -62,14 +126,25 @@ def main():
     screen = pygame.display.set_mode(window_size)
     pygame.display.set_caption("Agent Pacman")
 
-    # Convert the pixel formats to that of the same type as our screen.
-    ball = ball.convert_alpha() # Convert_alpha keeps the alpha channel in the pixel
-    pacman_background = pacman_background.convert_alpha() # Removes alpha channel
+    ball, ballrect = load_image("rojo.png")
 
-    screen.blit(pacman_background,pacman_rect)
-    pygame.key.set_repeat(50,50)
+    # Convert the pixel formats to that of the same type as our screen.
+    ball = ball.convert_alpha()  # Convert_alpha keeps the alpha channel in the pixel
+    pacman_background = pacman_background.convert_alpha()  # Removes alpha channel
+
+    screen.blit(pacman_background, pacman_rect)
+    # NOTE: Try commenting out this line and see how input behaves
+    pygame.key.set_repeat(50, 50)
+
+    ghost = Ghost()
+    ghostsprite = pygame.sprite.RenderPlain(ghost)
+
+    clock = pygame.time.Clock()
+    direction = [0, 0]
     while 1:
-        direction = [0,0]
+        # Make sure game doesn't run at more than 60 frames per second
+        clock.tick(60)
+
         # Detect the input and get a new direction
         # NOTE: This is the line that will be replaced by the agents once they are implemented
         for event in pygame.event.get():
@@ -77,34 +152,21 @@ def main():
                 return
             if event.type == pygame.KEYDOWN:
                 direction = handle_event(event)
+                ghost.movedirection(direction)
+            if event.type == pygame.KEYUP:
+                if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
+                    ghost.stop()
 
-         # Fill the background that was erased by the ball
-        screen.blit(pacman_background,ballrect,ballrect)
+        screen.blit(pacman_background, ghost.rect, ghost.rect)
 
-        # The class pygame.Rect is a rectanble represeting the position of the ball
-        ballrect.move_ip(direction)
-
-        # If we are out of boundaries stay inside
-        if ballrect.left < 0 or ballrect.right > width:
-            if ballrect.left < 0:
-                ballrect.left = 0
-            if ballrect.right > width:
-                ballrect.right = width
-        if ballrect.top < 0 or ballrect.bottom > height:
-            if ballrect.top < 0:
-                ballrect.top = 0
-            if ballrect.bottom > height:
-                ballrect.bottom = height
-
-        # Draw the ball image onto the screen. We pass the blit method a
-        # source Surface to copy from, and a position to place the source
-        # onto the destination.
-        screen.blit(ball, ballrect)
+        ghost.update()
+        ghostsprite.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
         # and make it available on the front buffer
         pygame.display.flip()
+
 
 if __name__ == "__main__":
     main()
