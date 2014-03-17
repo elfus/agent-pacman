@@ -151,6 +151,8 @@ def main():
             if event.type == pygame.QUIT:
                 return
             if event.type == pygame.KEYDOWN:
+                if event.key == K_ESCAPE:
+                    return
                 direction = handle_event(event)
                 ghost.movedirection(direction)
             if event.type == pygame.KEYUP:
