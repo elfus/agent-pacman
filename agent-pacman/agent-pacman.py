@@ -11,6 +11,12 @@ OFFSET = 1
 X_AXIS = 0
 Y_AXIS = 1
 
+BLACK  = (   0,   0,   0)
+WHITE  = ( 255, 255, 255)
+BLUE   = (   0,   0, 255)
+GREEN  = (   0, 255,   0)
+RED    = ( 255,   0,   0)
+PURPLE = ( 255,   0, 255)
 
 def handle_event(event):
     """
@@ -69,6 +75,7 @@ class Ghost(pygame.sprite.Sprite):
     Returns: ball object
     Functions: update, calcnewpos
     Attributes: area, vector"""
+
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image("rojo.png")
@@ -84,10 +91,10 @@ class Ghost(pygame.sprite.Sprite):
         pygame.event.pump()
 
     def stop(self):
-        self.movepos = [0,0]
+        self.movepos = [0, 0]
         self.state = "still"
 
-    def movedirection(self,direction):
+    def movedirection(self, direction, wallPixels):
         self.movepos = direction
 
     def moveup(self):
@@ -110,11 +117,78 @@ class Ghost(pygame.sprite.Sprite):
     def __del__(self):
         print 'Destructor'
 
+class Wall(pygame.sprite.Sprite):
+    """This class represents the bar at the bottom that the player controls """
+
+    def __init__(self, x, y, width, height, color):
+        """ Constructor function """
+
+        # Call the parent's constructor
+        pygame.sprite.Sprite.__init__(self)
+
+        # Make a BLUE wall, of the size specified in the parameters
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
+
+        # Make our top-left corner the passed-in location.
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+
+def create_wall(maze, x, y):
+    width = 0
+    height = 0
+    MAX_X, MAX_Y = maze.get_size()
+    CURRENT_COLOR = maze.get_at([x,y])
+
+    for m_x in range(x,MAX_X):
+        color = maze.get_at([m_x,y])
+        if CURRENT_COLOR != color:
+            width = m_x - x
+            break
+
+    for m_y in range(y,MAX_Y):
+        color = maze.get_at([x,m_y])
+        if CURRENT_COLOR != color:
+            height = m_y - y
+            break
+
+    return Wall(x,y,width,height, WHITE), x+width+1, y+height
+
+
+def analyze_maze():
+    maze, mazeRect = load_image("grid.bmp")
+    width, height = maze.get_size()
+    mainList = []
+
+    blackColor = pygame.Color("black")
+    redColor = pygame.Color("red")
+    whiteColor = pygame.Color("white")
+
+    rectangleCount = 0
+    h = 0
+    w = 0
+    while h < height:
+        w = 0
+        while w < width:
+            color = maze.get_at([w,h])
+            if blackColor != color:
+                mainList.append((w,h))
+                wall, w, h = create_wall(maze,w,h)
+                rectangleCount += 1
+                print color, h, w
+                continue
+            w += 1
+        h += 1
+
+    print "Number of rectangles ", rectangleCount
+    return mainList
+
 
 def main():
     pygame.init()
 
-    pacman_background = pygame.image.load("res/tableropacman.jpg")
+    pacman_background = pygame.image.load("res/grid.bmp")
     pacman_rect = pacman_background.get_rect()
     window_size = width, height = pacman_background.get_width(), pacman_background.get_height()
 
@@ -141,6 +215,8 @@ def main():
 
     clock = pygame.time.Clock()
     direction = [0, 0]
+
+    wallPixels = analyze_maze()
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
@@ -154,7 +230,7 @@ def main():
                 if event.key == K_ESCAPE:
                     return
                 direction = handle_event(event)
-                ghost.movedirection(direction)
+                ghost.movedirection(direction, wallPixels)
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     ghost.stop()
