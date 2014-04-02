@@ -131,23 +131,6 @@ class Ghost(pygame.sprite.Sprite):
             else:
                 wall.image.fill(GREEN)
 
-    def moveup(self):
-        self.movepos = [0, -OFFSET]
-        self.state = "moveup"
-
-    def movedown(self):
-        self.movepos = [0, OFFSET]
-        self.state = "movedown"
-
-
-    def moveleft(self):
-        self.movepos = [-OFFSET, 0]
-        self.state = "moveleft"
-
-    def moveright(self):
-        self.movepos = [OFFSET, 0]
-        self.state = "moveright"
-
     def __del__(self):
         print 'Destructor'
 
