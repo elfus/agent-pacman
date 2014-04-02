@@ -7,7 +7,7 @@ __author__ = 'aortegag'
 import pygame
 from pygame.locals import *
 
-OFFSET = 1
+OFFSET = 4
 X_AXIS = 0
 Y_AXIS = 1
 
@@ -86,8 +86,6 @@ class Ghost(pygame.sprite.Sprite):
         self.area = screen.get_rect()
         self.stop()
         print 'Constructor'
-
-
 
     def stop(self):
         self.movepos = [0, 0]
