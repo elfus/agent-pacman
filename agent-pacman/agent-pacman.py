@@ -91,6 +91,17 @@ class Ghost(pygame.sprite.Sprite):
         self.movepos = [0, 0]
         self.state = "still"
 
+    def update(self):
+        # This is if is meant to detect the case in which any character goes through
+        # the 'middle tunnel' on the maze and appears on the other side
+        if self.area.contains(self.rect) == False:
+            if self.rect.left < (self.area.left - self.rect.width):
+                self.rect.left = self.area.right
+                return
+            if self.rect.right > (self.area.right + self.rect.width):
+                self.rect.right = self.area.left
+                return
+
     def movedirection(self, direction, wallPixels):
         self.rect.x += direction[0]
         hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
@@ -261,8 +272,6 @@ def main():
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     ghost.stop()
-
-
 
         ghost.update()
         ghostsprite.draw(screen)
