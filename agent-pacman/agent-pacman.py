@@ -19,7 +19,7 @@ RED    = ( 255,   0,   0)
 PURPLE = ( 255,   0, 255)
 
 PACMAN_START = (107,207)
-GHOST_START = (105,132)
+GHOST_START = (105,133)
 
 def handle_event(event):
     """
@@ -87,18 +87,40 @@ class Ghost(pygame.sprite.Sprite):
         self.stop()
         print 'Constructor'
 
-    def update(self):
-        newpos = self.rect.move(self.movepos)
-        if self.area.contains(newpos):
-            self.rect = newpos
-        pygame.event.pump()
+
 
     def stop(self):
         self.movepos = [0, 0]
         self.state = "still"
 
     def movedirection(self, direction, wallPixels):
-        self.movepos = direction
+        self.rect.x += direction[0]
+        hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
+        # check for any collision with a wall
+        for wall in hit_wall_list:
+            if direction[0] > 0:
+                self.rect.right = wall.rect.left
+            else:
+                self.rect.left = wall.rect.right
+
+            if wall.image.get_at([0,0]) == pygame.Color("green"):
+                wall.image.fill(PURPLE)
+            else:
+                wall.image.fill(GREEN)
+
+        self.rect.y += direction[1]
+        hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
+        # check for any collision with a wall
+        for wall in hit_wall_list:
+            if direction[1] > 0:
+                self.rect.bottom = wall.rect.top
+            else:
+                self.rect.top = wall.rect.bottom
+
+            if wall.image.get_at([0,0]) == pygame.Color("green"):
+                wall.image.fill(PURPLE)
+            else:
+                wall.image.fill(GREEN)
 
     def moveup(self):
         self.movepos = [0, -OFFSET]
@@ -227,7 +249,7 @@ def main():
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
-
+        screen.blit(pacman_background, ghost.rect, ghost.rect)
         # Detect the input and get a new direction
         # NOTE: This is the line that will be replaced by the agents once they are implemented
         for event in pygame.event.get():
@@ -242,11 +264,11 @@ def main():
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     ghost.stop()
 
-        screen.blit(pacman_background, ghost.rect, ghost.rect)
+
 
         ghost.update()
         ghostsprite.draw(screen)
-        #wallSpriteGroup.draw(screen)
+        wallSpriteGroup.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
