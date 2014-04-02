@@ -143,8 +143,10 @@ def create_wall(maze, x, y):
 
     for m_x in range(x,MAX_X):
         color = maze.get_at([m_x,y])
-        if CURRENT_COLOR != color:
+        if CURRENT_COLOR != color or m_x == MAX_X-1:
             width = m_x - x
+            if m_x == MAX_X-1:
+                width += 1
             break
 
     for m_y in range(y,MAX_Y):
@@ -153,7 +155,7 @@ def create_wall(maze, x, y):
             height = m_y - y
             break
 
-    return Wall(x,y,width,height, WHITE), x+width+1, y+height
+    return Wall(x,y,width,height, GREEN), x+width, y+height
 
 
 def analyze_maze():
@@ -165,7 +167,6 @@ def analyze_maze():
     redColor = pygame.Color("red")
     whiteColor = pygame.Color("white")
 
-    rectangleCount = 0
     h = 0
     w = 0
     while h < height:
@@ -173,15 +174,14 @@ def analyze_maze():
         while w < width:
             color = maze.get_at([w,h])
             if blackColor != color:
-                mainList.append((w,h))
                 wall, w, h = create_wall(maze,w,h)
-                rectangleCount += 1
+                h -= 1 # decrease 1 because we will add it in the next loop
+                mainList.append(wall)
                 print color, h, w
-                continue
             w += 1
         h += 1
 
-    print "Number of rectangles ", rectangleCount
+    print "Number of rectangles ", len(mainList)
     return mainList
 
 
@@ -216,7 +216,11 @@ def main():
     clock = pygame.time.Clock()
     direction = [0, 0]
 
-    wallPixels = analyze_maze()
+    wallList = analyze_maze()
+    wallSpriteGroup =  pygame.sprite.Group()
+    for item in wallList:
+        wallSpriteGroup.add(item)
+
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
@@ -230,7 +234,7 @@ def main():
                 if event.key == K_ESCAPE:
                     return
                 direction = handle_event(event)
-                ghost.movedirection(direction, wallPixels)
+                ghost.movedirection(direction, wallList)
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     ghost.stop()
@@ -239,6 +243,7 @@ def main():
 
         ghost.update()
         ghostsprite.draw(screen)
+        wallSpriteGroup.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
