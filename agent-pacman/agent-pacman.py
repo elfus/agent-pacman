@@ -109,7 +109,7 @@ def main():
         ghostsprite.update()
         ghostsprite.draw(screen)
         # Comment out this line to remove collition detection debugging
-        wallSpriteGroup.draw(screen)
+        # wallSpriteGroup.draw(screen)
         pointsGroup.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
