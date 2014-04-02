@@ -175,8 +175,9 @@ def analyze_maze():
             color = maze.get_at([w,h])
             if blackColor != color:
                 wall, w = create_wall(maze,w,h)
-                wallSpriteGroup.add(wall)
-                print color, h, w
+                w -= 1
+                if len(pygame.sprite.spritecollide(wall,wallSpriteGroup,False)) == 0:
+                    wallSpriteGroup.add(wall)
             w += 1
         h += 1
 
@@ -230,7 +231,7 @@ def main():
                 if event.key == K_ESCAPE:
                     return
                 direction = handle_event(event)
-                ghost.movedirection(direction, wallList)
+                ghost.movedirection(direction, wallSpriteGroup)
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     ghost.stop()
