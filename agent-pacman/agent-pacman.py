@@ -101,6 +101,7 @@ def main():
                     return
                 direction = handle_event(event)
                 pacman.movedirection(direction, wallSpriteGroup)
+                print pacman.name, pacman.rect
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     pacman.stop()
@@ -108,7 +109,7 @@ def main():
         ghostsprite.update()
         ghostsprite.draw(screen)
         # Comment out this line to remove collition detection debugging
-        # wallSpriteGroup.draw(screen)
+        wallSpriteGroup.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it

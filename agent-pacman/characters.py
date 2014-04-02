@@ -20,6 +20,7 @@ class Character(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         self.area = screen.get_rect()
         self.stop()
+        self.name = "Character"
         print 'Character Constructor'
 
     def stop(self):
@@ -73,6 +74,7 @@ class Character(pygame.sprite.Sprite):
 class Blinky(Character):
     def __init__(self, FILENAME):
         Character.__init__(self, FILENAME)
+        self.name = "Blinky"
         print 'Blinky constructor'
 
     def update(self):
@@ -86,6 +88,7 @@ class Blinky(Character):
 class Pink(Character):
     def __init__(self, FILENAME):
         Character.__init__(self, FILENAME)
+        self.name = "Pink"
         print 'Pink constructor'
 
     def update(self):
@@ -99,6 +102,7 @@ class Pink(Character):
 class Inky(Character):
     def __init__(self, FILENAME):
         Character.__init__(self, FILENAME)
+        self.name = "Inky"
         print 'Inky constructor'
 
     def update(self):
@@ -112,6 +116,7 @@ class Inky(Character):
 class Clyde(Character):
     def __init__(self, FILENAME):
         Character.__init__(self, FILENAME)
+        self.name = "Clyde"
         print 'Clyde constructor'
 
     def update(self):
@@ -125,6 +130,7 @@ class Clyde(Character):
 class Pacman(Character):
     def __init__(self, FILENAME):
         Character.__init__(self, FILENAME)
+        self.name = "Pacman"
         print 'Pacman constructor'
 
     def update(self):
