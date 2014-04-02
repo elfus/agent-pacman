@@ -38,7 +38,7 @@ class Character(pygame.sprite.Sprite):
                 self.rect.right = self.area.left
                 return
 
-    def movedirection(self, direction, wallPixels):
+    def movedirection(self, direction, wallPixels, pointsGroup):
         self.rect.x += direction[0]
         hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
         # check for any collision with a wall
@@ -66,6 +66,12 @@ class Character(pygame.sprite.Sprite):
                 wall.image.fill(PURPLE)
             else:
                 wall.image.fill(GREEN)
+
+        if self.name == "Pacman":
+            points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
+            for point in points_list:
+                self.score += 1
+                print "Score ",self.score," points"
 
     def __del__(self):
         print 'Destructor'
@@ -131,6 +137,7 @@ class Pacman(Character):
     def __init__(self, FILENAME):
         Character.__init__(self, FILENAME)
         self.name = "Pacman"
+        self.score = 0
         print 'Pacman constructor'
 
     def update(self):

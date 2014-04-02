@@ -49,6 +49,7 @@ def analyze_maze():
     maze, mazeRect = load_image("grid.bmp")
     width, height = maze.get_size()
     wallSpriteGroup =  pygame.sprite.Group()
+    pointsSpriteGroup =  pygame.sprite.Group()
 
     blackColor = pygame.Color("black")
     redColor = pygame.Color("red")
@@ -63,10 +64,16 @@ def analyze_maze():
             if blackColor != color:
                 wall, w = create_wall(maze,w,h)
                 w -= 1
-                if len(pygame.sprite.spritecollide(wall,wallSpriteGroup,False)) == 0:
-                    wallSpriteGroup.add(wall)
+
+                if color == pygame.Color("blue"):
+                    if len(pygame.sprite.spritecollide(wall,pointsSpriteGroup,False)) == 0:
+                        pointsSpriteGroup.add(wall)
+                else:
+                    if len(pygame.sprite.spritecollide(wall,wallSpriteGroup,False)) == 0:
+                        wallSpriteGroup.add(wall)
             w += 1
         h += 1
 
     print "Number of rectangles ", len(wallSpriteGroup.sprites())
-    return wallSpriteGroup
+    print "Number of points ", len(pointsSpriteGroup.sprites())
+    return wallSpriteGroup, pointsSpriteGroup

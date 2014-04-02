@@ -82,7 +82,7 @@ def main():
     clock = pygame.time.Clock()
     direction = [0, 0]
 
-    wallSpriteGroup = analyze_maze()
+    wallSpriteGroup, pointsGroup = analyze_maze()
 
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
@@ -100,7 +100,7 @@ def main():
                 if event.key == K_ESCAPE:
                     return
                 direction = handle_event(event)
-                pacman.movedirection(direction, wallSpriteGroup)
+                pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
                 print pacman.name, pacman.rect
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
@@ -110,6 +110,7 @@ def main():
         ghostsprite.draw(screen)
         # Comment out this line to remove collition detection debugging
         wallSpriteGroup.draw(screen)
+        pointsGroup.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
