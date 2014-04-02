@@ -155,13 +155,13 @@ def create_wall(maze, x, y):
             height = m_y - y
             break
 
-    return Wall(x,y,width,height, GREEN), x+width, y+height
+    return Wall(x,y,width,height, GREEN), x+width
 
 
 def analyze_maze():
     maze, mazeRect = load_image("grid.bmp")
     width, height = maze.get_size()
-    mainList = []
+    wallSpriteGroup =  pygame.sprite.Group()
 
     blackColor = pygame.Color("black")
     redColor = pygame.Color("red")
@@ -174,15 +174,14 @@ def analyze_maze():
         while w < width:
             color = maze.get_at([w,h])
             if blackColor != color:
-                wall, w, h = create_wall(maze,w,h)
-                h -= 1 # decrease 1 because we will add it in the next loop
-                mainList.append(wall)
+                wall, w = create_wall(maze,w,h)
+                wallSpriteGroup.add(wall)
                 print color, h, w
             w += 1
         h += 1
 
-    print "Number of rectangles ", len(mainList)
-    return mainList
+    print "Number of rectangles ", len(wallSpriteGroup.sprites())
+    return wallSpriteGroup
 
 
 def main():
@@ -216,10 +215,7 @@ def main():
     clock = pygame.time.Clock()
     direction = [0, 0]
 
-    wallList = analyze_maze()
-    wallSpriteGroup =  pygame.sprite.Group()
-    for item in wallList:
-        wallSpriteGroup.add(item)
+    wallSpriteGroup = analyze_maze()
 
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
