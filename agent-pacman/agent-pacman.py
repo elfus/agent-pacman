@@ -18,6 +18,9 @@ GREEN  = (   0, 255,   0)
 RED    = ( 255,   0,   0)
 PURPLE = ( 255,   0, 255)
 
+PACMAN_START = (107,207)
+GHOST_START = (105,132)
+
 def handle_event(event):
     """
     Handles a pygame.K_DOWN event
@@ -188,7 +191,7 @@ def analyze_maze():
 def main():
     pygame.init()
 
-    pacman_background = pygame.image.load("res/grid.bmp")
+    pacman_background = pygame.image.load("res/tableropacman.jpg")
     pacman_rect = pacman_background.get_rect()
     window_size = width, height = pacman_background.get_width(), pacman_background.get_height()
 
@@ -212,6 +215,9 @@ def main():
 
     ghost = Ghost()
     ghostsprite = pygame.sprite.RenderPlain(ghost)
+    newpos = ghost.rect.move(GHOST_START)
+    if ghost.area.contains(newpos):
+        ghost.rect = newpos
 
     clock = pygame.time.Clock()
     direction = [0, 0]
@@ -240,7 +246,7 @@ def main():
 
         ghost.update()
         ghostsprite.draw(screen)
-        wallSpriteGroup.draw(screen)
+        #wallSpriteGroup.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
