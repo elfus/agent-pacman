@@ -151,7 +151,7 @@ def get_characters_group():
     blinky = Blinky("rojo.png")
     blinky.rect = blinky.rect.move(GHOST_START)
 
-    pacman = Pacman("pacman.png")
+    pacman = Pacman("pacman1.png")
     pacman.rect = pacman.rect.move(PACMAN_START)
 
     ghostsprite = pygame.sprite.RenderPlain(blinky)
