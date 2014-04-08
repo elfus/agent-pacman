@@ -12,7 +12,7 @@ POINTS_LIST = 0
 
 PACMAN_START = (105,206)
 GHOST_START = (105,133)
-BLINKY_START = (107, 108)
+BLINKY_START = (105, 108)
 
 PACMAN = 0
 
@@ -57,6 +57,23 @@ class Character(pygame.sprite.Sprite):
             if self.rect.right > (self.area.right + self.rect.width):
                 self.rect.right = self.area.left
                 return
+
+    def collides(self, direction):
+        old_rect = self.rect.copy()
+        self.rect.x += direction[0]
+        collitionDetected = False
+        hit_wall_list = pygame.sprite.spritecollide(self,WALL_LIST,False)
+        if len(hit_wall_list) > 0:
+            collitionDetected = True
+
+        self.rect.y += direction[1]
+        hit_wall_list = pygame.sprite.spritecollide(self,WALL_LIST,False)
+        if len(hit_wall_list) > 0:
+            collitionDetected = True
+
+        self.rect = old_rect.copy()
+        return collitionDetected
+
 
     def movedirection(self, direction, wallPixels, pointsGroup):
         self.rect.x += direction[0]
@@ -115,25 +132,32 @@ class Blinky(Character):
         print 'Blinky destructor'
 
     def finddirection(self, from_pos, to_pos ):
-        print "Current pos ", from_pos," want to move to ", to_pos
         pos1 = (from_pos[0], from_pos[1]-1)
         pos2 = (from_pos[0]+1, from_pos[1])
         pos3 = (from_pos[0], from_pos[1]+1)
         pos4 = (from_pos[0]-1, from_pos[1])
-        list = [self.pitagorazo(pos1[0]-to_pos[0], pos1[1]-to_pos[1]),
+        distance_list = [self.pitagorazo(pos1[0]-to_pos[0], pos1[1]-to_pos[1]),
                 self.pitagorazo(pos2[0]-to_pos[0], pos2[1]-to_pos[1]),
                 self.pitagorazo(pos3[0]-to_pos[0], pos3[1]-to_pos[1]),
                 self.pitagorazo(pos4[0]-to_pos[0], pos4[1]-to_pos[1]),
                 ]
-        direction = min(list)
-        if list.index(direction) == INDEX_UP:
-            return DIRECTION_UP
-        elif list.index(direction) == INDEX_RIGHT:
-            return DIRECTION_RIGHT
-        elif list.index(direction) == INDEX_DOWN:
-            return DIRECTION_DOWN
-        elif list.index(direction) == INDEX_LEFT:
-            return DIRECTION_LEFT
+        new_list = list(distance_list)
+        new_list.sort()
+        for direction in new_list:
+            new_direction = 0;
+            if distance_list.index(direction) == INDEX_UP:
+                new_direction = DIRECTION_UP
+            elif distance_list.index(direction) == INDEX_RIGHT:
+                new_direction = DIRECTION_RIGHT
+            elif distance_list.index(direction) == INDEX_DOWN:
+                new_direction = DIRECTION_DOWN
+            elif distance_list.index(direction) == INDEX_LEFT:
+                new_direction = DIRECTION_LEFT
+
+            if self.collides(new_direction) == False:
+                return new_direction
+            else:
+                return [0,0]
 
     def pitagorazo(self, a, b):
         c = sqrt(pow(a,2) + pow(b,2))
