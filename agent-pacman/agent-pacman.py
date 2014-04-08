@@ -76,13 +76,12 @@ def main():
     # NOTE: Try commenting out this line and see how input behaves
     pygame.key.set_repeat(50, 50)
 
-
-    ghostsprite, pacman = get_characters_group()
-
     clock = pygame.time.Clock()
     direction = [0, 0]
 
     wallSpriteGroup, pointsGroup = analyze_maze()
+
+    ghostsprite, pacman = get_characters_group(wallSpriteGroup, pointsGroup)
 
     while 1:
         # Make sure game doesn't run at more than 60 frames per second

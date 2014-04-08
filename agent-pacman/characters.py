@@ -1,3 +1,5 @@
+from math import sqrt
+
 __author__ = 'aortegag'
 
 import pygame
@@ -5,8 +7,26 @@ from pygame.locals import *
 from pygame.locals import *
 from util import *
 
+WALL_LIST = 0
+POINTS_LIST = 0
+
 PACMAN_START = (105,206)
 GHOST_START = (105,133)
+BLINKY_START = (107, 108)
+
+PACMAN = 0
+
+INDEX_UP = 0
+INDEX_RIGHT = 1
+INDEX_DOWN = 2
+INDEX_LEFT = 3
+
+OFFSET = 4
+DIRECTION_UP = [0, -OFFSET]
+DIRECTION_RIGHT = [OFFSET, 0]
+DIRECTION_DOWN = [0, OFFSET]
+DIRECTION_LEFT = [-OFFSET, 0]
+
 
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
@@ -84,11 +104,40 @@ class Blinky(Character):
         print 'Blinky constructor'
 
     def update(self):
+        global WALL_LIST
+        global POINTS_LIST
         #Implement custom behavior, then call base class method
+        direction = self.finddirection(self.rect.center, PACMAN.rect.center)
+        self.movedirection(direction, WALL_LIST, POINTS_LIST)
         Character.update(self)
 
     def __del__(self):
         print 'Blinky destructor'
+
+    def finddirection(self, from_pos, to_pos ):
+        print "Current pos ", from_pos," want to move to ", to_pos
+        pos1 = (from_pos[0], from_pos[1]-1)
+        pos2 = (from_pos[0]+1, from_pos[1])
+        pos3 = (from_pos[0], from_pos[1]+1)
+        pos4 = (from_pos[0]-1, from_pos[1])
+        list = [self.pitagorazo(pos1[0]-to_pos[0], pos1[1]-to_pos[1]),
+                self.pitagorazo(pos2[0]-to_pos[0], pos2[1]-to_pos[1]),
+                self.pitagorazo(pos3[0]-to_pos[0], pos3[1]-to_pos[1]),
+                self.pitagorazo(pos4[0]-to_pos[0], pos4[1]-to_pos[1]),
+                ]
+        direction = min(list)
+        if list.index(direction) == INDEX_UP:
+            return DIRECTION_UP
+        elif list.index(direction) == INDEX_RIGHT:
+            return DIRECTION_RIGHT
+        elif list.index(direction) == INDEX_DOWN:
+            return DIRECTION_DOWN
+        elif list.index(direction) == INDEX_LEFT:
+            return DIRECTION_LEFT
+
+    def pitagorazo(self, a, b):
+        c = sqrt(pow(a,2) + pow(b,2))
+        return c
 
 # Pinky is the pink ghost
 class Pink(Character):
@@ -147,11 +196,17 @@ class Pacman(Character):
     def __del__(self):
         print 'Pacman destructor'
 
-def get_characters_group():
-    blinky = Blinky("rojo.png")
-    blinky.rect = blinky.rect.move(GHOST_START)
+def get_characters_group(wallSpriteGroup, pointsGroup):
+    global PACMAN
+    global WALL_LIST
+    global POINTS_LIST
+    WALL_LIST = wallSpriteGroup
+    POINTS_LIST = pointsGroup
 
-    pacman = Pacman("pacman1.png")
+    blinky = Blinky("rojo.png")
+    blinky.rect = blinky.rect.move(BLINKY_START)
+
+    PACMAN = pacman = Pacman("pacman1.png")
     pacman.rect = pacman.rect.move(PACMAN_START)
 
     ghostsprite = pygame.sprite.RenderPlain(blinky)
