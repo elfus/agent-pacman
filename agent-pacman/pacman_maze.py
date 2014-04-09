@@ -4,6 +4,12 @@ import pygame
 from util import *
 from pygame.locals import *
 
+
+TILE_WIDTH = 8
+TILE_HEIGHT = 8
+BOARD_WIDTH = 224
+BOARD_HEIGHT = 288
+
 class Wall(pygame.sprite.Sprite):
     """This class represents the bar at the bottom that the player controls """
 
@@ -21,6 +27,26 @@ class Wall(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = y
         self.rect.x = x
+
+def create_board_matrix(width, height):
+    global BOARD_WIDTH
+    global BOARD_HEIGHT
+    if width != BOARD_WIDTH or height != BOARD_HEIGHT:
+        print "The board has the wrong size"
+        return 0
+
+    board_matrix = []
+    i, j = 0, 0
+    while j < BOARD_HEIGHT:
+        board_matrix.append([])
+        while i < BOARD_WIDTH:
+            row = board_matrix[-1] # get the last row
+            row.append(Rect(i, j, TILE_WIDTH, TILE_HEIGHT))
+            i += TILE_WIDTH
+        j += TILE_HEIGHT
+        i = 0
+
+    return board_matrix
 
 def create_wall(maze, x, y):
     width = 0

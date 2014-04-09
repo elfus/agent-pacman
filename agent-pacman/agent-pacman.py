@@ -62,6 +62,7 @@ def main():
     pacman_background = pygame.image.load("res/tableropacman.jpg")
     pacman_rect = pacman_background.get_rect()
     window_size = width, height = pacman_background.get_width(), pacman_background.get_height()
+    board_matrix = create_board_matrix(width,height)
 
     # Create a graphical window by calling set_mode
     # Pygame represents images as Surface objects. The "display.set_mode()"
