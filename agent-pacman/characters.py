@@ -27,6 +27,10 @@ DIRECTION_RIGHT = [OFFSET, 0]
 DIRECTION_DOWN = [0, OFFSET]
 DIRECTION_LEFT = [-OFFSET, 0]
 
+FACING_LEFT = "left"
+FACING_RIGHT = "right"
+FACING_UP = "up"
+FACING_DOWN = "down"
 
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
@@ -41,13 +45,14 @@ class Character(pygame.sprite.Sprite):
         self.area = screen.get_rect()
         self.stop()
         self.name = "Character"
+        self.facing = FACING_LEFT
         print 'Character Constructor'
 
     def stop(self):
         self.movepos = [0, 0]
         self.state = "still"
 
-    def update(self):
+    def detect_tunnel_condition(self):
         # This is if is meant to detect the case in which any character goes through
         # the 'middle tunnel' on the maze and appears on the other side
         if self.area.contains(self.rect) == False:
@@ -57,6 +62,9 @@ class Character(pygame.sprite.Sprite):
             if self.rect.right > (self.area.right + self.rect.width):
                 self.rect.right = self.area.left
                 return
+
+    def update(self):
+        self.detect_tunnel_condition()
 
     def collides(self, direction):
         old_rect = self.rect.copy()
@@ -74,42 +82,6 @@ class Character(pygame.sprite.Sprite):
         self.rect = old_rect.copy()
         return collitionDetected
 
-
-    def movedirection(self, direction, wallPixels, pointsGroup):
-        self.rect.x += direction[0]
-        hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
-        # check for any collision with a wall
-        for wall in hit_wall_list:
-            if direction[0] > 0:
-                self.rect.right = wall.rect.left
-            else:
-                self.rect.left = wall.rect.right
-
-            if wall.image.get_at([0,0]) == pygame.Color("green"):
-                wall.image.fill(PURPLE)
-            else:
-                wall.image.fill(GREEN)
-
-        self.rect.y += direction[1]
-        hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
-        # check for any collision with a wall
-        for wall in hit_wall_list:
-            if direction[1] > 0:
-                self.rect.bottom = wall.rect.top
-            else:
-                self.rect.top = wall.rect.bottom
-
-            if wall.image.get_at([0,0]) == pygame.Color("green"):
-                wall.image.fill(PURPLE)
-            else:
-                wall.image.fill(GREEN)
-
-        if self.name == "Pacman":
-            points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
-            for point in points_list:
-                self.score += 1
-                print "Score ",self.score," points"
-
     def __del__(self):
         print 'Destructor'
 
@@ -124,8 +96,8 @@ class Blinky(Character):
         global WALL_LIST
         global POINTS_LIST
         #Implement custom behavior, then call base class method
-        direction = self.finddirection(self.rect.center, PACMAN.rect.center)
-        self.movedirection(direction, WALL_LIST, POINTS_LIST)
+        # direction = self.finddirection(self.rect.center, PACMAN.rect.center)
+        # self.movedirection(direction, WALL_LIST, POINTS_LIST)
         Character.update(self)
 
     def __del__(self):
@@ -216,6 +188,41 @@ class Pacman(Character):
     def update(self):
         #Implement custom behavior, then call base class method
         Character.update(self)
+
+    def movedirection(self, direction, wallPixels, pointsGroup):
+        self.rect.x += direction[0]
+        hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
+        # check for any collision with a wall
+        for wall in hit_wall_list:
+            if direction[0] > 0:
+                self.rect.right = wall.rect.left
+            else:
+                self.rect.left = wall.rect.right
+
+            if wall.image.get_at([0,0]) == pygame.Color("green"):
+                wall.image.fill(PURPLE)
+            else:
+                wall.image.fill(GREEN)
+
+        self.rect.y += direction[1]
+        hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
+        # check for any collision with a wall
+        for wall in hit_wall_list:
+            if direction[1] > 0:
+                self.rect.bottom = wall.rect.top
+            else:
+                self.rect.top = wall.rect.bottom
+
+            if wall.image.get_at([0,0]) == pygame.Color("green"):
+                wall.image.fill(PURPLE)
+            else:
+                wall.image.fill(GREEN)
+
+        if self.name == "Pacman":
+            points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
+            for point in points_list:
+                self.score += 1
+                print "Score ",self.score," points"
 
     def __del__(self):
         print 'Pacman destructor'

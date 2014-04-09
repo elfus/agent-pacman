@@ -14,6 +14,11 @@ OFFSET = 4
 X_AXIS = 0
 Y_AXIS = 1
 
+GO_LEFT = [-OFFSET, 0]
+GO_RIGHT = [OFFSET, 0]
+GO_DOWN = [0, OFFSET]
+GO_UP = [0, -OFFSET]
+
 def handle_event(event):
     """
     Handles a pygame.K_DOWN event
@@ -22,13 +27,13 @@ def handle_event(event):
     """
     direction = [0, 0]
     if event.key == pygame.K_w:
-        direction = [0, -OFFSET]
+        direction = GO_UP
     elif event.key == pygame.K_s:
-        direction = [0, OFFSET]
+        direction = GO_DOWN
     elif event.key == pygame.K_a:
-        direction = [-OFFSET, 0]
+        direction = GO_LEFT
     elif event.key == pygame.K_d:
-        direction = [OFFSET, 0]
+        direction = GO_RIGHT
     return direction
 
 
@@ -100,7 +105,6 @@ def main():
                     return
                 direction = handle_event(event)
                 pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
-                print pacman.name, pacman.rect
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     pacman.stop()
