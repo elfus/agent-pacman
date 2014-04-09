@@ -37,14 +37,14 @@ def create_board_matrix(width, height):
 
     board_matrix = []
     i, j = 0, 0
-    while j < BOARD_HEIGHT:
+    while i < BOARD_WIDTH:
         board_matrix.append([])
-        while i < BOARD_WIDTH:
+        while j < BOARD_HEIGHT:
             row = board_matrix[-1] # get the last row
             row.append(Rect(i, j, TILE_WIDTH, TILE_HEIGHT))
-            i += TILE_WIDTH
-        j += TILE_HEIGHT
-        i = 0
+            j += TILE_HEIGHT
+        i += TILE_WIDTH
+        j = 0
 
     return board_matrix
 

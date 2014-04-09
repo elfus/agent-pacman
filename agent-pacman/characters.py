@@ -38,7 +38,7 @@ class Character(pygame.sprite.Sprite):
     Functions: update, calcnewpos
     Attributes: area, vector"""
 
-    def __init__(self, FILENAME):
+    def __init__(self, FILENAME, boardMatrix):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(FILENAME)
         screen = pygame.display.get_surface()
@@ -46,6 +46,9 @@ class Character(pygame.sprite.Sprite):
         self.stop()
         self.name = "Character"
         self.facing = FACING_LEFT
+        self.tile_xy = (0,0)
+        self.current_tile = 0
+        self.board_matrix = boardMatrix
         print 'Character Constructor'
 
     def stop(self):
@@ -87,8 +90,8 @@ class Character(pygame.sprite.Sprite):
 
 # Blinky is the red ghost
 class Blinky(Character):
-    def __init__(self, FILENAME):
-        Character.__init__(self, FILENAME)
+    def __init__(self, FILENAME, boardMatrix):
+        Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Blinky"
         print 'Blinky constructor'
 
@@ -179,10 +182,13 @@ class Clyde(Character):
 
 # Pacman is pacman
 class Pacman(Character):
-    def __init__(self, FILENAME):
-        Character.__init__(self, FILENAME)
+    def __init__(self, FILENAME, boardMatrix):
+        Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Pacman"
         self.score = 0
+        self.tile_xy = (13,26)
+        self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.rect.center = self.current_tile.center
         print 'Pacman constructor'
 
     def update(self):
@@ -234,18 +240,18 @@ class Pacman(Character):
     def __del__(self):
         print 'Pacman destructor'
 
-def get_characters_group(wallSpriteGroup, pointsGroup):
+def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
     global PACMAN
     global WALL_LIST
     global POINTS_LIST
     WALL_LIST = wallSpriteGroup
     POINTS_LIST = pointsGroup
 
-    blinky = Blinky("rojo.png")
+    blinky = Blinky("rojo.png", boardMatrix)
     blinky.rect = blinky.rect.move(BLINKY_START)
 
-    PACMAN = pacman = Pacman("pacman1.png")
-    pacman.rect = pacman.rect.move(PACMAN_START)
+    PACMAN = pacman = Pacman("pacman1.png", boardMatrix)
+
 
     ghostsprite = pygame.sprite.RenderPlain(blinky)
     ghostsprite.add(pacman)

@@ -87,7 +87,7 @@ def main():
 
     wallSpriteGroup, pointsGroup = analyze_maze()
 
-    ghostsprite, pacman = get_characters_group(wallSpriteGroup, pointsGroup)
+    ghostsprite, pacman = get_characters_group(board_matrix, wallSpriteGroup, pointsGroup)
 
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
@@ -106,6 +106,7 @@ def main():
                     return
                 direction = handle_event(event)
                 pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
+                print "Pacman coordinate: ", pacman.rect
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     pacman.stop()
