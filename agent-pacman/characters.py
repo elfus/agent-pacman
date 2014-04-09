@@ -190,6 +190,11 @@ class Pacman(Character):
         Character.update(self)
 
     def movedirection(self, direction, wallPixels, pointsGroup):
+        if direction == DIRECTION_LEFT: self.facing = FACING_LEFT
+        if direction == DIRECTION_RIGHT: self.facing = FACING_RIGHT
+        if direction == DIRECTION_UP: self.facing = FACING_UP
+        if direction == DIRECTION_DOWN: self.facing = FACING_DOWN
+
         self.rect.x += direction[0]
         hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
         # check for any collision with a wall
@@ -217,6 +222,8 @@ class Pacman(Character):
                 wall.image.fill(PURPLE)
             else:
                 wall.image.fill(GREEN)
+
+        print "Facing ", self.facing
 
         if self.name == "Pacman":
             points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
