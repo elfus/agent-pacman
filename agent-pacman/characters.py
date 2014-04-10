@@ -55,6 +55,18 @@ class Character(pygame.sprite.Sprite):
         self.movepos = [0, 0]
         self.state = "still"
 
+    def get_direction(self, facing_to):
+        if facing_to == FACING_LEFT: return GO_LEFT
+        if facing_to == FACING_RIGHT: return GO_RIGHT
+        if facing_to == FACING_DOWN: return GO_DOWN
+        if facing_to == FACING_UP: return GO_UP
+
+    def get_facing(self, direction):
+        if direction == GO_LEFT: return FACING_LEFT
+        if direction == GO_RIGHT: return FACING_RIGHT
+        if direction == GO_DOWN: return FACING_DOWN
+        if direction == GO_UP: return FACING_UP
+
     def detect_tunnel_condition(self):
         # This is if is meant to detect the case in which any character goes through
         # the 'middle tunnel' on the maze and appears on the other side
@@ -69,7 +81,7 @@ class Character(pygame.sprite.Sprite):
     def update(self):
         self.detect_tunnel_condition()
 
-    def get_adjacent_tile(self):
+    def get_adjacent_tile(self, facing_to):
         """
         Gets the adjacent tile to this character depending on where it is facing.
         This variable assumes the attribute variable self.facing is set before
@@ -81,13 +93,13 @@ class Character(pygame.sprite.Sprite):
         adjacent_tile = 0
         target_tile = (-1,-1)
 
-        if self.facing == FACING_LEFT:
+        if facing_to == FACING_LEFT:
             target_tile = (self.tile_xy[0]-1,self.tile_xy[1])
-        elif self.facing == FACING_RIGHT:
+        elif facing_to == FACING_RIGHT:
             target_tile = (self.tile_xy[0]+1,self.tile_xy[1])
-        elif self.facing == FACING_UP:
+        elif facing_to == FACING_UP:
             target_tile = (self.tile_xy[0],self.tile_xy[1]-1)
-        elif self.facing == FACING_DOWN:
+        elif facing_to == FACING_DOWN:
             target_tile = (self.tile_xy[0],self.tile_xy[1]+1)
 
         if target_tile[0] >= TILE_WIDTH_COUNT:
@@ -98,33 +110,17 @@ class Character(pygame.sprite.Sprite):
 
         adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
         if adjacent_tile.isWalkable() == False:
-            print "Tile coordinates ",target_tile, adjacent_tile.rect.center,"facing",self.facing,self.rect.center,"is NOT walkable"
-            if self.facing == FACING_LEFT or self.facing == FACING_RIGHT:
+            print "Tile coordinates ",target_tile, adjacent_tile.rect.center,"facing",facing_to,self.rect.center,"is NOT walkable"
+            if facing_to == FACING_LEFT or facing_to == FACING_RIGHT:
                 if self.current_tile.rect.centerx != self.rect.centerx:
                     adjacent_tile = self.current_tile
                     target_tile = self.tile_xy
-            elif self.facing == FACING_UP or self.facing == FACING_DOWN:
+            elif facing_to == FACING_UP or facing_to == FACING_DOWN:
                 if self.current_tile.rect.centery != self.rect.centery:
                     adjacent_tile = self.current_tile
                     target_tile = self.tile_xy
 
         return adjacent_tile, target_tile
-
-    def collides(self, direction):
-        old_rect = self.rect.copy()
-        self.rect.x += direction[0]
-        collitionDetected = False
-        hit_wall_list = pygame.sprite.spritecollide(self,WALL_LIST,False)
-        if len(hit_wall_list) > 0:
-            collitionDetected = True
-
-        self.rect.y += direction[1]
-        hit_wall_list = pygame.sprite.spritecollide(self,WALL_LIST,False)
-        if len(hit_wall_list) > 0:
-            collitionDetected = True
-
-        self.rect = old_rect.copy()
-        return collitionDetected
 
     def __del__(self):
         print 'Destructor'
@@ -236,16 +232,23 @@ class Pacman(Character):
         #Implement custom behavior, then call base class method
         Character.update(self)
 
-    def movedirection(self, direction, wallPixels, pointsGroup):
-        if direction == DIRECTION_LEFT: self.facing = FACING_LEFT
-        if direction == DIRECTION_RIGHT: self.facing = FACING_RIGHT
-        if direction == DIRECTION_UP: self.facing = FACING_UP
-        if direction == DIRECTION_DOWN: self.facing = FACING_DOWN
-
-        target_tile, target_xy = self.get_adjacent_tile()
+    def can_move_to(self,direction):
+        can_move = False
+        new_facing = self.get_facing(direction)
+        target_tile, target_xy = self.get_adjacent_tile(new_facing)
         if target_tile.isWalkable() == False:
-            return
+            return False
+        return True
 
+    def movedirection(self, direction, wallPixels, pointsGroup):
+        if self.can_move_to(direction) == False:
+            return False
+
+        new_facing = self.get_facing(direction)
+
+        target_tile, target_xy = self.get_adjacent_tile(new_facing)
+
+        self.facing = new_facing
         if target_tile.rect.collidepoint(self.rect.center) == True:
             self.current_tile = target_tile
             self.tile_xy = target_xy
@@ -260,6 +263,7 @@ class Pacman(Character):
             points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
             for point in points_list:
                 self.score += 1
+        return True
 
     def __del__(self):
         print 'Pacman destructor'

@@ -12,6 +12,8 @@ from characters import *
 X_AXIS = 0
 Y_AXIS = 1
 
+LAST_DIRECTION = GO_LEFT
+PENDING_DIRECTION = GO_LEFT
 
 def handle_event(event):
     """
@@ -37,7 +39,8 @@ def handle_input():
 
     :return: The direction where to move
     """
-    direction = [0, 0]
+    global PENDING_DIRECTION
+    direction = PENDING_DIRECTION
     if pygame.key.get_pressed()[pygame.K_w]:
         direction = GO_UP
     elif pygame.key.get_pressed()[pygame.K_s]:
@@ -51,6 +54,9 @@ def handle_input():
 
 
 def main():
+    global LAST_DIRECTION
+    global PENDING_DIRECTION
+
     pygame.init()
 
     pacman_background = pygame.image.load("res/tableropacman.jpg")
@@ -119,8 +125,11 @@ def main():
 
         # When detecting keyboard here, pacman moves faster
         direction = handle_input()
-        if direction != STAND_STILL:
-            pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
+        if pacman.movedirection(direction, wallSpriteGroup, pointsGroup) == True:
+            LAST_DIRECTION  = PENDING_DIRECTION = direction
+        else:
+            pacman.movedirection(LAST_DIRECTION, wallSpriteGroup, pointsGroup)
+            PENDING_DIRECTION = direction
 
         ghostsprite.update()
         ghostsprite.draw(screen)
