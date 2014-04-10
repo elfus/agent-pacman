@@ -98,7 +98,8 @@ class Character(pygame.sprite.Sprite):
 
         adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
         if adjacent_tile.isWalkable() == False:
-            print "Adjacent facing ",self.facing," tile is NOT walkable"
+            print "Tile coordinates ",target_tile
+            print "Adjacent tile facing ",self.facing," tile is NOT walkable"
 
         return adjacent_tile, target_tile
 
@@ -238,6 +239,10 @@ class Pacman(Character):
         if target_tile.isWalkable() == False:
             return
 
+        if target_tile.rect.collidepoint(self.rect.center) == True:
+            self.current_tile = target_tile
+            self.tile_xy = target_xy
+
         #################################
         self.rect.x += direction[0]
         hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
@@ -269,11 +274,11 @@ class Pacman(Character):
 
         print "Facing ", self.facing
 
+
         if self.name == "Pacman":
             points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
             for point in points_list:
                 self.score += 1
-                print "Score ",self.score," points"
 
     def __del__(self):
         print 'Pacman destructor'
