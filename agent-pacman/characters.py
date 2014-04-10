@@ -91,10 +91,10 @@ class Character(pygame.sprite.Sprite):
             target_tile = (self.tile_xy[0],self.tile_xy[1]+1)
 
         if target_tile[0] >= TILE_WIDTH_COUNT:
-            target_tile[0] = TILE_WIDTH_COUNT - 1
+            target_tile = (0,target_tile[1])
 
         if target_tile[1] >= TILE_HEIGHT_COUNT:
-            target_tile[1] = TILE_HEIGHT_COUNT - 1
+            target_tile = (target_tile[0], 0)
 
         adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
         if adjacent_tile.isWalkable() == False:
