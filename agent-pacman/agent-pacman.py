@@ -90,10 +90,10 @@ def main():
         clock.tick(60)
 
         ## Used for debugging
-        for row in board_matrix:
-            for tile in row:
-                if tile.isWalkable() == True:
-                    screen.fill(PURPLE, tile.rect)
+        # for row in board_matrix:
+        #     for tile in row:
+        #         if tile.isWalkable() == True:
+        #             screen.fill(PURPLE, tile.rect)
         ## Used for debugging
 
         for character in ghostsprite.sprites():
