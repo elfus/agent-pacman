@@ -4,12 +4,6 @@ import pygame
 from util import *
 from pygame.locals import *
 
-
-TILE_WIDTH = 8
-TILE_HEIGHT = 8
-BOARD_WIDTH = 224
-BOARD_HEIGHT = 288
-
 class Wall(pygame.sprite.Sprite):
     """This class represents the bar at the bottom that the player controls """
 
