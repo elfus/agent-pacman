@@ -251,43 +251,10 @@ class Pacman(Character):
             self.tile_xy = target_xy
 
         # Allow moving from left to right OR up and down
-        print "target_tile.center: ",target_tile.rect.center," -- pacman.rect.center: ",self.rect.center
-        if target_tile.rect.centery ==  self.rect.centery:
+        if target_tile.rect.centery ==  self.rect.centery or target_tile.rect.centerx ==  self.rect.centerx:
             self.rect.move_ip(direction)
-        elif target_tile.rect.centerx ==  self.rect.centerx:
-            self.rect.move_ip(direction)
-
-        #################################
-        # self.rect.x += direction[0]
-        # hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
-        # # check for any collision with a wall
-        # for wall in hit_wall_list:
-        #     if direction[0] > 0:
-        #         self.rect.right = wall.rect.left
-        #     else:
-        #         self.rect.left = wall.rect.right
-        #
-        #     if wall.image.get_at([0,0]) == pygame.Color("green"):
-        #         wall.image.fill(PURPLE)
-        #     else:
-        #         wall.image.fill(GREEN)
-        #
-        # self.rect.y += direction[1]
-        # hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
-        # # check for any collision with a wall
-        # for wall in hit_wall_list:
-        #     if direction[1] > 0:
-        #         self.rect.bottom = wall.rect.top
-        #     else:
-        #         self.rect.top = wall.rect.bottom
-        #
-        #     if wall.image.get_at([0,0]) == pygame.Color("green"):
-        #         wall.image.fill(PURPLE)
-        #     else:
-        #         wall.image.fill(GREEN)
 
         print "Facing ", self.facing
-
 
         if self.name == "Pacman":
             points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
