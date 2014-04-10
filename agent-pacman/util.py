@@ -2,6 +2,7 @@ __author__ = 'aortegag'
 
 import os
 import pygame
+from pygame.locals import *
 
 BLACK  = (   0,   0,   0)
 WHITE  = ( 255, 255, 255)
@@ -16,6 +17,21 @@ BOARD_WIDTH = 224
 BOARD_HEIGHT = 288
 TILE_WIDTH_COUNT = BOARD_WIDTH/TILE_WIDTH
 TILE_HEIGHT_COUNT = BOARD_HEIGHT/TILE_HEIGHT
+
+class Tile:
+    """Tile representing a tile on the board. It wraps a rect"""
+    def __init__(self, left, top, width, height):
+        self.rect = Rect(left, top, width, height)
+        self.is_walkable = False
+
+    def setWalkable(self, isWakable):
+        self.is_walkable = isWakable
+
+    def getCenter(self):
+        return self.rect.center
+
+    def isWalkable(self):
+        return self.is_walkable
 
 def load_image(name):
     """ Load image and return image object"""

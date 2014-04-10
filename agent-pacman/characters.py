@@ -218,7 +218,7 @@ class Pacman(Character):
         self.score = 0
         self.tile_xy = (13,26)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
-        self.rect.center = self.current_tile.center
+        self.rect.center = self.current_tile.getCenter()
         print 'Pacman constructor'
 
     def update(self):
