@@ -69,6 +69,36 @@ class Character(pygame.sprite.Sprite):
     def update(self):
         self.detect_tunnel_condition()
 
+    def get_adjacent_tile(self):
+        """
+        Gets the adjacent tile to this character depending on where it is facing.
+        This variable assumes the attribute variable self.facing is set before
+        calling this method.
+
+        :rtype : The tile (Rect) object adjacent where the character is facing
+        :return: The tile coordinates in the board matrix
+        """
+        adjacent_tile = 0
+        target_tile = (-1,-1)
+
+        if self.facing == FACING_LEFT:
+            target_tile = (self.tile_xy[0]-1,self.tile_xy[1])
+        elif self.facing == FACING_RIGHT:
+            target_tile = (self.tile_xy[0]+1,self.tile_xy[1])
+        elif self.facing == FACING_UP:
+            target_tile = (self.tile_xy[0],self.tile_xy[1]-1)
+        elif self.facing == FACING_DOWN:
+            target_tile = (self.tile_xy[0],self.tile_xy[1]+1)
+
+        if target_tile[0] >= TILE_WIDTH_COUNT:
+            target_tile[0] = TILE_WIDTH_COUNT - 1
+
+        if target_tile[1] >= TILE_HEIGHT_COUNT:
+            target_tile[1] = TILE_HEIGHT_COUNT - 1
+
+        adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
+        return adjacent_tile, target_tile
+
     def collides(self, direction):
         old_rect = self.rect.copy()
         self.rect.x += direction[0]
@@ -201,6 +231,10 @@ class Pacman(Character):
         if direction == DIRECTION_UP: self.facing = FACING_UP
         if direction == DIRECTION_DOWN: self.facing = FACING_DOWN
 
+        target_tile, target_xy = self.get_adjacent_tile()
+
+
+        #################################
         self.rect.x += direction[0]
         hit_wall_list = pygame.sprite.spritecollide(self,wallPixels,False)
         # check for any collision with a wall
