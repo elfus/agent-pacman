@@ -9,15 +9,9 @@ from util import *
 from pacman_maze import *
 from characters import *
 
-
-OFFSET = 4
 X_AXIS = 0
 Y_AXIS = 1
 
-GO_LEFT = [-OFFSET, 0]
-GO_RIGHT = [OFFSET, 0]
-GO_DOWN = [0, OFFSET]
-GO_UP = [0, -OFFSET]
 
 def handle_event(event):
     """
@@ -87,11 +81,20 @@ def main():
 
     wallSpriteGroup, pointsGroup = analyze_maze()
 
+    detect_walkable_tiles(board_matrix, wallSpriteGroup)
+
     ghostsprite, pacman = get_characters_group(board_matrix, wallSpriteGroup, pointsGroup)
 
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
+
+        ## Used for debugging
+        for row in board_matrix:
+            for tile in row:
+                if tile.isWalkable() == True:
+                    screen.fill(PURPLE, tile.rect)
+        ## Used for debugging
 
         for character in ghostsprite.sprites():
             screen.blit(pacman_background, character.rect, character.rect)
@@ -116,6 +119,8 @@ def main():
         # Comment out this line to remove collition detection debugging
         # wallSpriteGroup.draw(screen)
         pointsGroup.draw(screen)
+
+
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it

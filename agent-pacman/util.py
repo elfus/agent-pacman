@@ -4,6 +4,12 @@ import os
 import pygame
 from pygame.locals import *
 
+OFFSET = 1
+GO_LEFT = [-OFFSET, 0]
+GO_RIGHT = [OFFSET, 0]
+GO_DOWN = [0, OFFSET]
+GO_UP = [0, -OFFSET]
+
 BLACK  = (   0,   0,   0)
 WHITE  = ( 255, 255, 255)
 BLUE   = (   0,   0, 255)

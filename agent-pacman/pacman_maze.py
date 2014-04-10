@@ -35,12 +35,21 @@ def create_board_matrix(width, height):
         board_matrix.append([])
         while j < BOARD_HEIGHT:
             row = board_matrix[-1] # get the last row
-            row.append(Tile(i, j, TILE_WIDTH, TILE_HEIGHT))
+            new_tile = Tile(i, j, TILE_WIDTH, TILE_HEIGHT)
+            new_tile.setWalkable(True)
+            row.append(new_tile)
             j += TILE_HEIGHT
         i += TILE_WIDTH
         j = 0
 
     return board_matrix
+
+def detect_walkable_tiles(boardMatrix, wallList):
+    for row in boardMatrix:
+        for item in row:
+            hit = pygame.sprite.spritecollide(item, wallList, False)
+            if len(hit) > 0:
+                item.setWalkable(False)
 
 def create_wall(maze, x, y):
     width = 0

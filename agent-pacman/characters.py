@@ -21,7 +21,7 @@ INDEX_RIGHT = 1
 INDEX_DOWN = 2
 INDEX_LEFT = 3
 
-OFFSET = 4
+# OFFSET defined in util.py
 DIRECTION_UP = [0, -OFFSET]
 DIRECTION_RIGHT = [OFFSET, 0]
 DIRECTION_DOWN = [0, OFFSET]
@@ -97,6 +97,9 @@ class Character(pygame.sprite.Sprite):
             target_tile[1] = TILE_HEIGHT_COUNT - 1
 
         adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
+        if adjacent_tile.isWalkable() == False:
+            print "Adjacent facing ",self.facing," tile is NOT walkable"
+
         return adjacent_tile, target_tile
 
     def collides(self, direction):
@@ -232,7 +235,8 @@ class Pacman(Character):
         if direction == DIRECTION_DOWN: self.facing = FACING_DOWN
 
         target_tile, target_xy = self.get_adjacent_tile()
-
+        if target_tile.isWalkable() == False:
+            return
 
         #################################
         self.rect.x += direction[0]
