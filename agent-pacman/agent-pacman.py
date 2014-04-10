@@ -39,13 +39,13 @@ def handle_input():
     """
     direction = [0, 0]
     if pygame.key.get_pressed()[pygame.K_w]:
-        direction = [0, -OFFSET]
+        direction = GO_UP
     elif pygame.key.get_pressed()[pygame.K_s]:
-        direction = [0, OFFSET]
+        direction = GO_DOWN
     elif pygame.key.get_pressed()[pygame.K_a]:
-        direction = [-OFFSET, 0]
+        direction = GO_LEFT
     elif pygame.key.get_pressed()[pygame.K_d]:
-        direction = [OFFSET, 0]
+        direction = GO_RIGHT
 
     return direction
 
@@ -107,12 +107,20 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == K_ESCAPE:
                     return
-                direction = handle_event(event)
-                pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
+                # For some reason when detecting the keyboard with these 2 lines, pacman moves
+                # slower, why? I don't know and I don't want to investigate, for the moment
+                # let's use this workaround
+                # direction = handle_event(event)
+                # pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
                 print "Pacman coordinate: ", pacman.rect
             if event.type == pygame.KEYUP:
                 if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
                     pacman.stop()
+
+        # When detecting keyboard here, pacman moves faster
+        direction = handle_input()
+        if direction != STAND_STILL:
+            pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
 
         ghostsprite.update()
         ghostsprite.draw(screen)

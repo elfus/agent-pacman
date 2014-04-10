@@ -9,6 +9,7 @@ GO_LEFT = [-OFFSET, 0]
 GO_RIGHT = [OFFSET, 0]
 GO_DOWN = [0, OFFSET]
 GO_UP = [0, -OFFSET]
+STAND_STILL = [0, 0]
 
 BLACK  = (   0,   0,   0)
 WHITE  = ( 255, 255, 255)
