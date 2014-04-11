@@ -177,9 +177,10 @@ class Blinky(Character):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Blinky"
         # Every ghost needs the following three lines of code
-        self.tile_xy = (14,14)
+        self.tile_xy = (13,14)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
+        self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
         print 'Blinky constructor'
@@ -251,6 +252,7 @@ class Pinky(Character):
         self.tile_xy = (13,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
+        self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
         print 'Pinky constructor'
@@ -271,6 +273,7 @@ class Inky(Character):
         self.tile_xy = (11,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
+        self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
         print 'Inky constructor'
@@ -291,6 +294,7 @@ class Clyde(Character):
         self.tile_xy = (15,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
+        self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
         print 'Clyde constructor'
