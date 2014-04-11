@@ -30,6 +30,8 @@ class Tile:
     def __init__(self, left, top, width, height):
         self.rect = Rect(left, top, width, height)
         self.is_walkable = False
+        self.is_intersection = False
+        self.board_coordinate = (0,0)
 
     def setWalkable(self, isWakable):
         self.is_walkable = isWakable

@@ -42,6 +42,17 @@ def create_board_matrix(width, height):
         i += TILE_WIDTH
         j = 0
 
+    # This two while loops assign their Tile coordinate
+    i, j = 0, 0
+    while i < TILE_WIDTH_COUNT:
+        board_matrix.append([])
+        while j < TILE_HEIGHT_COUNT:
+            tile = board_matrix[i][j]
+            tile.board_coordinate = (i,j)
+            j += 1
+        i += 1
+        j = 0
+
     return board_matrix
 
 def detect_walkable_tiles(boardMatrix, wallList):
@@ -50,6 +61,39 @@ def detect_walkable_tiles(boardMatrix, wallList):
             hit = pygame.sprite.spritecollide(item, wallList, False)
             if len(hit) > 0:
                 item.setWalkable(False)
+
+def get_neighbors_coordinates(boardMatrix, tile):
+    up = (tile.board_coordinate[0],tile.board_coordinate[1]-1)
+    down = (tile.board_coordinate[0],tile.board_coordinate[1]+1)
+    left = (tile.board_coordinate[0]-1,tile.board_coordinate[1])
+    right = (tile.board_coordinate[0]+1,tile.board_coordinate[1])
+    m_list = []
+    if up[0]>=0 and up[0]<TILE_WIDTH_COUNT and up[1]>=3 and up[1]<TILE_HEIGHT_COUNT-3:
+        tile = boardMatrix[up[0]][up[1]]
+        if tile.is_walkable == True:
+            m_list.append(up)
+    if down[0]>=0 and down[0]<TILE_WIDTH_COUNT and down[1]>=3 and down[1]<TILE_HEIGHT_COUNT-3:
+        tile = boardMatrix[down[0]][down[1]]
+        if tile.is_walkable == True:
+            m_list.append(down)
+    if left[0]>=0 and left[0]<TILE_WIDTH_COUNT and left[1]>=3 and left[1]<TILE_HEIGHT_COUNT-3:
+        tile = boardMatrix[left[0]][left[1]]
+        if tile.is_walkable == True:
+            m_list.append(left)
+    if right[0]>=0 and right[0]<TILE_WIDTH_COUNT and right[1]>=3 and right[1]<TILE_HEIGHT_COUNT-3:
+        tile = boardMatrix[right[0]][right[1]]
+        if tile.is_walkable == True:
+            m_list.append(right)
+
+    return m_list
+
+def detect_intersections(boardMatrix):
+    for row in boardMatrix:
+        for tile in row:
+            neighbors = get_neighbors_coordinates(boardMatrix, tile)
+            if len(neighbors) >= 3:
+                tile.is_intersection = True
+
 
 def create_wall(maze, x, y):
     width = 0
