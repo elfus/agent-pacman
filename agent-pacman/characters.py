@@ -186,34 +186,6 @@ class Blinky(Character):
     def __del__(self):
         print 'Blinky destructor'
 
-    def finddirection(self, from_pos, to_pos ):
-        pos1 = (from_pos[0], from_pos[1]-1)
-        pos2 = (from_pos[0]+1, from_pos[1])
-        pos3 = (from_pos[0], from_pos[1]+1)
-        pos4 = (from_pos[0]-1, from_pos[1])
-        distance_list = [self.pitagorazo(pos1[0]-to_pos[0], pos1[1]-to_pos[1]),
-                self.pitagorazo(pos2[0]-to_pos[0], pos2[1]-to_pos[1]),
-                self.pitagorazo(pos3[0]-to_pos[0], pos3[1]-to_pos[1]),
-                self.pitagorazo(pos4[0]-to_pos[0], pos4[1]-to_pos[1]),
-                ]
-        new_list = list(distance_list)
-        new_list.sort()
-        for direction in new_list:
-            new_direction = 0;
-            if distance_list.index(direction) == INDEX_UP:
-                new_direction = DIRECTION_UP
-            elif distance_list.index(direction) == INDEX_RIGHT:
-                new_direction = DIRECTION_RIGHT
-            elif distance_list.index(direction) == INDEX_DOWN:
-                new_direction = DIRECTION_DOWN
-            elif distance_list.index(direction) == INDEX_LEFT:
-                new_direction = DIRECTION_LEFT
-
-            if self.collides(new_direction) == False:
-                return new_direction
-            else:
-                return [0,0]
-
     def pitagorazo(self, a, b):
         c = sqrt(pow(a,2) + pow(b,2))
         return c
