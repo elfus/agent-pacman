@@ -56,3 +56,32 @@ def load_image(name):
         print 'Cannot load image:', fullname
         raise SystemExit, message
     return image, image.get_rect()
+
+def get_tile_neighbors(boardMatrix, tile):
+    up = (tile.board_coordinate[0],tile.board_coordinate[1]-1)
+    down = (tile.board_coordinate[0],tile.board_coordinate[1]+1)
+    left = (tile.board_coordinate[0]-1,tile.board_coordinate[1])
+    right = (tile.board_coordinate[0]+1,tile.board_coordinate[1])
+    m_list = []
+    if up[0]>=0 and up[0]<TILE_WIDTH_COUNT and up[1]>=3 and up[1]<TILE_HEIGHT_COUNT-3:
+        if (up[0] <= 10 or up[0]>=18) or (up[1] < 15 or up[1] >18):
+            tile = boardMatrix[up[0]][up[1]]
+            if tile.is_walkable == True:
+                m_list.append(tile)
+    if down[0]>=0 and down[0]<TILE_WIDTH_COUNT and down[1]>=3 and down[1]<TILE_HEIGHT_COUNT-3:
+        if (down[0] <= 10 or down[0]>=18) or (down[1] < 15 or down[1] >18):
+            tile = boardMatrix[down[0]][down[1]]
+            if tile.is_walkable == True:
+                m_list.append(tile)
+    if left[0]>=0 and left[0]<TILE_WIDTH_COUNT and left[1]>=3 and left[1]<TILE_HEIGHT_COUNT-3:
+        if (left[0] <= 10 or left[0]>=18) or (left[1] < 15 or left[1] >18):
+            tile = boardMatrix[left[0]][left[1]]
+            if tile.is_walkable == True:
+                m_list.append(tile)
+    if right[0]>=0 and right[0]<TILE_WIDTH_COUNT and right[1]>=3 and right[1]<TILE_HEIGHT_COUNT-3:
+        if (right[0] <= 10 or right[0]>=18) or (right[1] < 15 or right[1] >18):
+            tile = boardMatrix[right[0]][right[1]]
+            if tile.is_walkable == True:
+                m_list.append(tile)
+
+    return m_list

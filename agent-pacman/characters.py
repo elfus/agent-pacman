@@ -177,23 +177,74 @@ class Blinky(Character):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Blinky"
         # Every ghost needs the following three lines of code
-        self.tile_xy = (13,14)
+        self.tile_xy = (14,14)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
+        self.current_direction = GO_LEFT
+        self.last_kg_direction = 0
         print 'Blinky constructor'
 
+    def get_direction_from_to(self,from_tile, to_tile):
+        if from_tile.rect.centerx and to_tile.rect.centerx:
+            if to_tile.rect.centerx < from_tile.rect.centerx:
+                return GO_LEFT
+            if to_tile.rect.centerx > from_tile.rect.centerx:
+                return GO_RIGHT
+        if from_tile.rect.centery and to_tile.rect.centery:
+            if to_tile.rect.centery < from_tile.rect.centery:
+                return GO_UP
+            if to_tile.rect.centery > from_tile.rect.centery:
+                return GO_DOWN
+        return STAND_STILL
+
     def update(self):
-        global WALL_LIST
         global POINTS_LIST
         #Implement custom behavior, then call base class method
         target_tile = Character.PACMAN.current_tile
-        adjacent_tile = self.get_adjacent_tile(self.facing)
+        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
+        # TODO: Add code to handle special intersections
+        if adjacent_tile.is_intersection:
+            neighbors = get_tile_neighbors(self.board_matrix, adjacent_tile)
+            # neighbors.remove(self.current_tile) This line may or may not cause a bug, watch out
+            d_list = []
+            for tile in neighbors:
+                distance = self.pitagorazo(tile.rect.centerx-target_tile.rect.centerx,
+                                           tile.rect.centery-target_tile.rect.centery)
+                d_list.append(distance)
+            closest = min(d_list)
+            index = d_list.index(closest)
+
+            self.current_direction = self.get_direction_from_to(adjacent_tile,neighbors[index])
+
+        if self.movedirection(self.current_direction, POINTS_LIST) == True:
+            self.last_kg_direction = self.current_direction
+        else:
+            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
+                self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
 
         
         Character.update(self)
 
     def __del__(self):
         print 'Blinky destructor'
+
+    def get_closest_direction(self, from_tile, to_tile):
+        """
+        Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
+        :param from_tile:
+        :param to_tile:
+        """
+        neighbors = get_tile_neighbors(self.board_matrix, from_tile)
+        #neighbors.remove(self.current_tile)
+        d_list = []
+        for tile in neighbors:
+            distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
+                                       tile.rect.centery-to_tile.rect.centery)
+            d_list.append(distance)
+        closest = min(d_list)
+        index = d_list.index(closest)
+
+        return self.get_direction_from_to(from_tile,neighbors[index])
 
     def pitagorazo(self, a, b):
         c = sqrt(pow(a,2) + pow(b,2))
