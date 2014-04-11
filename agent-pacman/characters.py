@@ -264,9 +264,15 @@ class Pinky(Character):
 
 # Inky is the cyan ghost
 class Inky(Character):
-    def __init__(self, FILENAME):
-        Character.__init__(self, FILENAME)
+    def __init__(self, FILENAME,boardMatrix):
+        Character.__init__(self, FILENAME,boardMatrix)
         self.name = "Inky"
+         # Every ghost needs the following three lines of code
+        self.tile_xy = (11,17)
+        self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.rect.center = self.current_tile.getCenter()
+        self.current_direction = GO_LEFT
+        self.last_kg_direction = 0
         print 'Inky constructor'
 
     def update(self):
@@ -278,9 +284,15 @@ class Inky(Character):
 
 # Clyde is the orange ghost
 class Clyde(Character):
-    def __init__(self, FILENAME):
-        Character.__init__(self, FILENAME)
+    def __init__(self, FILENAME,boardMatrix):
+        Character.__init__(self, FILENAME,boardMatrix)
         self.name = "Clyde"
+         # Every ghost needs the following three lines of code
+        self.tile_xy = (15,17)
+        self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.rect.center = self.current_tile.getCenter()
+        self.current_direction = GO_LEFT
+        self.last_kg_direction = 0
         print 'Clyde constructor'
 
     def update(self):
@@ -321,10 +333,14 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
 
     blinky = Blinky("rojo.png", boardMatrix)
     pinky = Pinky("rosa.png", boardMatrix)
+    clyde = Clyde("naranja.png",boardMatrix)
+    inky = Inky("azulito.png",boardMatrix)
 
 
     ghostsprite = pygame.sprite.RenderPlain()
     #ghostsprite.add(blinky)
     ghostsprite.add(pinky)
+    ghostsprite.add(clyde)
+    ghostsprite.add(inky)
     ghostsprite.add(pacman)
     return ghostsprite, pacman
