@@ -110,7 +110,7 @@ class Character(pygame.sprite.Sprite):
 
         adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
         if adjacent_tile.isWalkable() == False:
-            print "Tile coordinates ",target_tile, adjacent_tile.rect.center,"facing",facing_to,self.rect.center,"is NOT walkable"
+            print self.name,": the tile facing",facing_to,"is NOT walkable"
             if facing_to == FACING_LEFT or facing_to == FACING_RIGHT:
                 if self.current_tile.rect.centerx != self.rect.centerx:
                     adjacent_tile = self.current_tile
@@ -122,6 +122,42 @@ class Character(pygame.sprite.Sprite):
 
         return adjacent_tile, target_tile
 
+    def movedirection(self, direction, wallPixels, pointsGroup):
+        if self.can_move_to(direction) == False:
+            return False
+
+        new_facing = self.get_facing(direction)
+
+        target_tile, target_xy = self.get_adjacent_tile(new_facing)
+
+        self.facing = new_facing
+        if target_tile.rect.collidepoint(self.rect.center) == True:
+            self.current_tile = target_tile
+            self.tile_xy = target_xy
+
+        # Allow moving from left to right OR up and down
+        if target_tile.rect.centery ==  self.rect.centery or target_tile.rect.centerx ==  self.rect.centerx:
+            self.rect.move_ip(direction)
+
+        if self.name == "Pacman":
+            points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
+            for point in points_list:
+                self.score += 1
+        return True
+
+    def can_move_to(self,direction):
+        new_facing = self.get_facing(direction)
+        target_tile, target_xy = self.get_adjacent_tile(new_facing)
+        if target_tile.isWalkable() == False:
+            return False
+        if new_facing == FACING_UP or new_facing == FACING_DOWN:
+            if target_tile.rect.centerx != self.rect.centerx:
+                return False
+        elif new_facing == FACING_LEFT or new_facing == FACING_RIGHT:
+            if target_tile.rect.centery != self.rect.centery:
+                return False
+        return True
+
     def __del__(self):
         print 'Destructor'
 
@@ -130,6 +166,10 @@ class Blinky(Character):
     def __init__(self, FILENAME, boardMatrix):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Blinky"
+        # Every ghost needs the following three lines of code
+        self.tile_xy = (13,14)
+        self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.rect.center = self.current_tile.getCenter()
         print 'Blinky constructor'
 
     def update(self):
@@ -137,7 +177,7 @@ class Blinky(Character):
         global POINTS_LIST
         #Implement custom behavior, then call base class method
         # direction = self.finddirection(self.rect.center, PACMAN.rect.center)
-        # self.movedirection(direction, WALL_LIST, POINTS_LIST)
+        self.movedirection(GO_LEFT, WALL_LIST, POINTS_LIST)
         Character.update(self)
 
     def __del__(self):
@@ -232,41 +272,6 @@ class Pacman(Character):
         #Implement custom behavior, then call base class method
         Character.update(self)
 
-    def can_move_to(self,direction):
-        new_facing = self.get_facing(direction)
-        target_tile, target_xy = self.get_adjacent_tile(new_facing)
-        if target_tile.isWalkable() == False:
-            return False
-        if new_facing == FACING_UP or new_facing == FACING_DOWN:
-            if target_tile.rect.centerx != self.rect.centerx:
-                return False
-        elif new_facing == FACING_LEFT or new_facing == FACING_RIGHT:
-            if target_tile.rect.centery != self.rect.centery:
-                return False
-        return True
-
-    def movedirection(self, direction, wallPixels, pointsGroup):
-        if self.can_move_to(direction) == False:
-            return False
-
-        new_facing = self.get_facing(direction)
-
-        target_tile, target_xy = self.get_adjacent_tile(new_facing)
-
-        self.facing = new_facing
-        if target_tile.rect.collidepoint(self.rect.center) == True:
-            self.current_tile = target_tile
-            self.tile_xy = target_xy
-
-        # Allow moving from left to right OR up and down
-        if target_tile.rect.centery ==  self.rect.centery or target_tile.rect.centerx ==  self.rect.centerx:
-            self.rect.move_ip(direction)
-
-        if self.name == "Pacman":
-            points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
-            for point in points_list:
-                self.score += 1
-        return True
 
     def __del__(self):
         print 'Pacman destructor'
@@ -279,7 +284,6 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
     POINTS_LIST = pointsGroup
 
     blinky = Blinky("rojo.png", boardMatrix)
-    blinky.rect = blinky.rect.move(BLINKY_START)
 
     PACMAN = pacman = Pacman("pacman1.png", boardMatrix)
 
