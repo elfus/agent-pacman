@@ -233,11 +233,16 @@ class Pacman(Character):
         Character.update(self)
 
     def can_move_to(self,direction):
-        can_move = False
         new_facing = self.get_facing(direction)
         target_tile, target_xy = self.get_adjacent_tile(new_facing)
         if target_tile.isWalkable() == False:
             return False
+        if new_facing == FACING_UP or new_facing == FACING_DOWN:
+            if target_tile.rect.centerx != self.rect.centerx:
+                return False
+        elif new_facing == FACING_LEFT or new_facing == FACING_RIGHT:
+            if target_tile.rect.centery != self.rect.centery:
+                return False
         return True
 
     def movedirection(self, direction, wallPixels, pointsGroup):
