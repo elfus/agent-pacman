@@ -243,11 +243,17 @@ class Blinky(Character):
         return c
 
 # Pinky is the pink ghost
-class Pink(Character):
-    def __init__(self, FILENAME):
-        Character.__init__(self, FILENAME)
+class Pinky(Character):
+    def __init__(self, FILENAME, boardMatrix):
+        Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Pink"
-        print 'Pink constructor'
+        # Every ghost needs the following three lines of code
+        self.tile_xy = (13,17)
+        self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.rect.center = self.current_tile.getCenter()
+        self.current_direction = GO_LEFT
+        self.last_kg_direction = 0
+        print 'Pinky constructor'
 
     def update(self):
         #Implement custom behavior, then call base class method
@@ -314,8 +320,11 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
     PACMAN = pacman = Pacman("pacman1.png", boardMatrix)
 
     blinky = Blinky("rojo.png", boardMatrix)
+    pinky = Pinky("rosa.png", boardMatrix)
 
 
-    ghostsprite = pygame.sprite.RenderPlain(blinky)
+    ghostsprite = pygame.sprite.RenderPlain()
+    #ghostsprite.add(blinky)
+    ghostsprite.add(pinky)
     ghostsprite.add(pacman)
     return ghostsprite, pacman
