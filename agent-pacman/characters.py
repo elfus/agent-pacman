@@ -155,6 +155,26 @@ class Character(pygame.sprite.Sprite):
                 self.score += 1
         return True
 
+    def movedirection_in_ghost_house(self, direction, pointsGroup):
+        """
+
+        :param direction: The direction the Character should go
+        :param pointsGroup: A list of all the points that pacman can eat
+        :return: True when the Character was able to move to the given direction, False otherwise
+        """
+        new_facing = self.get_facing(direction)
+
+        target_tile, target_xy = self.get_adjacent_tile(new_facing)
+
+        self.facing = new_facing
+        if target_tile.rect.centery == self.rect.centery:
+            self.current_tile = target_tile
+            self.tile_xy = target_xy
+
+        self.rect.move_ip(direction)
+
+        return True
+
     def get_direction_from_to(self,from_tile, to_tile):
         """
         Gets the direction needed to go from tile from_tile to tile to_tile
@@ -217,8 +237,7 @@ class Character(pygame.sprite.Sprite):
     def exit_ghost_house(self):
         global POINTS_LIST
         EXIT = (13, 14)
-        self.movedirection(GO_UP,POINTS_LIST)
-        return
+        return self.movedirection_in_ghost_house(GO_UP,POINTS_LIST)
 
     def __del__(self):
         print 'Destructor'
@@ -277,7 +296,8 @@ class Pinky(Character):
     def update(self):
         #Implement custom behavior, then call base class method
         if self.current_tile.is_in_ghost_house:
-            self.exit_ghost_house()
+            if self.exit_ghost_house() == False:
+                print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
             return
 
@@ -365,8 +385,8 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
 
     ghostsprite = pygame.sprite.RenderPlain()
     #ghostsprite.add(blinky)
-    # ghostsprite.add(pinky)
-    # ghostsprite.add(clyde)
-    # ghostsprite.add(inky)
+    ghostsprite.add(pinky)
+    ghostsprite.add(clyde)
+    ghostsprite.add(inky)
     ghostsprite.add(pacman)
     return ghostsprite, pacman
