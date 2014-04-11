@@ -62,7 +62,7 @@ def detect_walkable_tiles(boardMatrix, wallList):
             if len(hit) > 0:
                 item.setWalkable(False)
 
-def get_neighbors_coordinates(boardMatrix, tile):
+def get_tile_neighbors(boardMatrix, tile):
     up = (tile.board_coordinate[0],tile.board_coordinate[1]-1)
     down = (tile.board_coordinate[0],tile.board_coordinate[1]+1)
     left = (tile.board_coordinate[0]-1,tile.board_coordinate[1])
@@ -94,7 +94,7 @@ def get_neighbors_coordinates(boardMatrix, tile):
 def detect_intersections(boardMatrix):
     for row in boardMatrix:
         for tile in row:
-            neighbors = get_neighbors_coordinates(boardMatrix, tile)
+            neighbors = get_tile_neighbors(boardMatrix, tile)
             if len(neighbors) >= 3:
                 tile.is_intersection = True
 
