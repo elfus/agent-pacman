@@ -129,10 +129,10 @@ def main():
 
         # When detecting keyboard here, pacman moves faster
         direction = handle_input()
-        if pacman.movedirection(direction, wallSpriteGroup, pointsGroup) == True:
+        if pacman.movedirection(direction, pointsGroup) == True:
             LAST_DIRECTION  = PENDING_DIRECTION = direction
         else:
-            pacman.movedirection(LAST_DIRECTION, wallSpriteGroup, pointsGroup)
+            pacman.movedirection(LAST_DIRECTION, pointsGroup)
             PENDING_DIRECTION = direction
 
         ghostsprite.update()

@@ -125,11 +125,10 @@ class Character(pygame.sprite.Sprite):
 
         return adjacent_tile, target_tile
 
-    def movedirection(self, direction, wallPixels, pointsGroup):
+    def movedirection(self, direction, pointsGroup):
         """
 
         :param direction: The direction the Character should go
-        :param wallPixels: List of walls in the maze
         :param pointsGroup: A list of all the points that pacman can eat
         :return: True when the Character was able to move to the given direction, False otherwise
         """
@@ -187,7 +186,7 @@ class Blinky(Character):
         global POINTS_LIST
         #Implement custom behavior, then call base class method
         # direction = self.finddirection(self.rect.center, PACMAN.rect.center)
-        self.movedirection(GO_LEFT, WALL_LIST, POINTS_LIST)
+        self.movedirection(GO_LEFT, POINTS_LIST)
         Character.update(self)
 
     def __del__(self):
