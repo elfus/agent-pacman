@@ -102,7 +102,9 @@ def main():
             for tile in row:
                 # if tile.isWalkable() == True:
                 #     screen.fill(PURPLE, tile.rect)
-                if tile.is_intersection == True:
+                if tile.is_special_intersection == True:
+                    screen.fill(GREEN, tile.rect)
+                elif tile.is_intersection == True:
                     screen.fill(WHITE, tile.rect)
         ## Used for debugging
 

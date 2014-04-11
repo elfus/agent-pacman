@@ -37,6 +37,7 @@ class Character(pygame.sprite.Sprite):
     Returns: ball object
     Functions: update, calcnewpos
     Attributes: area, vector"""
+    PACMAN = 0
 
     def __init__(self, FILENAME, boardMatrix):
         pygame.sprite.Sprite.__init__(self)
@@ -185,8 +186,10 @@ class Blinky(Character):
         global WALL_LIST
         global POINTS_LIST
         #Implement custom behavior, then call base class method
-        # direction = self.finddirection(self.rect.center, PACMAN.rect.center)
-        self.movedirection(GO_LEFT, POINTS_LIST)
+        target_tile = Character.PACMAN.current_tile
+        adjacent_tile = self.get_adjacent_tile(self.facing)
+
+        
         Character.update(self)
 
     def __del__(self):
@@ -247,6 +250,7 @@ class Pacman(Character):
         self.tile_xy = (13,26)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
+        Character.PACMAN = self
         print 'Pacman constructor'
 
     def update(self):
@@ -264,9 +268,9 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
     WALL_LIST = wallSpriteGroup
     POINTS_LIST = pointsGroup
 
-    blinky = Blinky("rojo.png", boardMatrix)
-
     PACMAN = pacman = Pacman("pacman1.png", boardMatrix)
+
+    blinky = Blinky("rojo.png", boardMatrix)
 
 
     ghostsprite = pygame.sprite.RenderPlain(blinky)

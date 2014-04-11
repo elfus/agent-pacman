@@ -62,6 +62,7 @@ def detect_walkable_tiles(boardMatrix, wallList):
             if len(hit) > 0:
                 item.setWalkable(False)
 
+
 def get_tile_neighbors(boardMatrix, tile):
     up = (tile.board_coordinate[0],tile.board_coordinate[1]-1)
     down = (tile.board_coordinate[0],tile.board_coordinate[1]+1)
@@ -97,6 +98,14 @@ def detect_intersections(boardMatrix):
             neighbors = get_tile_neighbors(boardMatrix, tile)
             if len(neighbors) >= 3:
                 tile.is_intersection = True
+                if tile.board_coordinate == (12,14):
+                    tile.is_special_intersection = True
+                if tile.board_coordinate == (15,14):
+                    tile.is_special_intersection = True
+                if tile.board_coordinate == (12,26):
+                    tile.is_special_intersection = True
+                if tile.board_coordinate == (15,26):
+                    tile.is_special_intersection = True
 
 
 def create_wall(maze, x, y):
