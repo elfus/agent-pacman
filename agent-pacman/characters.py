@@ -155,7 +155,31 @@ class Character(pygame.sprite.Sprite):
                 self.score += 1
         return True
 
+    def get_direction_from_to(self,from_tile, to_tile):
+        """
+        Gets the direction needed to go from tile from_tile to tile to_tile
+        :param from_tile: Source tile
+        :param to_tile: Destiny tile
+        :return: A direction
+        """
+        if from_tile.rect.centerx and to_tile.rect.centerx:
+            if to_tile.rect.centerx < from_tile.rect.centerx:
+                return GO_LEFT
+            if to_tile.rect.centerx > from_tile.rect.centerx:
+                return GO_RIGHT
+        if from_tile.rect.centery and to_tile.rect.centery:
+            if to_tile.rect.centery < from_tile.rect.centery:
+                return GO_UP
+            if to_tile.rect.centery > from_tile.rect.centery:
+                return GO_DOWN
+        return STAND_STILL
+
     def can_move_to(self,direction):
+        """
+        Tests wheather the Character can move to the given direction
+        :param direction: The direction to test if we can move to
+        :return: True if we can move, False otherwise
+        """
         new_facing = self.get_facing(direction)
         target_tile, target_xy = self.get_adjacent_tile(new_facing)
         if target_tile.isWalkable() == False:
@@ -167,6 +191,28 @@ class Character(pygame.sprite.Sprite):
             if target_tile.rect.centery != self.rect.centery:
                 return False
         return True
+
+    def get_closest_direction(self, from_tile, to_tile):
+        """
+        Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
+        :param from_tile:
+        :param to_tile:
+        """
+        neighbors = get_tile_neighbors(self.board_matrix, from_tile)
+        # neighbors.remove(self.current_tile) This line may or may not cause a bug, watch out
+        d_list = []
+        for tile in neighbors:
+            distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
+                                       tile.rect.centery-to_tile.rect.centery)
+            d_list.append(distance)
+        closest = min(d_list)
+        index = d_list.index(closest)
+
+        return self.get_direction_from_to(from_tile,neighbors[index])
+
+    def pitagorazo(self, a, b):
+        c = sqrt(pow(a,2) + pow(b,2))
+        return c
 
     def __del__(self):
         print 'Destructor'
@@ -184,19 +230,6 @@ class Blinky(Character):
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
         print 'Blinky constructor'
-
-    def get_direction_from_to(self,from_tile, to_tile):
-        if from_tile.rect.centerx and to_tile.rect.centerx:
-            if to_tile.rect.centerx < from_tile.rect.centerx:
-                return GO_LEFT
-            if to_tile.rect.centerx > from_tile.rect.centerx:
-                return GO_RIGHT
-        if from_tile.rect.centery and to_tile.rect.centery:
-            if to_tile.rect.centery < from_tile.rect.centery:
-                return GO_UP
-            if to_tile.rect.centery > from_tile.rect.centery:
-                return GO_DOWN
-        return STAND_STILL
 
     def update(self):
         global POINTS_LIST
@@ -220,28 +253,6 @@ class Blinky(Character):
 
     def __del__(self):
         print 'Blinky destructor'
-
-    def get_closest_direction(self, from_tile, to_tile):
-        """
-        Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
-        :param from_tile:
-        :param to_tile:
-        """
-        neighbors = get_tile_neighbors(self.board_matrix, from_tile)
-        # neighbors.remove(self.current_tile) This line may or may not cause a bug, watch out
-        d_list = []
-        for tile in neighbors:
-            distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
-                                       tile.rect.centery-to_tile.rect.centery)
-            d_list.append(distance)
-        closest = min(d_list)
-        index = d_list.index(closest)
-
-        return self.get_direction_from_to(from_tile,neighbors[index])
-
-    def pitagorazo(self, a, b):
-        c = sqrt(pow(a,2) + pow(b,2))
-        return c
 
 # Pinky is the pink ghost
 class Pinky(Character):
@@ -342,7 +353,7 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
 
 
     ghostsprite = pygame.sprite.RenderPlain()
-    #ghostsprite.add(blinky)
+    ghostsprite.add(blinky)
     ghostsprite.add(pinky)
     ghostsprite.add(clyde)
     ghostsprite.add(inky)
