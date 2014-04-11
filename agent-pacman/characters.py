@@ -301,7 +301,10 @@ class Pinky(Character):
             Character.update(self)
             return
 
-        target_tile = Character.PACMAN.current_tile
+        pacman_tile = Character.PACMAN.current_tile
+        pacman_facing = Character.PACMAN.facing
+        target_tile = self.get_pinky_target(pacman_facing, pacman_tile)
+
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
@@ -317,6 +320,26 @@ class Pinky(Character):
             print "GAME OVER"
 
         Character.update(self)
+
+    def get_pinky_target(self, pacman_facing, pacman_tile):
+        target = 0
+        if pacman_facing == FACING_LEFT:
+            x,y = pacman_tile.board_coordinate[0]-4, pacman_tile.board_coordinate[1]
+        elif pacman_facing == FACING_RIGHT:
+            x,y = pacman_tile.board_coordinate[0]+4, pacman_tile.board_coordinate[1]
+        elif pacman_facing == FACING_DOWN:
+            x,y = pacman_tile.board_coordinate[0], pacman_tile.board_coordinate[1]+4
+        elif pacman_facing == FACING_UP:
+            x,y = pacman_tile.board_coordinate[0]-4, pacman_tile.board_coordinate[1]-4
+
+        if x < 0: x = 0
+        if y < 0: y = 0
+        if x >= TILE_WIDTH_COUNT: x = TILE_WIDTH_COUNT-1
+        if y >= TILE_HEIGHT_COUNT: y = TILE_HEIGHT_COUNT-1
+
+        target = self.board_matrix[x][y];
+
+        return target
 
     def __del__(self):
         print 'Pink destructor'
