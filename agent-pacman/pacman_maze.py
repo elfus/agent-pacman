@@ -69,21 +69,25 @@ def get_neighbors_coordinates(boardMatrix, tile):
     right = (tile.board_coordinate[0]+1,tile.board_coordinate[1])
     m_list = []
     if up[0]>=0 and up[0]<TILE_WIDTH_COUNT and up[1]>=3 and up[1]<TILE_HEIGHT_COUNT-3:
-        tile = boardMatrix[up[0]][up[1]]
-        if tile.is_walkable == True:
-            m_list.append(up)
+        if (up[0] <= 10 or up[0]>=18) or (up[1] < 15 or up[1] >18):
+            tile = boardMatrix[up[0]][up[1]]
+            if tile.is_walkable == True:
+                m_list.append(up)
     if down[0]>=0 and down[0]<TILE_WIDTH_COUNT and down[1]>=3 and down[1]<TILE_HEIGHT_COUNT-3:
-        tile = boardMatrix[down[0]][down[1]]
-        if tile.is_walkable == True:
-            m_list.append(down)
+        if (down[0] <= 10 or down[0]>=18) or (down[1] < 15 or down[1] >18):
+            tile = boardMatrix[down[0]][down[1]]
+            if tile.is_walkable == True:
+                m_list.append(down)
     if left[0]>=0 and left[0]<TILE_WIDTH_COUNT and left[1]>=3 and left[1]<TILE_HEIGHT_COUNT-3:
-        tile = boardMatrix[left[0]][left[1]]
-        if tile.is_walkable == True:
-            m_list.append(left)
+        if (left[0] <= 10 or left[0]>=18) or (left[1] < 15 or left[1] >18):
+            tile = boardMatrix[left[0]][left[1]]
+            if tile.is_walkable == True:
+                m_list.append(left)
     if right[0]>=0 and right[0]<TILE_WIDTH_COUNT and right[1]>=3 and right[1]<TILE_HEIGHT_COUNT-3:
-        tile = boardMatrix[right[0]][right[1]]
-        if tile.is_walkable == True:
-            m_list.append(right)
+        if (right[0] <= 10 or right[0]>=18) or (right[1] < 15 or right[1] >18):
+            tile = boardMatrix[right[0]][right[1]]
+            if tile.is_walkable == True:
+                m_list.append(right)
 
     return m_list
 

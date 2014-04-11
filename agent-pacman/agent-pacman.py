@@ -103,7 +103,7 @@ def main():
                 # if tile.isWalkable() == True:
                 #     screen.fill(PURPLE, tile.rect)
                 if tile.is_intersection == True:
-                    screen.fill(PURPLE, tile.rect)
+                    screen.fill(WHITE, tile.rect)
         ## Used for debugging
 
         for character in ghostsprite.sprites():
