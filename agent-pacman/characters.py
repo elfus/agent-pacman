@@ -262,8 +262,6 @@ class Pacman(Character):
         if target_tile.rect.centery ==  self.rect.centery or target_tile.rect.centerx ==  self.rect.centerx:
             self.rect.move_ip(direction)
 
-        print "Facing ", self.facing
-
         if self.name == "Pacman":
             points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
             for point in points_list:
