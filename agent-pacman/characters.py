@@ -361,10 +361,13 @@ class Inky(Character):
     def update(self):
         #Implement custom behavior, then call base class method
         #Implement custom behavior, then call base class method
-        if self.current_tile.is_in_ghost_house:
+        if self.current_tile.is_in_ghost_house and Character.PACMAN.score >=30:
             if self.inky_exits_ghost_house() == False:
                 print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
+            return
+
+        if Character.PACMAN.score < 30:
             return
 
         target_tile = Character.PACMAN.current_tile
@@ -483,8 +486,8 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
 
 
     ghostsprite = pygame.sprite.RenderPlain()
-    # ghostsprite.add(blinky)
-    # ghostsprite.add(pinky)
+    ghostsprite.add(blinky)
+    ghostsprite.add(pinky)
     ghostsprite.add(inky)
     ghostsprite.add(clyde)
     ghostsprite.add(pacman)
