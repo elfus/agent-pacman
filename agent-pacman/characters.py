@@ -105,6 +105,9 @@ class Character(pygame.sprite.Sprite):
         if target_tile[0] >= TILE_WIDTH_COUNT:
             target_tile = (0,target_tile[1])
 
+        if target_tile[0] < 0:
+            target_tile = (TILE_WIDTH_COUNT-1,target_tile[1])
+
         if target_tile[1] >= TILE_HEIGHT_COUNT:
             target_tile = (target_tile[0], 0)
 
