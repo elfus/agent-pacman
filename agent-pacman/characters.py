@@ -126,6 +126,13 @@ class Character(pygame.sprite.Sprite):
         return adjacent_tile, target_tile
 
     def movedirection(self, direction, wallPixels, pointsGroup):
+        """
+
+        :param direction: The direction the Character should go
+        :param wallPixels: List of walls in the maze
+        :param pointsGroup: A list of all the points that pacman can eat
+        :return: True when the Character was able to move to the given direction, False otherwise
+        """
         if self.can_move_to(direction) == False:
             return False
 
