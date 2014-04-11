@@ -33,6 +33,7 @@ class Tile:
         self.is_intersection = False
         self.is_special_intersection = False
         self.board_coordinate = (0,0)
+        self.is_in_ghost_house = False
 
     def setWalkable(self, isWakable):
         self.is_walkable = isWakable

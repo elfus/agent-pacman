@@ -106,6 +106,9 @@ def main():
                     screen.fill(GREEN, tile.rect)
                 elif tile.is_intersection == True:
                     screen.fill(WHITE, tile.rect)
+
+                if tile.is_in_ghost_house:
+                    screen.fill(PURPLE,tile.rect)
         ## Used for debugging
 
         for character in ghostsprite.sprites():

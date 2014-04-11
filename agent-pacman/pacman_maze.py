@@ -78,6 +78,10 @@ def detect_intersections(boardMatrix):
                 if tile.board_coordinate == (15,26):
                     tile.is_special_intersection = True
 
+            if tile.board_coordinate[0] >= 11 and tile.board_coordinate[0] <= 16 \
+                    and tile.board_coordinate[1] >= 16 and tile.board_coordinate[1] <=18:
+                    tile.is_in_ghost_house = True
+
 
 def create_wall(maze, x, y):
     width = 0

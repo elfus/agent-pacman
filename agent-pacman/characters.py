@@ -214,6 +214,12 @@ class Character(pygame.sprite.Sprite):
         c = sqrt(pow(a,2) + pow(b,2))
         return c
 
+    def exit_ghost_house(self):
+        global POINTS_LIST
+        EXIT = (13, 14)
+        self.movedirection(GO_UP,POINTS_LIST)
+        return
+
     def __del__(self):
         print 'Destructor'
 
@@ -270,6 +276,11 @@ class Pinky(Character):
 
     def update(self):
         #Implement custom behavior, then call base class method
+        if self.current_tile.is_in_ghost_house:
+            self.exit_ghost_house()
+            Character.update(self)
+            return
+
         Character.update(self)
 
     def __del__(self):
@@ -353,9 +364,9 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
 
 
     ghostsprite = pygame.sprite.RenderPlain()
-    ghostsprite.add(blinky)
-    ghostsprite.add(pinky)
-    ghostsprite.add(clyde)
-    ghostsprite.add(inky)
+    #ghostsprite.add(blinky)
+    # ghostsprite.add(pinky)
+    # ghostsprite.add(clyde)
+    # ghostsprite.add(inky)
     ghostsprite.add(pacman)
     return ghostsprite, pacman
