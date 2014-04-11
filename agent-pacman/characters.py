@@ -204,17 +204,7 @@ class Blinky(Character):
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
-            neighbors = get_tile_neighbors(self.board_matrix, adjacent_tile)
-            # neighbors.remove(self.current_tile) This line may or may not cause a bug, watch out
-            d_list = []
-            for tile in neighbors:
-                distance = self.pitagorazo(tile.rect.centerx-target_tile.rect.centerx,
-                                           tile.rect.centery-target_tile.rect.centery)
-                d_list.append(distance)
-            closest = min(d_list)
-            index = d_list.index(closest)
-
-            self.current_direction = self.get_direction_from_to(adjacent_tile,neighbors[index])
+            self.current_direction = self.get_closest_direction(adjacent_tile, target_tile)
 
         if self.movedirection(self.current_direction, POINTS_LIST) == True:
             self.last_kg_direction = self.current_direction
@@ -222,6 +212,8 @@ class Blinky(Character):
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
                 self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
 
+        if Character.PACMAN.rect.collidepoint(self.rect.center):
+            print "GAME OVER"
         
         Character.update(self)
 
@@ -235,7 +227,7 @@ class Blinky(Character):
         :param to_tile:
         """
         neighbors = get_tile_neighbors(self.board_matrix, from_tile)
-        #neighbors.remove(self.current_tile)
+        # neighbors.remove(self.current_tile) This line may or may not cause a bug, watch out
         d_list = []
         for tile in neighbors:
             distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
