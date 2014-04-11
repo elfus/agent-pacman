@@ -170,8 +170,9 @@ class Character(pygame.sprite.Sprite):
         if target_tile.rect.centery == self.rect.centery:
             self.current_tile = target_tile
             self.tile_xy = target_xy
+            return True # Strange bug
 
-        self.rect.move_ip(direction)
+        self.rect.move_ip(direction) # Moves the image by 1 in y
 
         return True
 
@@ -236,7 +237,6 @@ class Character(pygame.sprite.Sprite):
 
     def exit_ghost_house(self):
         global POINTS_LIST
-        EXIT = (13, 14)
         return self.movedirection_in_ghost_house(GO_UP,POINTS_LIST)
 
     def __del__(self):
@@ -253,7 +253,7 @@ class Blinky(Character):
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
-        self.last_kg_direction = 0
+        self.last_kg_direction = STAND_STILL
         print 'Blinky constructor'
 
     def update(self):
@@ -290,7 +290,7 @@ class Pinky(Character):
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
-        self.last_kg_direction = 0
+        self.last_kg_direction = STAND_STILL
         print 'Pinky constructor'
 
     def update(self):
@@ -300,6 +300,21 @@ class Pinky(Character):
                 print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
             return
+
+        target_tile = Character.PACMAN.current_tile
+        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
+        # TODO: Add code to handle special intersections
+        if adjacent_tile.is_intersection:
+            self.current_direction = self.get_closest_direction(adjacent_tile, target_tile)
+
+        if self.movedirection(self.current_direction, POINTS_LIST) == True:
+            self.last_kg_direction = self.current_direction
+        else:
+            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
+                self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
+
+        if Character.PACMAN.rect.collidepoint(self.rect.center):
+            print "GAME OVER"
 
         Character.update(self)
 
@@ -384,7 +399,7 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
 
 
     ghostsprite = pygame.sprite.RenderPlain()
-    #ghostsprite.add(blinky)
+    ghostsprite.add(blinky)
     ghostsprite.add(pinky)
     ghostsprite.add(clyde)
     ghostsprite.add(inky)
