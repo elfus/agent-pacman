@@ -85,15 +85,13 @@ def detect_intersections(boardMatrix):
             if tile.board_coordinate == (13,15) or tile.board_coordinate == (14,15):
                 tile.is_in_ghost_house = True
 
-            if tile.board_coordinate == (13,32) or tile.board_coordinate == (14,26):
-                tile.is_clyde_switch_mode = True
 
             # These are meant to draw on screen the tiles for scatter mode, only that
             if tile.board_coordinate == (0,TILE_HEIGHT_COUNT-1) or tile.board_coordinate == (TILE_WIDTH_COUNT-1,TILE_HEIGHT_COUNT-1):
-                tile.is_clyde_switch_mode = True
+                tile.is_scatter_tile = True
 
             if tile.board_coordinate == (3,0) or tile.board_coordinate == (TILE_WIDTH_COUNT-4,0):
-                tile.is_clyde_switch_mode = True
+                tile.is_scatter_tile = True
 
 
 def create_wall(maze, x, y):

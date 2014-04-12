@@ -34,7 +34,7 @@ class Tile:
         self.is_special_intersection = False
         self.board_coordinate = (0,0)
         self.is_in_ghost_house = False
-        self.is_clyde_switch_mode = False
+        self.is_scatter_tile = False
 
     def setWalkable(self, isWakable):
         self.is_walkable = isWakable

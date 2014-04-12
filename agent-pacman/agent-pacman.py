@@ -113,7 +113,7 @@ def main():
                 if tile.is_in_ghost_house:
                     screen.fill(PURPLE,tile.rect)
 
-                if tile.is_clyde_switch_mode:
+                if tile.is_scatter_tile:
                     screen.fill(PURPLE,tile.rect)
         ## Used for debugging
 
