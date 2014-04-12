@@ -32,9 +32,10 @@ FACING_RIGHT = "right"
 FACING_UP = "up"
 FACING_DOWN = "down"
 
-SCATTER_MODE = "scatter"
-FRIGHTENED_MODE = "frightened"
-CHASE_MODE = "chase"
+SCATTER_MODE = 0 #"scatter"
+FRIGHTENED_MODE = 1 #"frightened"
+CHASE_MODE = 2 #"chase"
+NUMBER_MODE = 3
 
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
@@ -264,9 +265,12 @@ class Blinky(Character):
     def update(self):
         global POINTS_LIST
         #Implement custom behavior, then call base class method
+        target_tile = 0
         if Character.CURRENT_MODE == CHASE_MODE:
             target_tile = Character.PACMAN.current_tile
         elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
+        elif Character.CURRENT_MODE == FRIGHTENED_MODE:
             target_tile = self.scatter_tile
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
@@ -317,6 +321,8 @@ class Pinky(Character):
             pacman_facing = Character.PACMAN.facing
             target_tile = self.get_pinky_target(pacman_facing, pacman_tile)
         elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
+        elif Character.CURRENT_MODE == FRIGHTENED_MODE:
             target_tile = self.scatter_tile
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
@@ -396,6 +402,8 @@ class Inky(Character):
             blinky_tile = Character.BLINKY.current_tile # tuple
             target_tile = self.get_inky_target(pacman_facing, pacman_tile, blinky_tile)
         elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
+        elif Character.CURRENT_MODE == FRIGHTENED_MODE:
             target_tile = self.scatter_tile
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
@@ -524,6 +532,8 @@ class Clyde(Character):
             #TODO Change this behavior specific to clyde
             target_tile = Character.PACMAN.current_tile
         elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
+        elif Character.CURRENT_MODE == FRIGHTENED_MODE:
             target_tile = self.scatter_tile
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)

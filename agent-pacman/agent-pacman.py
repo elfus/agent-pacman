@@ -52,7 +52,10 @@ def handle_input():
 
     return direction
 
-
+def next_mode():
+    print "Changing game mode"
+    Character.CURRENT_MODE = (Character.CURRENT_MODE+1) % NUMBER_MODE
+    return
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
@@ -131,9 +134,8 @@ def main():
                 # direction = handle_event(event)
                 # pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
                 print "Pacman coordinate: ", pacman.rect
-            if event.type == pygame.KEYUP:
-                if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
-                    pacman.stop()
+                if event.key == pygame.K_m:
+                    next_mode()
 
         # When detecting keyboard here, pacman moves faster
         direction = handle_input()
@@ -148,9 +150,6 @@ def main():
         # Comment out this line to remove collition detection debugging
         # wallSpriteGroup.draw(screen)
         pointsGroup.draw(screen)
-
-        if pacman.score >30:
-            Character.CURRENT_MODE = SCATTER_MODE
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
