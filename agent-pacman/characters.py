@@ -7,7 +7,6 @@ from pygame.locals import *
 from pygame.locals import *
 from util import *
 
-WALL_LIST = 0
 POINTS_LIST = 0
 
 PACMAN_START = (105,206)
@@ -633,11 +632,10 @@ class Pacman(Character):
     def __del__(self):
         print 'Pacman destructor'
 
-def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
+def get_characters_group(boardMatrix, pointsGroup):
     global PACMAN
-    global WALL_LIST
     global POINTS_LIST
-    WALL_LIST = wallSpriteGroup
+
     POINTS_LIST = pointsGroup
 
     PACMAN = pacman = Pacman("pacman1.png", boardMatrix)

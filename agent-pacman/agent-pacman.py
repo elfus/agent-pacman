@@ -97,7 +97,7 @@ def main():
 
     detect_intersections(board_matrix)
 
-    ghostsprite, pacman = get_characters_group(board_matrix, wallSpriteGroup, pointsGroup)
+    ghostsprite, pacman = get_characters_group(board_matrix, pointsGroup)
 
     pointsGroup = generate_pacman_points(board_matrix)
 
