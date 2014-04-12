@@ -133,7 +133,7 @@ def main():
                 # let's use this workaround
                 # direction = handle_event(event)
                 # pacman.movedirection(direction, wallSpriteGroup, pointsGroup)
-                print "Pacman coordinate: ", pacman.rect
+                # print "Pacman coordinate: ", pacman.rect
                 if event.key == pygame.K_m:
                     next_mode()
 
