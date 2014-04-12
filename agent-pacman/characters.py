@@ -64,6 +64,13 @@ class Character(pygame.sprite.Sprite):
         self.movepos = [0, 0]
         self.state = "still"
 
+    def get_opposite_direction(self, dir1):
+        if dir1 == GO_LEFT: return GO_RIGHT
+        if dir1 == GO_RIGHT: return GO_LEFT
+        if dir1 == GO_UP: return GO_DOWN
+        if dir1 == GO_DOWN: return GO_UP
+        return STAND_STILL
+
     def get_direction(self, facing_to):
         if facing_to == FACING_LEFT: return GO_LEFT
         if facing_to == FACING_RIGHT: return GO_RIGHT
@@ -221,14 +228,21 @@ class Character(pygame.sprite.Sprite):
                 return False
         return True
 
-    def get_closest_direction(self, from_tile, to_tile):
+    def get_closest_direction(self, current_direction, from_tile, to_tile):
         """
         Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
         :param from_tile:
         :param to_tile:
         """
+        opposite_direction = self.get_opposite_direction(current_direction)
+        back_facing = self.get_facing(opposite_direction)
+        back_tile, back_tile_xy = self.get_adjacent_tile(back_facing)
         neighbors = get_tile_neighbors(self.board_matrix, from_tile)
-        # neighbors.remove(self.current_tile) This line may or may not cause a bug, watch out
+        for tile in neighbors:
+            if tile == self.current_tile:
+                neighbors.remove(self.current_tile)
+            if tile == back_tile:
+                neighbors.remove(back_tile)
         d_list = []
         for tile in neighbors:
             distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
@@ -276,13 +290,13 @@ class Blinky(Character):
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(adjacent_tile, target_tile)
+            self.current_direction = self.get_closest_direction(self.current_direction, adjacent_tile, target_tile)
 
         if self.movedirection(self.current_direction, POINTS_LIST) == True:
             self.last_kg_direction = self.current_direction
         else:
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
+                self.current_direction = self.get_closest_direction(self.last_kg_direction,self.current_tile, target_tile)
 
         if Character.PACMAN.rect.collidepoint(self.rect.center):
             print "GAME OVER"
@@ -328,13 +342,13 @@ class Pinky(Character):
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(adjacent_tile, target_tile)
+            self.current_direction = self.get_closest_direction(self.current_direction, adjacent_tile, target_tile)
 
         if self.movedirection(self.current_direction, POINTS_LIST) == True:
             self.last_kg_direction = self.current_direction
         else:
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
+                self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
 
         if Character.PACMAN.rect.collidepoint(self.rect.center):
             print "GAME OVER"
@@ -409,13 +423,13 @@ class Inky(Character):
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(adjacent_tile, target_tile)
+            self.current_direction = self.get_closest_direction(self.last_kg_direction, adjacent_tile, target_tile)
 
         if self.movedirection(self.current_direction, POINTS_LIST) == True:
             self.last_kg_direction = self.current_direction
         else:
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
+                self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
 
         if Character.PACMAN.rect.collidepoint(self.rect.center):
             print "GAME OVER"
@@ -539,13 +553,13 @@ class Clyde(Character):
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(adjacent_tile, target_tile)
+            self.current_direction = self.get_closest_direction(self.last_kg_direction, adjacent_tile, target_tile)
 
         if self.movedirection(self.current_direction, POINTS_LIST) == True:
             self.last_kg_direction = self.current_direction
         else:
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
+                self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
 
         if Character.PACMAN.rect.collidepoint(self.rect.center):
             print "GAME OVER"
