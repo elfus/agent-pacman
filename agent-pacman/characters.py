@@ -95,6 +95,9 @@ class Character(pygame.sprite.Sprite):
 
     def update(self):
         self.detect_tunnel_condition()
+        if self.name != "Pacman":
+            if Character.PACMAN.rect.collidepoint(self.rect.center):
+                print "GAME OVER:",self.name,"killed Pacman"
 
     def get_adjacent_tile(self, facing_to):
         """
@@ -300,9 +303,6 @@ class Blinky(Character):
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
                 self.current_direction = self.get_closest_direction(self.last_kg_direction,self.current_tile, target_tile)
 
-        if Character.PACMAN.rect.collidepoint(self.rect.center):
-            print "GAME OVER"
-        
         Character.update(self)
 
     def __del__(self):
@@ -312,7 +312,7 @@ class Blinky(Character):
 class Pinky(Character):
     def __init__(self, FILENAME, boardMatrix):
         Character.__init__(self, FILENAME, boardMatrix)
-        self.name = "Pink"
+        self.name = "Pinky"
         # Every ghost needs the following three lines of code
         self.tile_xy = (13,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
@@ -351,9 +351,6 @@ class Pinky(Character):
         else:
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
                 self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
-
-        if Character.PACMAN.rect.collidepoint(self.rect.center):
-            print "GAME OVER"
 
         Character.update(self)
 
@@ -433,9 +430,6 @@ class Inky(Character):
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
                 self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
 
-        if Character.PACMAN.rect.collidepoint(self.rect.center):
-            print "GAME OVER"
-
         Character.update(self)
 
     def get_inky_target(self, pacman_facing, pacman_tile, blinky_tile):
@@ -511,9 +505,6 @@ class Inky(Character):
                 self.current_tile = self.board_matrix[13][14]
                 self.tile_xy = (13,14)
 
-
-
-
     def __del__(self):
         print 'Inky destructor'
 
@@ -569,9 +560,6 @@ class Clyde(Character):
         else:
             if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
                 self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
-
-        if Character.PACMAN.rect.collidepoint(self.rect.center):
-            print "GAME OVER"
 
         Character.update(self)
 
@@ -630,7 +618,6 @@ class Pacman(Character):
     def update(self):
         #Implement custom behavior, then call base class method
         Character.update(self)
-
 
     def __del__(self):
         print 'Pacman destructor'
