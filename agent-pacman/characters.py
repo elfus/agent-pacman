@@ -544,7 +544,14 @@ class Clyde(Character):
         target_tile = 0
         if Character.CURRENT_MODE == CHASE_MODE:
             #TODO Change this behavior specific to clyde
-            target_tile = Character.PACMAN.current_tile
+            ref_tile = self.board_matrix[self.tile_xy[0]][self.tile_xy[1]-7]
+            radius = self.pitagorazo(self.rect.centerx - ref_tile.rect.centerx, self.rect.centery - ref_tile.rect.centery)
+            pacman_tile = Character.PACMAN.current_tile
+            distance = self.pitagorazo(self.rect.centerx - pacman_tile.rect.centerx, self.rect.centery - pacman_tile.rect.centery)
+            if distance <= radius: # when pacman is close go to scatter tile
+                target_tile =self.scatter_tile
+            else: # when pacman is far imitate blinky's behavior
+                target_tile = pacman_tile
         elif Character.CURRENT_MODE == SCATTER_MODE:
             target_tile = self.scatter_tile
         elif Character.CURRENT_MODE == FRIGHTENED_MODE:
