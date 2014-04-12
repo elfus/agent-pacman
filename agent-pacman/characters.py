@@ -47,7 +47,8 @@ class Character(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(FILENAME)
         screen = pygame.display.get_surface()
-        self.area = screen.get_rect()
+        self.board_area = screen.get_rect()
+        self.board_rect = pygame.Rect(0,0,BOARD_WIDTH,BOARD_HEIGHT)
         self.stop()
         self.name = "Character"
         self.facing = FACING_LEFT
@@ -83,12 +84,12 @@ class Character(pygame.sprite.Sprite):
     def detect_tunnel_condition(self):
         # This is if is meant to detect the case in which any character goes through
         # the 'middle tunnel' on the maze and appears on the other side
-        if self.area.contains(self.rect) == False:
-            if self.rect.left < (self.area.left - self.rect.width):
-                self.rect.left = self.area.right
+        if self.board_rect.contains(self.rect) == False:
+            if self.rect.left < (0 - self.rect.width):
+                self.rect.left = BOARD_WIDTH
                 return
-            if self.rect.right > (self.area.right + self.rect.width):
-                self.rect.right = self.area.left
+            if self.rect.right > (BOARD_WIDTH + self.rect.width):
+                self.rect.right = 0
                 return
 
     def update(self):

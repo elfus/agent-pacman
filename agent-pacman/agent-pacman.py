@@ -62,20 +62,21 @@ def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
     PAUSE_GAME = False
+    BOARD_RIGHT_PADDING = 300
 
     pygame.init()
 
     pacman_background = pygame.image.load("res/tableropacman.jpg")
     pacman_rect = pacman_background.get_rect()
-    window_size = width, height = pacman_background.get_width(), pacman_background.get_height()
-    board_matrix = create_board_matrix(width,height)
+    window_size = BOARD_WIDTH, BOARD_HEIGHT = pacman_background.get_width(), pacman_background.get_height()
+    board_matrix = create_board_matrix(BOARD_WIDTH,BOARD_HEIGHT)
 
     # Create a graphical window by calling set_mode
     # Pygame represents images as Surface objects. The "display.set_mode()"
     # function creates a new Surface object that represents the actual
     # displayed graphics. Any drawing you do to this Surface will become
     # visible on the monitor.
-    screen = pygame.display.set_mode(window_size)
+    screen = pygame.display.set_mode((BOARD_WIDTH+BOARD_RIGHT_PADDING,BOARD_HEIGHT))
     pygame.display.set_caption("Agent Pacman")
 
     ball, ballrect = load_image("rojo.png")
@@ -157,9 +158,11 @@ def main():
 
         ghostsprite.update()
         ghostsprite.draw(screen)
-        # Comment out this line to remove collition detection debugging
-        # wallSpriteGroup.draw(screen)
+        # wrokaround to make sure when any character exits on the right side of the tunnel,
+        # it's always black
+        screen.blit(pacman_background,pygame.Rect(224,133,16,16),pygame.Rect(0,0,16,16))
         pointsGroup.draw(screen)
+
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
