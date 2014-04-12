@@ -109,6 +109,9 @@ def main():
 
                 if tile.is_in_ghost_house:
                     screen.fill(PURPLE,tile.rect)
+
+                if tile.is_clyde_switch_mode:
+                    screen.fill(PURPLE,tile.rect)
         ## Used for debugging
 
         for character in ghostsprite.sprites():

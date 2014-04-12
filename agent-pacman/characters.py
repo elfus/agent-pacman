@@ -51,6 +51,7 @@ class Character(pygame.sprite.Sprite):
         self.tile_xy = (0,0)
         self.current_tile = 0
         self.board_matrix = boardMatrix
+        self.scatter_tile = boardMatrix[0][0]
         print 'Character Constructor'
 
     def stop(self):
@@ -252,6 +253,7 @@ class Blinky(Character):
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
         Character.BLINKY = self
+        self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-4][0]
         print 'Blinky constructor'
 
     def update(self):
@@ -289,6 +291,7 @@ class Pinky(Character):
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
+        self.scatter_tile = boardMatrix[3][0]
         print 'Pinky constructor'
 
     def update(self):
@@ -358,6 +361,7 @@ class Inky(Character):
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
+        self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-1][TILE_HEIGHT_COUNT-1]
         print 'Inky constructor'
 
     def update(self):
@@ -485,6 +489,7 @@ class Clyde(Character):
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
+        self.scatter_tile = boardMatrix[0][TILE_HEIGHT_COUNT-1]
         print 'Clyde constructor'
 
     def update(self):
@@ -595,6 +600,6 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
     ghostsprite.add(blinky)
     ghostsprite.add(pinky)
     ghostsprite.add(inky)
-    # ghostsprite.add(clyde)
+    ghostsprite.add(clyde)
     ghostsprite.add(pacman)
     return ghostsprite, pacman
