@@ -175,6 +175,12 @@ def generate_pacman_points(boardMatrix):
     for row in boardMatrix:
         for tile in row:
             if tile.board_coordinate[1] > 3 and tile.board_coordinate[1] < (TILE_HEIGHT_COUNT-3):
+                if tile.board_coordinate[1] > 11 and tile.board_coordinate[1]<23 and tile.board_coordinate[0] > 6 and tile.board_coordinate[0]<21:
+                    continue
+                if tile.board_coordinate[1] > 11 and tile.board_coordinate[1]<23 and tile.board_coordinate[0] >=0 and tile.board_coordinate[0]<6:
+                    continue
+                if tile.board_coordinate[1] > 11 and tile.board_coordinate[1]<23 and tile.board_coordinate[0] >21 and tile.board_coordinate[0]<TILE_WIDTH_COUNT:
+                    continue
                 if tile.is_walkable and not tile.is_in_ghost_house:
                     point = PacmanPoint(tile.rect.centerx-(POINT_WIDTH/2), tile.rect.centery-(POINT_HEIGHT/2), 2, 2, GREEN)
                     pointsGroup.add(point)
