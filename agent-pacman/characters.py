@@ -32,6 +32,10 @@ FACING_RIGHT = "right"
 FACING_UP = "up"
 FACING_DOWN = "down"
 
+SCATTER_MODE = "scatter"
+FRIGHTENED_MODE = "frightened"
+CHASE_MODE = "chase"
+
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
     Returns: ball object
@@ -39,6 +43,7 @@ class Character(pygame.sprite.Sprite):
     Attributes: area, vector"""
     PACMAN = 0
     BLINKY = 0
+    CURRENT_MODE = CHASE_MODE
 
     def __init__(self, FILENAME, boardMatrix):
         pygame.sprite.Sprite.__init__(self)
@@ -259,7 +264,11 @@ class Blinky(Character):
     def update(self):
         global POINTS_LIST
         #Implement custom behavior, then call base class method
-        target_tile = Character.PACMAN.current_tile
+        if Character.CURRENT_MODE == CHASE_MODE:
+            target_tile = Character.PACMAN.current_tile
+        elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
+
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
@@ -302,9 +311,13 @@ class Pinky(Character):
             Character.update(self)
             return
 
-        pacman_tile = Character.PACMAN.current_tile
-        pacman_facing = Character.PACMAN.facing
-        target_tile = self.get_pinky_target(pacman_facing, pacman_tile)
+        target_tile = 0
+        if Character.CURRENT_MODE == CHASE_MODE:
+            pacman_tile = Character.PACMAN.current_tile
+            pacman_facing = Character.PACMAN.facing
+            target_tile = self.get_pinky_target(pacman_facing, pacman_tile)
+        elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
@@ -375,12 +388,15 @@ class Inky(Character):
         if Character.PACMAN.score < 30:
             return
 
-        # TODO Change this behavior specific to inky
-        pacman_tile = Character.PACMAN.current_tile
-        pacman_facing = Character.PACMAN.facing
-        blinky_tile = Character.BLINKY.current_tile # tuple
-
-        target_tile = self.get_inky_target(pacman_facing, pacman_tile, blinky_tile)
+        target_tile = 0
+        if Character.CURRENT_MODE == CHASE_MODE:
+            # TODO Change this behavior specific to inky
+            pacman_tile = Character.PACMAN.current_tile
+            pacman_facing = Character.PACMAN.facing
+            blinky_tile = Character.BLINKY.current_tile # tuple
+            target_tile = self.get_inky_target(pacman_facing, pacman_tile, blinky_tile)
+        elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
@@ -503,8 +519,13 @@ class Clyde(Character):
         if Character.PACMAN.score < 50:
             return
 
-        #TODO Change this behavior specific to clyde
-        target_tile = Character.PACMAN.current_tile
+        target_tile = 0
+        if Character.CURRENT_MODE == CHASE_MODE:
+            #TODO Change this behavior specific to clyde
+            target_tile = Character.PACMAN.current_tile
+        elif Character.CURRENT_MODE == SCATTER_MODE:
+            target_tile = self.scatter_tile
+
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:

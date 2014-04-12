@@ -149,7 +149,8 @@ def main():
         # wallSpriteGroup.draw(screen)
         pointsGroup.draw(screen)
 
-
+        if pacman.score >30:
+            Character.CURRENT_MODE = SCATTER_MODE
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
