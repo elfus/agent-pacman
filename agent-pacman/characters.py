@@ -166,7 +166,10 @@ class Character(pygame.sprite.Sprite):
         if self.name == "Pacman":
             points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
             for point in points_list:
-                self.score += 1
+                if point.is_energizer:
+                    self.score += 5
+                else:
+                    self.score += 1
         return True
 
     def movedirection_in_ghost_house(self, direction, pointsGroup):
