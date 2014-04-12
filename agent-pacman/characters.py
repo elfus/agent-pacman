@@ -360,7 +360,6 @@ class Inky(Character):
 
     def update(self):
         #Implement custom behavior, then call base class method
-        #Implement custom behavior, then call base class method
         if self.current_tile.is_in_ghost_house and Character.PACMAN.score >=30:
             if self.inky_exits_ghost_house() == False:
                 print self.name, "ERROR: Could not exit ghost house"
@@ -370,6 +369,7 @@ class Inky(Character):
         if Character.PACMAN.score < 30:
             return
 
+        # TODO Change this behavior specific to inky
         target_tile = Character.PACMAN.current_tile
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
@@ -445,7 +445,69 @@ class Clyde(Character):
 
     def update(self):
         #Implement custom behavior, then call base class method
+        if self.current_tile.is_in_ghost_house and Character.PACMAN.score >=50:
+            if self.clyde_exits_ghost_house() == False:
+                print self.name, "ERROR: Could not exit ghost house"
+            Character.update(self)
+            return
+
+        if Character.PACMAN.score < 50:
+            return
+
+        #TODO Change this behavior specific to clyde
+        target_tile = Character.PACMAN.current_tile
+        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
+        # TODO: Add code to handle special intersections
+        if adjacent_tile.is_intersection:
+            self.current_direction = self.get_closest_direction(adjacent_tile, target_tile)
+
+        if self.movedirection(self.current_direction, POINTS_LIST) == True:
+            self.last_kg_direction = self.current_direction
+        else:
+            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
+                self.current_direction = self.get_closest_direction(self.current_tile, target_tile)
+
+        if Character.PACMAN.rect.collidepoint(self.rect.center):
+            print "GAME OVER"
+
         Character.update(self)
+
+    def clyde_exits_ghost_house(self):
+        global POINTS_LIST
+        exit_tile = self.board_matrix[13][14]
+        if self.rect.centerx > exit_tile.rect.right:
+            new_facing = self.get_facing(GO_LEFT)
+
+            target_tile, target_xy = self.get_adjacent_tile(new_facing)
+
+            self.facing = new_facing
+            if target_tile.rect.left == self.rect.centerx:
+                self.current_tile = self.board_matrix[13][17]
+                self.tile_xy = (13,17)
+                return True # Strange bug
+
+            self.rect.move_ip(GO_LEFT) # Moves the image by 1 in y
+            return True
+
+        if self.rect.centerx == exit_tile.rect.right:
+            if self.rect.centery > exit_tile.rect.centery:
+                new_facing = self.get_facing(GO_UP)
+
+                target_tile, target_xy = self.get_adjacent_tile(new_facing)
+
+                self.facing = new_facing
+                if target_tile.rect.centery == self.rect.centery:
+                    self.current_tile = target_tile
+                    self.tile_xy = target_xy
+                    return True # Strange bug
+
+                self.rect.move_ip(GO_UP) # Moves the image by 1 in y
+                return True
+
+            if self.rect.centery == exit_tile.rect.centery:
+                self.current_tile = self.board_matrix[13][14]
+                self.tile_xy = (13,14)
+
 
     def __del__(self):
         print 'Clyde destructor'
