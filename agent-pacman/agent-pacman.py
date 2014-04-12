@@ -61,6 +61,7 @@ def next_mode():
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
+    PAUSE_GAME = False
 
     pygame.init()
 
@@ -105,20 +106,20 @@ def main():
         clock.tick(60)
 
         ## Used for debugging
-        for row in board_matrix:
-            for tile in row:
-                # if tile.isWalkable() == True:
-                #     screen.fill(PURPLE, tile.rect)
-                if tile.is_special_intersection == True:
-                    screen.fill(GREEN, tile.rect)
-                elif tile.is_intersection == True:
-                    screen.fill(WHITE, tile.rect)
-
-                if tile.is_in_ghost_house:
-                    screen.fill(PURPLE,tile.rect)
-
-                if tile.is_scatter_tile:
-                    screen.fill(PURPLE,tile.rect)
+        # for row in board_matrix:
+        #     for tile in row:
+        #         # if tile.isWalkable() == True:
+        #         #     screen.fill(PURPLE, tile.rect)
+        #         if tile.is_special_intersection == True:
+        #             screen.fill(GREEN, tile.rect)
+        #         elif tile.is_intersection == True:
+        #             screen.fill(WHITE, tile.rect)
+        #
+        #         if tile.is_in_ghost_house:
+        #             screen.fill(PURPLE,tile.rect)
+        #
+        #         if tile.is_scatter_tile:
+        #             screen.fill(PURPLE,tile.rect)
         ## Used for debugging
 
         for character in ghostsprite.sprites():
@@ -140,6 +141,11 @@ def main():
                 # print "Pacman coordinate: ", pacman.rect
                 if event.key == pygame.K_m:
                     next_mode()
+                elif event.key == pygame.K_p:
+                    PAUSE_GAME = not PAUSE_GAME
+
+        if PAUSE_GAME:
+            continue
 
         # When detecting keyboard here, pacman moves faster
         direction = handle_input()
