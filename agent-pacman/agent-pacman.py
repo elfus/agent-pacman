@@ -56,6 +56,8 @@ def next_mode():
     print "Changing game mode"
     Character.CURRENT_MODE = (Character.CURRENT_MODE+1) % NUMBER_MODE
     return
+
+
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
@@ -95,6 +97,8 @@ def main():
     detect_intersections(board_matrix)
 
     ghostsprite, pacman = get_characters_group(board_matrix, wallSpriteGroup, pointsGroup)
+
+    pointsGroup = generate_pacman_points(board_matrix)
 
     while 1:
         # Make sure game doesn't run at more than 60 frames per second

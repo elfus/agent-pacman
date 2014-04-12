@@ -22,6 +22,24 @@ class Wall(pygame.sprite.Sprite):
         self.rect.y = y
         self.rect.x = x
 
+class PacmanPoint(pygame.sprite.Sprite):
+    """This class represents the bar at the bottom that the player controls """
+
+    def __init__(self, x, y, width, height, color):
+        """ Constructor function """
+
+        # Call the parent's constructor
+        pygame.sprite.Sprite.__init__(self)
+
+        # Make a BLUE wall, of the size specified in the parameters
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
+
+        # Make our top-left corner the passed-in location.
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+
 def create_board_matrix(width, height):
     global BOARD_WIDTH
     global BOARD_HEIGHT
@@ -149,3 +167,15 @@ def analyze_maze():
     print "Number of rectangles ", len(wallSpriteGroup.sprites())
     print "Number of points ", len(pointsSpriteGroup.sprites())
     return wallSpriteGroup, pointsSpriteGroup
+
+def generate_pacman_points(boardMatrix):
+    POINT_WIDTH = 2
+    POINT_HEIGHT = 2
+    pointsGroup = pygame.sprite.Group()
+    for row in boardMatrix:
+        for tile in row:
+            if tile.board_coordinate[1] > 3 and tile.board_coordinate[1] < (TILE_HEIGHT_COUNT-3):
+                if tile.is_walkable and not tile.is_in_ghost_house:
+                    point = PacmanPoint(tile.rect.centerx-(POINT_WIDTH/2), tile.rect.centery-(POINT_HEIGHT/2), 2, 2, GREEN)
+                    pointsGroup.add(point)
+    return pointsGroup
