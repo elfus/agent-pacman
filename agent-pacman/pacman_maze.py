@@ -39,6 +39,8 @@ class PacmanPoint(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = y
         self.rect.x = x
+        # If it's not an energize is assumed to be a normal point
+        self.is_energizer = False
 
 def create_board_matrix(width, height):
     global BOARD_WIDTH
@@ -171,6 +173,8 @@ def analyze_maze():
 def generate_pacman_points(boardMatrix):
     POINT_WIDTH = 2
     POINT_HEIGHT = 2
+    ENERGIZER_WIDTH = 6
+    ENERGIZER_HEIGHT = 6
     pointsGroup = pygame.sprite.Group()
     for row in boardMatrix:
         for tile in row:
@@ -182,6 +186,10 @@ def generate_pacman_points(boardMatrix):
                 if tile.board_coordinate[1] > 11 and tile.board_coordinate[1]<23 and tile.board_coordinate[0] >21 and tile.board_coordinate[0]<TILE_WIDTH_COUNT:
                     continue
                 if tile.is_walkable and not tile.is_in_ghost_house:
-                    point = PacmanPoint(tile.rect.centerx-(POINT_WIDTH/2), tile.rect.centery-(POINT_HEIGHT/2), 2, 2, GREEN)
+                    if tile.board_coordinate == (1,6) or tile.board_coordinate == (TILE_WIDTH_COUNT-2,6) or tile.board_coordinate == (1,26) or tile.board_coordinate == (TILE_WIDTH_COUNT-2,26):
+                        point = PacmanPoint(tile.rect.centerx-(ENERGIZER_WIDTH/2), tile.rect.centery-(ENERGIZER_HEIGHT/2), ENERGIZER_WIDTH, ENERGIZER_HEIGHT, GREEN)
+                        point.is_energizer = True
+                    else:
+                        point = PacmanPoint(tile.rect.centerx-(POINT_WIDTH/2), tile.rect.centery-(POINT_HEIGHT/2), POINT_WIDTH, POINT_HEIGHT, GREEN)
                     pointsGroup.add(point)
     return pointsGroup
