@@ -129,7 +129,7 @@ class Character(pygame.sprite.Sprite):
 
         adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
         if adjacent_tile.isWalkable() == False:
-            print self.name,": the tile facing",facing_to,"is NOT walkable"
+            # print self.name,": the tile facing",facing_to,"is NOT walkable"
             if facing_to == FACING_LEFT or facing_to == FACING_RIGHT:
                 if self.current_tile.rect.centerx != self.rect.centerx:
                     adjacent_tile = self.current_tile
