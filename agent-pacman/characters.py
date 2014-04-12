@@ -38,6 +38,7 @@ class Character(pygame.sprite.Sprite):
     Functions: update, calcnewpos
     Attributes: area, vector"""
     PACMAN = 0
+    BLINKY = 0
 
     def __init__(self, FILENAME, boardMatrix):
         pygame.sprite.Sprite.__init__(self)
@@ -250,6 +251,7 @@ class Blinky(Character):
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
+        Character.BLINKY = self
         print 'Blinky constructor'
 
     def update(self):
@@ -370,7 +372,12 @@ class Inky(Character):
             return
 
         # TODO Change this behavior specific to inky
-        target_tile = Character.PACMAN.current_tile
+        pacman_tile = Character.PACMAN.current_tile
+        pacman_facing = Character.PACMAN.facing
+        blinky_tile = Character.BLINKY.current_tile # tuple
+
+        target_tile = self.get_inky_target(pacman_facing, pacman_tile, blinky_tile)
+
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
         if adjacent_tile.is_intersection:
@@ -386,6 +393,43 @@ class Inky(Character):
             print "GAME OVER"
 
         Character.update(self)
+
+    def get_inky_target(self, pacman_facing, pacman_tile, blinky_tile):
+        target = 0
+        if pacman_facing == FACING_LEFT:
+            x,y = pacman_tile.board_coordinate[0]-2, pacman_tile.board_coordinate[1]
+        elif pacman_facing == FACING_RIGHT:
+            x,y = pacman_tile.board_coordinate[0]+2, pacman_tile.board_coordinate[1]
+        elif pacman_facing == FACING_DOWN:
+            x,y = pacman_tile.board_coordinate[0], pacman_tile.board_coordinate[1]+2
+        elif pacman_facing == FACING_UP:
+            x,y = pacman_tile.board_coordinate[0]-2, pacman_tile.board_coordinate[1]-2
+
+        if x < 0: x = 0
+        if y < 0: y = 0
+        if x >= TILE_WIDTH_COUNT: x = TILE_WIDTH_COUNT-1
+        if y >= TILE_HEIGHT_COUNT: y = TILE_HEIGHT_COUNT-1
+
+        # Use blinky's position
+        target = self.board_matrix[x][y];
+        c1 = self.pitagorazo(target.rect.centerx - blinky_tile.rect.centerx, target.rect.centery - blinky_tile.rect.centery)
+
+        x2 = (abs(x - blinky_tile.board_coordinate[0]) * 2) + blinky_tile.board_coordinate[0]
+        y2 = (abs(y - blinky_tile.board_coordinate[1]) * 2) + blinky_tile.board_coordinate[1]
+
+        if x2 < 0: x = 0
+        if y2 < 0: y = 0
+        if x2 >= TILE_WIDTH_COUNT: x2 = TILE_WIDTH_COUNT-1
+        if y2 >= TILE_HEIGHT_COUNT: y2 = TILE_HEIGHT_COUNT-1
+        real_target = self.board_matrix[x2][y2]
+        # This piece of code was just to validate the calculations were right
+        # c2 = self.pitagorazo(real_target.rect.centerx - blinky_tile.rect.centerx, real_target.rect.centery - blinky_tile.rect.centery)
+        # if (c1*2) == c2:
+        #     print "SUCCESS"
+        # else:
+        #     print "FAILURE"
+
+        return real_target
 
     def inky_exits_ghost_house(self):
         global POINTS_LIST
@@ -551,6 +595,6 @@ def get_characters_group(boardMatrix, wallSpriteGroup, pointsGroup):
     ghostsprite.add(blinky)
     ghostsprite.add(pinky)
     ghostsprite.add(inky)
-    ghostsprite.add(clyde)
+    # ghostsprite.add(clyde)
     ghostsprite.add(pacman)
     return ghostsprite, pacman
