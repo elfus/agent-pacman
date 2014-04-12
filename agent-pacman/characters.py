@@ -13,8 +13,6 @@ PACMAN_START = (105,206)
 GHOST_START = (105,133)
 BLINKY_START = (105, 108)
 
-PACMAN = 0
-
 INDEX_UP = 0
 INDEX_RIGHT = 1
 INDEX_DOWN = 2
@@ -623,12 +621,11 @@ class Pacman(Character):
         print 'Pacman destructor'
 
 def get_characters_group(boardMatrix, pointsGroup):
-    global PACMAN
     global POINTS_LIST
 
     POINTS_LIST = pointsGroup
 
-    PACMAN = pacman = Pacman("pacman1.png", boardMatrix)
+    pacman = Pacman("pacman1.png", boardMatrix)
 
     blinky = Blinky("rojo.png", boardMatrix)
     pinky = Pinky("rosa.png", boardMatrix)
