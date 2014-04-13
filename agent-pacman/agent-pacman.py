@@ -53,8 +53,9 @@ def handle_input():
     return direction
 
 def next_mode():
-    print "Changing game mode"
+    old_mode = MODE_STR[Character.CURRENT_MODE]
     Character.CURRENT_MODE = (Character.CURRENT_MODE+1) % NUMBER_MODE
+    print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
     return
 
 

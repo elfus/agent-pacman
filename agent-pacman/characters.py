@@ -6,6 +6,7 @@ import pygame
 from pygame.locals import *
 from pygame.locals import *
 from util import *
+import random
 
 POINTS_LIST = 0
 
@@ -34,6 +35,8 @@ FRIGHTENED_MODE = 1 #"frightened"
 CHASE_MODE = 2 #"chase"
 NUMBER_MODE = 3
 
+MODE_STR = ["Scatter","Frightened","Chase"]
+
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
     Returns: ball object
@@ -56,6 +59,8 @@ class Character(pygame.sprite.Sprite):
         self.current_tile = 0
         self.board_matrix = boardMatrix
         self.scatter_tile = boardMatrix[0][0]
+        self.frightened_counter = 0
+        self.frightened_tile = self.get_random_tile()
         print 'Character Constructor'
 
     def stop(self):
@@ -257,6 +262,24 @@ class Character(pygame.sprite.Sprite):
 
         return self.get_direction_from_to(from_tile,neighbors[index])
 
+    def get_random_tile(self):
+        x = random.randrange(0, TILE_WIDTH_COUNT-1)
+        y = 2
+        if self.name == "Inky" or self.name == "Clyde":
+            if self.frightened_counter <= 10:
+                y = random.randrange(0, 2)
+            else:
+                y = random.randrange(TILE_HEIGHT_COUNT-3, TILE_HEIGHT_COUNT-1)
+        elif self.name == "Blinky" or self.name == "Pinky":
+            if self.frightened_counter <= 10:
+                y = random.randrange(TILE_HEIGHT_COUNT-3, TILE_HEIGHT_COUNT-1)
+            else:
+                y = random.randrange(0, 2)
+        self.frightened_counter += 1
+        if self.frightened_counter == 21:
+            self.frightened_counter = 0
+        return self.board_matrix[x][y]
+
     def pitagorazo(self, a, b):
         c = sqrt(pow(a,2) + pow(b,2))
         return c
@@ -289,7 +312,9 @@ class Blinky(Character):
         elif Character.CURRENT_MODE == SCATTER_MODE:
             target_tile = self.scatter_tile
         elif Character.CURRENT_MODE == FRIGHTENED_MODE:
-            target_tile = self.scatter_tile
+            target_tile = self.frightened_tile
+            if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
+                target_tile = self.frightened_tile = self.get_random_tile()
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
@@ -338,7 +363,9 @@ class Pinky(Character):
         elif Character.CURRENT_MODE == SCATTER_MODE:
             target_tile = self.scatter_tile
         elif Character.CURRENT_MODE == FRIGHTENED_MODE:
-            target_tile = self.scatter_tile
+            target_tile = self.frightened_tile
+            if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
+                target_tile = self.frightened_tile = self.get_random_tile()
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
@@ -416,7 +443,9 @@ class Inky(Character):
         elif Character.CURRENT_MODE == SCATTER_MODE:
             target_tile = self.scatter_tile
         elif Character.CURRENT_MODE == FRIGHTENED_MODE:
-            target_tile = self.scatter_tile
+            target_tile = self.frightened_tile
+            if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
+                target_tile = self.frightened_tile = self.get_random_tile()
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
@@ -547,7 +576,9 @@ class Clyde(Character):
         elif Character.CURRENT_MODE == SCATTER_MODE:
             target_tile = self.scatter_tile
         elif Character.CURRENT_MODE == FRIGHTENED_MODE:
-            target_tile = self.scatter_tile
+            target_tile = self.frightened_tile
+            if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
+                target_tile = self.frightened_tile = self.get_random_tile()
 
         adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
         # TODO: Add code to handle special intersections
