@@ -99,9 +99,13 @@ class Character(pygame.sprite.Sprite):
 
     def update(self):
         self.detect_tunnel_condition()
+        # This is where we detect collisions between pacman and the ghosts
         if self.name != "Pacman":
             if Character.PACMAN.rect.collidepoint(self.rect.center):
-                print "GAME OVER:",self.name,"killed Pacman"
+                if Character.CURRENT_MODE == CHASE_MODE or Character.CURRENT_MODE == SCATTER_MODE:
+                    print "GAME OVER:",self.name,"killed Pacman"
+                elif Character.CURRENT_MODE == FRIGHTENED_MODE:
+                    print "PACMAN just killed",self.name
 
     def get_adjacent_tile(self, facing_to):
         """
