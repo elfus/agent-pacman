@@ -35,6 +35,11 @@ FRIGHTENED_MODE = 1 #"frightened"
 CHASE_MODE = 2 #"chase"
 NUMBER_MODE = 3
 
+BLINKY_ID = 0
+PINKY_ID = 1
+INKY_ID = 2
+CLYDE_ID = 3
+
 MODE_STR = ["Scatter","Frightened","Chase"]
 
 class Character(pygame.sprite.Sprite):
@@ -44,6 +49,7 @@ class Character(pygame.sprite.Sprite):
     Attributes: area, vector"""
     PACMAN = 0
     BLINKY = 0
+    GHOST_LIST = [0, 0, 0, 0] # List for 4 ghosts
     CURRENT_MODE = CHASE_MODE
 
     def __init__(self, FILENAME, boardMatrix):
@@ -107,6 +113,10 @@ class Character(pygame.sprite.Sprite):
             if Character.PACMAN.rect.collidepoint(self.rect.center):
                 if Character.CURRENT_MODE == CHASE_MODE or Character.CURRENT_MODE == SCATTER_MODE:
                     print "GAME OVER:",self.name,"killed Pacman"
+                    # Reset world state
+                    Character.PACMAN.reset_state(self.board_matrix)
+                    for ghost in Character.GHOST_LIST:
+                        ghost.reset_state(self.board_matrix)
                 elif Character.CURRENT_MODE == FRIGHTENED_MODE:
                     print "PACMAN just killed",self.name
 
@@ -300,6 +310,8 @@ class Blinky(Character):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Blinky"
         self.reset_state(boardMatrix)
+        Character.BLINKY = self
+        Character.GHOST_LIST[BLINKY_ID] = self
         print 'Blinky constructor'
 
     def reset_state(self, boardMatrix):
@@ -311,7 +323,6 @@ class Blinky(Character):
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
-        Character.BLINKY = self
         self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-4][0]
 
 
@@ -350,6 +361,7 @@ class Pinky(Character):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Pinky"
         self.reset_state(boardMatrix)
+        Character.GHOST_LIST[PINKY_ID] = self
         print 'Pinky constructor'
 
     def reset_state(self, boardMatrix):
@@ -429,6 +441,7 @@ class Inky(Character):
         Character.__init__(self, FILENAME,boardMatrix)
         self.name = "Inky"
         self.reset_state(boardMatrix)
+        Character.GHOST_LIST[INKY_ID] = self
         print 'Inky constructor'
 
     def reset_state(self, boardMatrix):
@@ -562,6 +575,7 @@ class Clyde(Character):
         Character.__init__(self, FILENAME,boardMatrix)
         self.name = "Clyde"
         self.reset_state(boardMatrix)
+        Character.GHOST_LIST[CLYDE_ID] = self
         print 'Clyde constructor'
 
     def reset_state(self, boardMatrix):
