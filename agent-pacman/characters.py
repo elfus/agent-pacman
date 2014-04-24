@@ -55,7 +55,9 @@ class Character(pygame.sprite.Sprite):
 
     def __init__(self, FILENAME, boardMatrix):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image(FILENAME)
+        self.normal_image, self.normal_rect = load_image(FILENAME)
+        self.frightened_image, self.frightened_rect = load_image("asustado.png")
+        self.image, self.rect = self.normal_image, self.normal_rect
         screen = pygame.display.get_surface()
         self.board_area = screen.get_rect()
         self.board_rect = pygame.Rect(0,0,BOARD_WIDTH,BOARD_HEIGHT)
@@ -111,6 +113,11 @@ class Character(pygame.sprite.Sprite):
         self.detect_tunnel_condition()
         # This is where we detect collisions between pacman and the ghosts
         if self.name != "Pacman":
+            if Character.CURRENT_MODE == FRIGHTENED_MODE:
+                self.image = self.frightened_image
+            else:
+                self.image = self.normal_image
+                
             if Character.PACMAN.rect.collidepoint(self.rect.center):
                 if Character.CURRENT_MODE == CHASE_MODE or Character.CURRENT_MODE == SCATTER_MODE:
                     print "GAME OVER:",self.name,"killed Pacman"
