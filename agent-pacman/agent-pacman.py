@@ -58,6 +58,17 @@ def next_mode():
     print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
     return
 
+def change_mode(new_mode):
+    old_mode = MODE_STR[Character.CURRENT_MODE]
+    if new_mode == Character.CURRENT_MODE:
+        print "Current mode ", old_mode
+        return
+    if new_mode < SCATTER_MODE or new_mode > CHASE_MODE:
+        print "INVALID MODE, keeping current mode: ",old_mode
+        return
+    Character.CURRENT_MODE = new_mode
+    print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
+    return
 
 def render_score(screen, score, center):
     """
@@ -155,6 +166,12 @@ def main():
                 # print "Pacman coordinate: ", pacman.rect
                 if event.key == pygame.K_m:
                     next_mode()
+                elif event.key == pygame.K_j:
+                    change_mode(CHASE_MODE)
+                elif event.key == pygame.K_k:
+                    change_mode(SCATTER_MODE)
+                elif event.key == pygame.K_l:
+                    change_mode(FRIGHTENED_MODE)
                 elif event.key == pygame.K_p:
                     PAUSE_GAME = not PAUSE_GAME
 
