@@ -196,6 +196,8 @@ class Character(pygame.sprite.Sprite):
                     self.score += 5
                 else:
                     self.score += 1
+            if self.score > self.highest_score:
+                self.highest_score = self.score
         return True
 
     def movedirection_in_ghost_house(self, direction, pointsGroup):
@@ -679,6 +681,7 @@ class Pacman(Character):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Pacman"
         Character.PACMAN = self
+        self.highest_score = 0
         self.reset_state(boardMatrix)
         print 'Pacman constructor'
 
