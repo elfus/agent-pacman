@@ -51,6 +51,7 @@ class Character(pygame.sprite.Sprite):
     BLINKY = 0
     GHOST_LIST = [0, 0, 0, 0] # List for 4 ghosts
     CURRENT_MODE = CHASE_MODE
+    GAME_OVER = False
 
     def __init__(self, FILENAME, boardMatrix):
         pygame.sprite.Sprite.__init__(self)
@@ -117,6 +118,7 @@ class Character(pygame.sprite.Sprite):
                     Character.PACMAN.reset_state(self.board_matrix)
                     for ghost in Character.GHOST_LIST:
                         ghost.reset_state(self.board_matrix)
+                    Character.GAME_OVER = True
                 elif Character.CURRENT_MODE == FRIGHTENED_MODE:
                     print "PACMAN just killed",self.name
 

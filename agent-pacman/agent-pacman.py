@@ -162,8 +162,14 @@ def main():
         # wrokaround to make sure when any character exits on the right side of the tunnel,
         # it's always black
         screen.blit(pacman_background,pygame.Rect(224,133,16,16),pygame.Rect(0,0,16,16))
-        pointsGroup.draw(screen)
 
+
+        if(Character.GAME_OVER):
+            pointsGroup = generate_pacman_points(board_matrix)
+            Character.PACMAN.score = 0
+            Character.GAME_OVER = False
+
+        pointsGroup.draw(screen)
 
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
