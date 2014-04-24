@@ -59,6 +59,18 @@ def next_mode():
     return
 
 
+def render_score(screen, center):
+    """
+    Renders pacman score on screen
+    :param screen: Surface screen
+    """
+    font = pygame.font.Font(None,20)
+    text = font.render(str(Character.PACMAN.score), 1, (220,252,199))
+    textrect = text.get_rect()
+    textrect.center = center
+    screen.fill((0,0,0), pygame.Rect(textrect.left-5,textrect.top,textrect.width+10,textrect.height) )
+    screen.blit(text, textrect)
+
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
@@ -164,8 +176,11 @@ def main():
         screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
         pointsGroup.draw(screen)
 
+        render_score(screen, (BOARD_WIDTH/2,16))
+
         if(Character.GAME_OVER):
             pygame.time.wait(2000)
+            render_score(screen, (BOARD_WIDTH/2,16))
             pointsGroup = generate_pacman_points(board_matrix)
             Character.PACMAN.score = 0
             Character.GAME_OVER = False
