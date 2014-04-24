@@ -159,9 +159,9 @@ def main():
 
         ghostsprite.update()
         ghostsprite.draw(screen)
-        # wrokaround to make sure when any character exits on the right side of the tunnel,
+        # workaround to make sure when any character exits on the right side of the tunnel,
         # it's always black
-        screen.blit(pacman_background,pygame.Rect(224,133,16,16),pygame.Rect(0,0,16,16))
+        screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
         pointsGroup.draw(screen)
 
         if(Character.GAME_OVER):
