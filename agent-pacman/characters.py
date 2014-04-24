@@ -52,8 +52,12 @@ class Character(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         self.board_area = screen.get_rect()
         self.board_rect = pygame.Rect(0,0,BOARD_WIDTH,BOARD_HEIGHT)
-        self.stop()
         self.name = "Character"
+        self.reset_state(boardMatrix)
+        print 'Character Constructor'
+
+    def reset_state(self, boardMatrix):
+        self.stop()
         self.facing = FACING_LEFT
         self.tile_xy = (0,0)
         self.current_tile = 0
@@ -61,7 +65,6 @@ class Character(pygame.sprite.Sprite):
         self.scatter_tile = boardMatrix[0][0]
         self.frightened_counter = 0
         self.frightened_tile = self.get_random_tile()
-        print 'Character Constructor'
 
     def stop(self):
         self.movepos = [0, 0]
@@ -296,7 +299,12 @@ class Blinky(Character):
     def __init__(self, FILENAME, boardMatrix):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Blinky"
+        self.reset_state(boardMatrix)
+        print 'Blinky constructor'
+
+    def reset_state(self, boardMatrix):
         # Every ghost needs the following three lines of code
+        Character.reset_state(self,boardMatrix)
         self.tile_xy = (13,14)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
@@ -305,7 +313,7 @@ class Blinky(Character):
         self.last_kg_direction = STAND_STILL
         Character.BLINKY = self
         self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-4][0]
-        print 'Blinky constructor'
+
 
     def update(self):
         global POINTS_LIST
@@ -341,6 +349,11 @@ class Pinky(Character):
     def __init__(self, FILENAME, boardMatrix):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Pinky"
+        self.reset_state(boardMatrix)
+        print 'Pinky constructor'
+
+    def reset_state(self, boardMatrix):
+        Character.reset_state(self,boardMatrix)
         # Every ghost needs the following three lines of code
         self.tile_xy = (13,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
@@ -349,7 +362,6 @@ class Pinky(Character):
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
         self.scatter_tile = boardMatrix[3][0]
-        print 'Pinky constructor'
 
     def update(self):
         #Implement custom behavior, then call base class method
@@ -416,6 +428,11 @@ class Inky(Character):
     def __init__(self, FILENAME,boardMatrix):
         Character.__init__(self, FILENAME,boardMatrix)
         self.name = "Inky"
+        self.reset_state(boardMatrix)
+        print 'Inky constructor'
+
+    def reset_state(self, boardMatrix):
+        Character.reset_state(self,boardMatrix)
          # Every ghost needs the following three lines of code
         self.tile_xy = (11,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
@@ -424,7 +441,6 @@ class Inky(Character):
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
         self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-1][TILE_HEIGHT_COUNT-1]
-        print 'Inky constructor'
 
     def update(self):
         #Implement custom behavior, then call base class method
@@ -545,6 +561,11 @@ class Clyde(Character):
     def __init__(self, FILENAME,boardMatrix):
         Character.__init__(self, FILENAME,boardMatrix)
         self.name = "Clyde"
+        self.reset_state(boardMatrix)
+        print 'Clyde constructor'
+
+    def reset_state(self, boardMatrix):
+        Character.reset_state(self,boardMatrix)
          # Every ghost needs the following three lines of code
         self.tile_xy = (15,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
@@ -553,7 +574,6 @@ class Clyde(Character):
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
         self.scatter_tile = boardMatrix[0][TILE_HEIGHT_COUNT-1]
-        print 'Clyde constructor'
 
     def update(self):
         #Implement custom behavior, then call base class method
@@ -642,12 +662,16 @@ class Pacman(Character):
     def __init__(self, FILENAME, boardMatrix):
         Character.__init__(self, FILENAME, boardMatrix)
         self.name = "Pacman"
+        Character.PACMAN = self
+        self.reset_state(boardMatrix)
+        print 'Pacman constructor'
+
+    def reset_state(self, boardMatrix):
+        Character.reset_state(self,boardMatrix)
         self.score = 0
         self.tile_xy = (13,26)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
-        Character.PACMAN = self
-        print 'Pacman constructor'
 
     def update(self):
         #Implement custom behavior, then call base class method
