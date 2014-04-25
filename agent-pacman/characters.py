@@ -84,6 +84,7 @@ class Character(pygame.sprite.Sprite):
         self.name = "Character"
         self.reset_state(boardMatrix)
         self.killed = False
+        self.TIME_IN_GHOST_HOUSE = 0
         print 'Character Constructor'
 
     def reset_state(self, boardMatrix):
@@ -488,6 +489,12 @@ class Inky(Character):
     def update(self):
         #Implement custom behavior, then call base class method
         if self.current_tile.is_in_ghost_house and Character.PACMAN.score >=30:
+            if self.killed == True:
+                ENDED = time.time()
+                time_elapsed = ENDED - self.TIME_IN_GHOST_HOUSE
+                if time_elapsed > 3:
+                    self.killed = False
+                return
             if self.inky_exits_ghost_house() == False:
                 print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
@@ -582,7 +589,7 @@ class Inky(Character):
             if self.rect.centerx == self.ghost_tile.rect.centerx+4:
                 self.current_tile = self.ghost_tile
                 self.tile_xy = self.ghost_tile_xy
-                self.killed = False
+                self.TIME_IN_GHOST_HOUSE = time.time()
         return True
 
     def inky_exits_ghost_house(self):
@@ -620,7 +627,6 @@ class Inky(Character):
             if self.rect.centery == exit_tile.rect.centery:
                 self.current_tile = self.board_matrix[13][14]
                 self.tile_xy = (13,14)
-
     def __del__(self):
         print 'Inky destructor'
 
