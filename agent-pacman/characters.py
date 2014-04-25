@@ -83,6 +83,7 @@ class Character(pygame.sprite.Sprite):
         self.board_rect = pygame.Rect(0,0,BOARD_WIDTH,BOARD_HEIGHT)
         self.name = "Character"
         self.reset_state(boardMatrix)
+        self.killed = False
         print 'Character Constructor'
 
     def reset_state(self, boardMatrix):
@@ -148,6 +149,7 @@ class Character(pygame.sprite.Sprite):
                     Character.GAME_OVER = True
                 elif Character.CURRENT_MODE == FRIGHTENED_MODE:
                     print "PACMAN just killed",self.name
+                    self.killed = True
 
     def get_adjacent_tile(self, facing_to):
         """
@@ -475,6 +477,8 @@ class Inky(Character):
          # Every ghost needs the following three lines of code
         self.tile_xy = (11,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.ghost_tile_xy = (11,17)
+        self.ghost_tile = boardMatrix[self.ghost_tile_xy[0]][self.ghost_tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
         self.current_direction = GO_LEFT
@@ -487,6 +491,11 @@ class Inky(Character):
             if self.inky_exits_ghost_house() == False:
                 print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
+            return
+
+        if self.killed == True:
+            if self.inky_goes_back_home() == False:
+                print self.name, "ERROR: Could not go back home"
             return
 
         if Character.PACMAN.score < 30:
@@ -546,6 +555,35 @@ class Inky(Character):
         #     print "FAILURE"
 
         return real_target
+
+    def inky_goes_back_home(self):
+        enter_tile1 = self.board_matrix[13][14]
+        enter_tile2 = self.board_matrix[14][14]
+        center_ghost_house = self.board_matrix[13][17]
+        enter_center = (enter_tile1.rect.right, enter_tile1.rect.centery)
+        if self.rect.centerx != enter_tile1.rect.right and self.rect.centery!=self.ghost_tile.rect.centery:
+            if self.rect.x < enter_center[0]:
+                self.move_to_tile(enter_tile1)
+                return True
+            elif self.rect.x >= enter_center[0]:
+                self.move_to_tile(enter_tile2)
+                return True
+
+        if self.rect.centerx == enter_tile1.rect.right:
+            if self.rect.centery < self.ghost_tile.rect.centery:
+                self.rect.move_ip(GO_DOWN)
+                return True
+
+        if self.rect.centery == self.ghost_tile.rect.centery:
+            if self.rect.centerx != self.ghost_tile.rect.centerx+4:
+                self.rect.move_ip(self.get_direction_from_to(center_ghost_house,self.ghost_tile))
+                return True
+
+            if self.rect.centerx == self.ghost_tile.rect.centerx+4:
+                self.current_tile = self.ghost_tile
+                self.tile_xy = self.ghost_tile_xy
+                self.killed = False
+        return True
 
     def inky_exits_ghost_house(self):
         global POINTS_LIST
