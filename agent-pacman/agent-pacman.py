@@ -71,22 +71,25 @@ def render_score(screen, score, center):
 def ghost_mode_detector():
     global CURRENT_MODE_START
     global CURRENT_MODE_END
+
+    if Character.CHANGE_TO_FRIGHTENED == True:
+        Character.CHANGE_TO_FRIGHTENED = False
+        CURRENT_MODE_START = change_mode(FRIGHTENED_MODE)
+
     CURRENT_MODE_END = time.time()
     elapsed_time = CURRENT_MODE_END - CURRENT_MODE_START
+
     if Character.CURRENT_MODE == CHASE_MODE:
         if elapsed_time > 20.0:
-            change_mode(SCATTER_MODE)
-            CURRENT_MODE_START = time.time()
+            CURRENT_MODE_START = change_mode(SCATTER_MODE)
             print "Elapsed time",elapsed_time,"seconds"
     elif Character.CURRENT_MODE == SCATTER_MODE:
         if elapsed_time > 7.0:
-            change_mode(CHASE_MODE)
-            CURRENT_MODE_START = time.time()
+            CURRENT_MODE_START = change_mode(CHASE_MODE)
             print "Elapsed time",elapsed_time,"seconds"
     elif Character.CURRENT_MODE == FRIGHTENED_MODE:
         if elapsed_time > 7.0:
-            change_mode(CHASE_MODE)
-            CURRENT_MODE_START = time.time()
+            CURRENT_MODE_START = change_mode(CHASE_MODE)
             print "Elapsed time",elapsed_time,"seconds"
 
 def main():
@@ -210,6 +213,7 @@ def main():
             render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
             pointsGroup = generate_pacman_points(board_matrix)
             Character.GAME_OVER = False
+            change_mode(CHASE_MODE)
 
 
         ghost_mode_detector()

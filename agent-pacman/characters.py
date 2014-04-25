@@ -7,6 +7,7 @@ from pygame.locals import *
 from pygame.locals import *
 from util import *
 import random
+import time
 
 POINTS_LIST = 0
 
@@ -58,7 +59,7 @@ def change_mode(new_mode):
         return
     Character.CURRENT_MODE = new_mode
     print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
-    return
+    return time.time()
 
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
@@ -70,6 +71,7 @@ class Character(pygame.sprite.Sprite):
     GHOST_LIST = [0, 0, 0, 0] # List for 4 ghosts
     CURRENT_MODE = CHASE_MODE
     GAME_OVER = False
+    CHANGE_TO_FRIGHTENED = False
 
     def __init__(self, FILENAME, boardMatrix):
         pygame.sprite.Sprite.__init__(self)
@@ -219,7 +221,7 @@ class Character(pygame.sprite.Sprite):
             for point in points_list:
                 if point.is_energizer:
                     self.score += 5
-                    change_mode(FRIGHTENED_MODE)
+                    Character.CHANGE_TO_FRIGHTENED = True
                 else:
                     self.score += 1
             if self.score > self.highest_score:
