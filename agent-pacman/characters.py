@@ -42,6 +42,24 @@ CLYDE_ID = 3
 
 MODE_STR = ["Scatter","Frightened","Chase"]
 
+def next_mode():
+    old_mode = MODE_STR[Character.CURRENT_MODE]
+    Character.CURRENT_MODE = (Character.CURRENT_MODE+1) % NUMBER_MODE
+    print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
+    return
+
+def change_mode(new_mode):
+    old_mode = MODE_STR[Character.CURRENT_MODE]
+    if new_mode == Character.CURRENT_MODE:
+        print "Current mode ", old_mode
+        return
+    if new_mode < SCATTER_MODE or new_mode > CHASE_MODE:
+        print "INVALID MODE, keeping current mode: ",old_mode
+        return
+    Character.CURRENT_MODE = new_mode
+    print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
+    return
+
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
     Returns: ball object
@@ -201,6 +219,7 @@ class Character(pygame.sprite.Sprite):
             for point in points_list:
                 if point.is_energizer:
                     self.score += 5
+                    change_mode(FRIGHTENED_MODE)
                 else:
                     self.score += 1
             if self.score > self.highest_score:
