@@ -193,6 +193,18 @@ class Character(pygame.sprite.Sprite):
 
         return adjacent_tile, target_tile
 
+    def move_to_tile(self, target_tile):
+        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
+        # TODO: Add code to handle special intersections
+        if adjacent_tile.is_intersection:
+            self.current_direction = self.get_closest_direction(self.current_direction, adjacent_tile, target_tile)
+
+        if self.movedirection(self.current_direction, POINTS_LIST) == True:
+            self.last_kg_direction = self.current_direction
+        else:
+            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
+                self.current_direction = self.get_closest_direction(self.last_kg_direction,self.current_tile, target_tile)
+
     def movedirection(self, direction, pointsGroup):
         """
 
@@ -371,16 +383,7 @@ class Blinky(Character):
             if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
                 target_tile = self.frightened_tile = self.get_random_tile()
 
-        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
-        # TODO: Add code to handle special intersections
-        if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(self.current_direction, adjacent_tile, target_tile)
-
-        if self.movedirection(self.current_direction, POINTS_LIST) == True:
-            self.last_kg_direction = self.current_direction
-        else:
-            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.last_kg_direction,self.current_tile, target_tile)
+        self.move_to_tile(target_tile)
 
         Character.update(self)
 
@@ -427,16 +430,7 @@ class Pinky(Character):
             if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
                 target_tile = self.frightened_tile = self.get_random_tile()
 
-        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
-        # TODO: Add code to handle special intersections
-        if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(self.current_direction, adjacent_tile, target_tile)
-
-        if self.movedirection(self.current_direction, POINTS_LIST) == True:
-            self.last_kg_direction = self.current_direction
-        else:
-            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
+        self.move_to_tile(target_tile)
 
         Character.update(self)
 
@@ -512,16 +506,7 @@ class Inky(Character):
             if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
                 target_tile = self.frightened_tile = self.get_random_tile()
 
-        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
-        # TODO: Add code to handle special intersections
-        if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(self.last_kg_direction, adjacent_tile, target_tile)
-
-        if self.movedirection(self.current_direction, POINTS_LIST) == True:
-            self.last_kg_direction = self.current_direction
-        else:
-            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
+        self.move_to_tile(target_tile)
 
         Character.update(self)
 
@@ -650,16 +635,7 @@ class Clyde(Character):
             if self.current_tile.is_intersection and self.current_tile.rect.center == self.rect.center:
                 target_tile = self.frightened_tile = self.get_random_tile()
 
-        adjacent_tile, tile_xy = self.get_adjacent_tile(self.facing)
-        # TODO: Add code to handle special intersections
-        if adjacent_tile.is_intersection:
-            self.current_direction = self.get_closest_direction(self.last_kg_direction, adjacent_tile, target_tile)
-
-        if self.movedirection(self.current_direction, POINTS_LIST) == True:
-            self.last_kg_direction = self.current_direction
-        else:
-            if self.movedirection(self.last_kg_direction, POINTS_LIST) == False:
-                self.current_direction = self.get_closest_direction(self.last_kg_direction, self.current_tile, target_tile)
+        self.move_to_tile(target_tile)
 
         Character.update(self)
 
