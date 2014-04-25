@@ -74,22 +74,26 @@ def ghost_mode_detector():
 
     if Character.CHANGE_TO_FRIGHTENED == True:
         Character.CHANGE_TO_FRIGHTENED = False
-        CURRENT_MODE_START = change_mode(FRIGHTENED_MODE)
+        change_mode(FRIGHTENED_MODE)
+        CURRENT_MODE_START = time.time()
 
     CURRENT_MODE_END = time.time()
     elapsed_time = CURRENT_MODE_END - CURRENT_MODE_START
 
     if Character.CURRENT_MODE == CHASE_MODE:
         if elapsed_time > 20.0:
-            CURRENT_MODE_START = change_mode(SCATTER_MODE)
+            change_mode(SCATTER_MODE)
+            CURRENT_MODE_START = time.time()
             print "Elapsed time",elapsed_time,"seconds"
     elif Character.CURRENT_MODE == SCATTER_MODE:
         if elapsed_time > 7.0:
-            CURRENT_MODE_START = change_mode(CHASE_MODE)
+            change_mode(CHASE_MODE)
+            CURRENT_MODE_START = time.time()
             print "Elapsed time",elapsed_time,"seconds"
     elif Character.CURRENT_MODE == FRIGHTENED_MODE:
         if elapsed_time > 7.0:
-            CURRENT_MODE_START = change_mode(CHASE_MODE)
+            change_mode(CHASE_MODE)
+            CURRENT_MODE_START = time.time()
             print "Elapsed time",elapsed_time,"seconds"
 
 def main():

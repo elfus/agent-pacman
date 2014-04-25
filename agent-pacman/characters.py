@@ -59,7 +59,7 @@ def change_mode(new_mode):
         return
     Character.CURRENT_MODE = new_mode
     print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
-    return time.time()
+    return
 
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
