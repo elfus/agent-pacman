@@ -45,13 +45,13 @@ def handle_input():
     """
     global PENDING_DIRECTION
     direction = PENDING_DIRECTION
-    if pygame.key.get_pressed()[pygame.K_w]:
+    if pygame.key.get_pressed()[pygame.K_w] or pygame.key.get_pressed()[pygame.K_UP]:
         direction = GO_UP
-    elif pygame.key.get_pressed()[pygame.K_s]:
+    elif pygame.key.get_pressed()[pygame.K_s] or pygame.key.get_pressed()[pygame.K_DOWN]:
         direction = GO_DOWN
-    elif pygame.key.get_pressed()[pygame.K_a]:
+    elif pygame.key.get_pressed()[pygame.K_a] or pygame.key.get_pressed()[pygame.K_LEFT]:
         direction = GO_LEFT
-    elif pygame.key.get_pressed()[pygame.K_d]:
+    elif pygame.key.get_pressed()[pygame.K_d] or pygame.key.get_pressed()[pygame.K_RIGHT]:
         direction = GO_RIGHT
 
     return direction
