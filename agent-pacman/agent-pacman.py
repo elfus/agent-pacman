@@ -8,12 +8,16 @@ from pygame.locals import *
 from util import *
 from pacman_maze import *
 from characters import *
+import time
 
 X_AXIS = 0
 Y_AXIS = 1
 
 LAST_DIRECTION = GO_LEFT
 PENDING_DIRECTION = GO_LEFT
+
+CURRENT_MODE_START = time.time()
+CURRENT_MODE_END = 0
 
 def handle_event(event):
     """
@@ -63,6 +67,27 @@ def render_score(screen, score, center):
     textrect.center = center
     screen.fill((0,0,0), pygame.Rect(textrect.left-10,textrect.top,textrect.width+20,textrect.height) )
     screen.blit(text, textrect)
+
+def ghost_mode_detector():
+    global CURRENT_MODE_START
+    global CURRENT_MODE_END
+    CURRENT_MODE_END = time.time()
+    elapsed_time = CURRENT_MODE_END - CURRENT_MODE_START
+    if Character.CURRENT_MODE == CHASE_MODE:
+        if elapsed_time > 20.0:
+            change_mode(SCATTER_MODE)
+            CURRENT_MODE_START = time.time()
+            print "Elapsed time",elapsed_time,"seconds"
+    elif Character.CURRENT_MODE == SCATTER_MODE:
+        if elapsed_time > 7.0:
+            change_mode(CHASE_MODE)
+            CURRENT_MODE_START = time.time()
+            print "Elapsed time",elapsed_time,"seconds"
+    elif Character.CURRENT_MODE == FRIGHTENED_MODE:
+        if elapsed_time > 7.0:
+            change_mode(CHASE_MODE)
+            CURRENT_MODE_START = time.time()
+            print "Elapsed time",elapsed_time,"seconds"
 
 def main():
     global LAST_DIRECTION
@@ -187,7 +212,7 @@ def main():
             Character.GAME_OVER = False
 
 
-
+        ghost_mode_detector()
         # PyGame uses a double buffer to display images on screen
         # since we were drawing the back buffer it's time to flip it
         # and make it available on the front buffer
