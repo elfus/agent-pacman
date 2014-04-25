@@ -25,22 +25,37 @@ class Wall(pygame.sprite.Sprite):
 class PacmanPoint(pygame.sprite.Sprite):
     """This class represents the bar at the bottom that the player controls """
 
-    def __init__(self, x, y, width, height, color):
+    def __init__(self, x, y):
         """ Constructor function """
 
         # Call the parent's constructor
         pygame.sprite.Sprite.__init__(self)
 
         # Make a BLUE wall, of the size specified in the parameters
-        self.image = pygame.Surface([width, height])
-        self.image.fill(color)
+        self.small_dot , self.small_dot_rect = load_image("punto-peque.png")
+        self.big_dot , self.big_dot_rect = load_image("punto-gde.png")
+        self.image = self.small_dot#pygame.Surface([width, height])
+        #self.image.fill(color)
+
+        self.tile_centerx = x
+        self.tile_centery = y
 
         # Make our top-left corner the passed-in location.
         self.rect = self.image.get_rect()
-        self.rect.y = y
-        self.rect.x = x
+        self.rect.centery = y # y is the centery
+        self.rect.centerx = x # x is the centerx
         # If it's not an energize is assumed to be a normal point
-        self.is_energizer = False
+        self.set_energizer(False)
+
+    def set_energizer(self, boolean):
+        self.is_energizer = boolean
+        if boolean == False:
+            self.image = self.small_dot
+        elif boolean == True:
+            self.image = self.big_dot
+        self.rect = self.image.get_rect()
+        self.rect.centery = self.tile_centery # y is the centery
+        self.rect.centerx = self.tile_centerx # x is the centerx
 
 def create_board_matrix(width, height):
     global BOARD_WIDTH
@@ -187,9 +202,10 @@ def generate_pacman_points(boardMatrix):
                     continue
                 if tile.is_walkable and not tile.is_in_ghost_house:
                     if tile.board_coordinate == (1,6) or tile.board_coordinate == (TILE_WIDTH_COUNT-2,6) or tile.board_coordinate == (1,26) or tile.board_coordinate == (TILE_WIDTH_COUNT-2,26):
-                        point = PacmanPoint(tile.rect.centerx-(ENERGIZER_WIDTH/2), tile.rect.centery-(ENERGIZER_HEIGHT/2), ENERGIZER_WIDTH, ENERGIZER_HEIGHT, GREEN)
+                        point = PacmanPoint(tile.rect.centerx, tile.rect.centery)
                         point.is_energizer = True
+                        point.image = point.big_dot
                     else:
-                        point = PacmanPoint(tile.rect.centerx-(POINT_WIDTH/2), tile.rect.centery-(POINT_HEIGHT/2), POINT_WIDTH, POINT_HEIGHT, GREEN)
+                        point = PacmanPoint(tile.rect.centerx, tile.rect.centery)
                     pointsGroup.add(point)
     return pointsGroup
