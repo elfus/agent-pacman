@@ -116,6 +116,7 @@ def ghost_mode_detector():
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
+    global CURRENT_MODE_START
     PAUSE_GAME = False
     STARTING_GAME = True
     COUNTDOWN = 3
@@ -271,6 +272,8 @@ def main():
                 STARTING_GAME = False
                 COUNTDOWN = 3
                 render_message(screen)
+                change_mode(CHASE_MODE)
+                CURRENT_MODE_START = time.time()
             continue
 
         if PAUSE_GAME:
