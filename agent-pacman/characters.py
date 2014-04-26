@@ -253,13 +253,12 @@ class Character(pygame.sprite.Sprite):
         :return: True when the Character was able to move to the given direction, False otherwise
         """
         new_facing = self.get_facing(direction)
-
-        target_tile, target_xy = self.get_adjacent_tile(new_facing)
+        exit_tile = self.board_matrix[13][14]
 
         self.facing = new_facing
-        if target_tile.rect.centery == self.rect.centery:
-            self.current_tile = target_tile
-            self.tile_xy = target_xy
+        if exit_tile.rect.centery == self.rect.centery:
+            self.current_tile = exit_tile
+            self.tile_xy = (13,14)
             return True # Strange bug
 
         self.rect.move_ip(direction) # Moves the image by 1 in y
@@ -350,6 +349,51 @@ class Character(pygame.sprite.Sprite):
         c = sqrt(pow(a,2) + pow(b,2))
         return c
 
+    def ghost_goes_back_home(self):
+        enter_tile1 = self.board_matrix[13][14]
+        enter_tile2 = self.board_matrix[14][14]
+        center_ghost_house = self.board_matrix[13][17]
+        enter_center = (enter_tile1.rect.right, enter_tile1.rect.centery)
+        # Position right above the ghost house
+        if self.current_tile.is_in_ghost_house == False:
+            # Arriving from the left
+            if self.rect.centerx < enter_center[0]:
+                self.move_to_tile(enter_tile1)
+                return True
+            # Arriving from the right
+            elif self.rect.centerx > enter_center[0]:
+                self.move_to_tile(enter_tile2)
+                return True
+
+            #This will move us into a tile that is inside the ghost house
+            if self.rect.centerx == enter_tile1.rect.right:
+                if self.rect.centery < self.ghost_tile.rect.centery:
+                    self.rect.move_ip(GO_DOWN)
+                    return True
+
+            self.current_tile = center_ghost_house
+            self.tile_xy = (13,17)
+
+
+        # We are in the center of the house, move each ghost to their respective side
+        if self.rect.centery == self.ghost_tile.rect.centery:
+            # Move to the desired side
+            if self.rect.centerx != self.initial_position[0]:
+                self.rect.move_ip(self.get_direction_from_to(center_ghost_house,self.ghost_tile))
+                return True
+            # We are positioned on the side we want
+            if self.rect.centerx == self.initial_position[0]:
+                self.current_tile = self.ghost_tile
+                self.tile_xy = self.ghost_tile_xy
+                self.TIME_IN_GHOST_HOUSE = time.time()
+                self.killed = False
+                self.waiting = True
+        return True
+
+    def pinky_exits_ghost_house(self):
+        global POINTS_LIST
+        return self.movedirection_in_ghost_house(GO_UP,POINTS_LIST)
+
     def __del__(self):
         print 'Destructor'
 
@@ -368,6 +412,8 @@ class Blinky(Character):
         Character.reset_state(self,boardMatrix)
         self.tile_xy = (13,14)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.ghost_tile_xy = (11,17)
+        self.ghost_tile = boardMatrix[self.ghost_tile_xy[0]][self.ghost_tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
         self.initial_position = (self.rect.centerx, self.rect.centery)
@@ -378,7 +424,23 @@ class Blinky(Character):
 
     def update(self):
         global POINTS_LIST
-        #Implement custom behavior, then call base class method
+        if self.killed == True:
+            if self.ghost_goes_back_home() == False:
+                print self.name, "ERROR: Could not go back home"
+            return
+
+        if self.current_tile.is_in_ghost_house:
+            if self.waiting == True:
+                ENDED = time.time()
+                time_elapsed = ENDED - self.TIME_IN_GHOST_HOUSE
+                if time_elapsed > 3:
+                    self.waiting = False
+                return
+            if self.pinky_exits_ghost_house() == False:
+                print self.name, "ERROR: Could not exit ghost house"
+            Character.update(self)
+            return
+
         target_tile = 0
         if Character.CURRENT_MODE == CHASE_MODE:
             target_tile = Character.PACMAN.current_tile
@@ -410,6 +472,8 @@ class Pinky(Character):
         # Every ghost needs the following three lines of code
         self.tile_xy = (13,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.ghost_tile_xy = (13,17)
+        self.ghost_tile = boardMatrix[self.ghost_tile_xy[0]][self.ghost_tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
         self.initial_position = (self.rect.centerx, self.rect.centery)
@@ -418,8 +482,18 @@ class Pinky(Character):
         self.scatter_tile = boardMatrix[3][0]
 
     def update(self):
-        #Implement custom behavior, then call base class method
+        if self.killed == True:
+            if self.ghost_goes_back_home() == False:
+                print self.name, "ERROR: Could not go back home"
+            return
+
         if self.current_tile.is_in_ghost_house:
+            if self.waiting == True:
+                ENDED = time.time()
+                time_elapsed = ENDED - self.TIME_IN_GHOST_HOUSE
+                if time_elapsed > 3:
+                    self.waiting = False
+                return
             if self.pinky_exits_ghost_house() == False:
                 print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
@@ -440,10 +514,6 @@ class Pinky(Character):
         self.move_to_tile(target_tile)
 
         Character.update(self)
-
-    def pinky_exits_ghost_house(self):
-        global POINTS_LIST
-        return self.movedirection_in_ghost_house(GO_UP,POINTS_LIST)
 
     def get_pinky_target(self, pacman_facing, pacman_tile):
         target = 0
@@ -568,47 +638,6 @@ class Inky(Character):
 
         return real_target
 
-    def ghost_goes_back_home(self):
-        enter_tile1 = self.board_matrix[13][14]
-        enter_tile2 = self.board_matrix[14][14]
-        center_ghost_house = self.board_matrix[13][17]
-        enter_center = (enter_tile1.rect.right, enter_tile1.rect.centery)
-        # Position right above the ghost house
-        if self.current_tile.is_in_ghost_house == False:
-            # Arriving from the left
-            if self.rect.centerx < enter_center[0]:
-                self.move_to_tile(enter_tile1)
-                return True
-            # Arriving from the right
-            elif self.rect.centerx > enter_center[0]:
-                self.move_to_tile(enter_tile2)
-                return True
-
-            #This will move us into a tile that is inside the ghost house
-            if self.rect.centerx == enter_tile1.rect.right:
-                if self.rect.centery < self.ghost_tile.rect.centery:
-                    self.rect.move_ip(GO_DOWN)
-                    return True
-
-            self.current_tile = center_ghost_house
-            self.tile_xy = (13,17)
-
-
-        # We are in the center of the house, move each ghost to their respective side
-        if self.rect.centery == self.ghost_tile.rect.centery:
-            # Move to the desired side
-            if self.rect.centerx != self.initial_position[0]:
-                self.rect.move_ip(self.get_direction_from_to(center_ghost_house,self.ghost_tile))
-                return True
-            # We are positioned on the side we want
-            if self.rect.centerx == self.initial_position[0]:
-                self.current_tile = self.ghost_tile
-                self.tile_xy = self.ghost_tile_xy
-                self.TIME_IN_GHOST_HOUSE = time.time()
-                self.killed = False
-                self.waiting = True
-        return True
-
     def inky_exits_ghost_house(self):
         global POINTS_LIST
         exit_tile = self.board_matrix[13][14]
@@ -661,6 +690,8 @@ class Clyde(Character):
          # Every ghost needs the following three lines of code
         self.tile_xy = (15,17)
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
+        self.ghost_tile_xy = (15,17)
+        self.ghost_tile = boardMatrix[self.ghost_tile_xy[0]][self.ghost_tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
         self.initial_position = (self.rect.centerx, self.rect.centery)
@@ -669,8 +700,18 @@ class Clyde(Character):
         self.scatter_tile = boardMatrix[0][TILE_HEIGHT_COUNT-1]
 
     def update(self):
-        #Implement custom behavior, then call base class method
+        if self.killed == True:
+            if self.ghost_goes_back_home() == False:
+                print self.name, "ERROR: Could not go back home"
+            return
+
         if self.current_tile.is_in_ghost_house and Character.PACMAN.score >=50:
+            if self.waiting == True:
+                ENDED = time.time()
+                time_elapsed = ENDED - self.TIME_IN_GHOST_HOUSE
+                if time_elapsed > 3:
+                    self.waiting = False
+                return
             if self.clyde_exits_ghost_house() == False:
                 print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
