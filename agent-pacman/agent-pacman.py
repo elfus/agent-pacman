@@ -138,7 +138,7 @@ def main():
     # function creates a new Surface object that represents the actual
     # displayed graphics. Any drawing you do to this Surface will become
     # visible on the monitor.
-    screen = pygame.display.set_mode((BOARD_WIDTH+BOARD_RIGHT_PADDING,BOARD_HEIGHT))
+    screen = pygame.display.set_mode((BOARD_WIDTH,BOARD_HEIGHT))
     pygame.display.set_caption("Agent Pacman")
 
     ball, ballrect = load_image("rojo.png")
@@ -221,7 +221,6 @@ def main():
 
         if PLAYER_CHOSEN == False:
             render_message(screen, "Press H for Human, C for Computer",font_size=18)
-            screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
             pygame.display.flip()
             if CURRENT_PLAYER == PLAYER_COMPUTER or CURRENT_PLAYER == PLAYER_HUMAN:
                 render_message(screen)
@@ -235,7 +234,6 @@ def main():
         if STARTING_GAME:
             ghostsprite.draw(screen)
             render_message(screen, "Starting game in "+str(COUNTDOWN))
-            screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
             pointsGroup.draw(screen)
             render_score(screen, str(Character.PACMAN.score), (30,16))
             render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
@@ -259,18 +257,18 @@ def main():
             continue
 
         # When detecting keyboard here, pacman moves faster
-        direction = handle_input()
-        if pacman.movedirection(direction, pointsGroup) == True:
-            LAST_DIRECTION  = PENDING_DIRECTION = direction
-        else:
-            pacman.movedirection(LAST_DIRECTION, pointsGroup)
-            PENDING_DIRECTION = direction
+        if CURRENT_PLAYER == PLAYER_HUMAN:
+            direction = handle_input()
+            if pacman.movedirection(direction, pointsGroup) == True:
+                LAST_DIRECTION  = PENDING_DIRECTION = direction
+            else:
+                pacman.movedirection(LAST_DIRECTION, pointsGroup)
+                PENDING_DIRECTION = direction
 
         ghostsprite.update()
         ghostsprite.draw(screen)
         # workaround to make sure when any character exits on the right side of the tunnel,
         # it's always black
-        screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
         pointsGroup.draw(screen)
 
         render_score(screen, str(Character.PACMAN.score), (30,16))
