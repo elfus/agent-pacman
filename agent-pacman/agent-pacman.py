@@ -123,6 +123,7 @@ def main():
     PLAYER_HUMAN = "Human"
     PLAYER_COMPUTER = "Computer"
     PLAYER_NA = "na"
+    RESET_GAME = False
     CURRENT_PLAYER = PLAYER_NA
     BOARD_RIGHT_PADDING = 300
 
@@ -208,6 +209,8 @@ def main():
                     CURRENT_PLAYER = PLAYER_HUMAN
                 elif event.key == pygame.K_c:
                     CURRENT_PLAYER = PLAYER_COMPUTER
+                elif event.key == pygame.K_r:
+                    RESET_GAME = True
                 elif event.key == pygame.K_j:
                     change_mode(CHASE_MODE)
                 elif event.key == pygame.K_k:
@@ -218,6 +221,30 @@ def main():
                     PAUSE_GAME = not PAUSE_GAME
                     if PAUSE_GAME == False:
                         render_message(screen)
+
+        if RESET_GAME == True:
+            render_message(screen,"RESETTING GAME in "+str(COUNTDOWN)+"!")
+            pygame.display.flip()
+            pygame.time.delay(1000)
+            COUNTDOWN -= 1
+            if COUNTDOWN == 0:
+                STARTING_GAME = True
+                COUNTDOWN = 3
+                render_message(screen)
+                RESET_GAME = False
+                PLAYER_CHOSEN = False
+                CURRENT_PLAYER = PLAYER_NA
+                Character.PACMAN.score = 0
+                Character.PACMAN.highest_score = 0
+                render_score(screen, str(Character.PACMAN.score), (30,16))
+                render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
+                pointsGroup = generate_pacman_points(board_matrix)
+                Character.GAME_OVER = False
+                change_mode(CHASE_MODE)
+                Character.PACMAN.reset_state(board_matrix)
+                for ghost in Character.GHOST_LIST:
+                    ghost.reset_state(board_matrix)
+            continue
 
         if PLAYER_CHOSEN == False:
             render_message(screen, "Press H for Human, C for Computer",font_size=18)
