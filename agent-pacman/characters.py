@@ -84,6 +84,7 @@ class Character(pygame.sprite.Sprite):
         self.name = "Character"
         self.reset_state(boardMatrix)
         self.killed = False
+        self.waiting = False
         self.TIME_IN_GHOST_HOUSE = 0
         print 'Character Constructor'
 
@@ -491,22 +492,22 @@ class Inky(Character):
         self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-1][TILE_HEIGHT_COUNT-1]
 
     def update(self):
+        if self.killed == True:
+            if self.ghost_goes_back_home() == False:
+                print self.name, "ERROR: Could not go back home"
+            return
+
         #Implement custom behavior, then call base class method
         if self.current_tile.is_in_ghost_house and Character.PACMAN.score >=30:
-            if self.killed == True:
+            if self.waiting == True:
                 ENDED = time.time()
                 time_elapsed = ENDED - self.TIME_IN_GHOST_HOUSE
                 if time_elapsed > 3:
-                    self.killed = False
+                    self.waiting = False
                 return
             if self.inky_exits_ghost_house() == False:
                 print self.name, "ERROR: Could not exit ghost house"
             Character.update(self)
-            return
-
-        if self.killed == True:
-            if self.ghost_goes_back_home() == False:
-                print self.name, "ERROR: Could not go back home"
             return
 
         if Character.PACMAN.score < 30:
@@ -573,21 +574,25 @@ class Inky(Character):
         center_ghost_house = self.board_matrix[13][17]
         enter_center = (enter_tile1.rect.right, enter_tile1.rect.centery)
         # Position right above the ghost house
-        if self.rect.centerx != enter_tile1.rect.right and self.rect.centery!=self.ghost_tile.rect.centery:
+        if self.current_tile.is_in_ghost_house == False:
             # Arriving from the left
-            if self.rect.x < enter_center[0]:
+            if self.rect.centerx < enter_center[0]:
                 self.move_to_tile(enter_tile1)
                 return True
             # Arriving from the right
-            elif self.rect.x >= enter_center[0]:
+            elif self.rect.centerx > enter_center[0]:
                 self.move_to_tile(enter_tile2)
                 return True
 
-        # Once we are position above the ghost house, move down
-        if self.rect.centerx == enter_tile1.rect.right:
-            if self.rect.centery < self.ghost_tile.rect.centery:
-                self.rect.move_ip(GO_DOWN)
-                return True
+            #This will move us into a tile that is inside the ghost house
+            if self.rect.centerx == enter_tile1.rect.right:
+                if self.rect.centery < self.ghost_tile.rect.centery:
+                    self.rect.move_ip(GO_DOWN)
+                    return True
+
+            self.current_tile = center_ghost_house
+            self.tile_xy = (13,17)
+
 
         # We are in the center of the house, move each ghost to their respective side
         if self.rect.centery == self.ghost_tile.rect.centery:
@@ -600,6 +605,8 @@ class Inky(Character):
                 self.current_tile = self.ghost_tile
                 self.tile_xy = self.ghost_tile_xy
                 self.TIME_IN_GHOST_HOUSE = time.time()
+                self.killed = False
+                self.waiting = True
         return True
 
     def inky_exits_ghost_house(self):
