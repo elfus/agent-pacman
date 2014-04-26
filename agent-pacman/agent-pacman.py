@@ -210,6 +210,8 @@ def main():
                     CURRENT_PLAYER = PLAYER_HUMAN
                 elif event.key == pygame.K_c:
                     CURRENT_PLAYER = PLAYER_COMPUTER
+                elif event.key == pygame.K_u:
+                    pointsGroup.empty()
                 elif event.key == pygame.K_r:
                     RESET_GAME = True
                 elif event.key == pygame.K_j:
@@ -279,12 +281,34 @@ def main():
         if PAUSE_GAME:
             ghostsprite.draw(screen)
             render_message(screen, "Press P to unpause the game")
-            screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
             pointsGroup.draw(screen)
             render_score(screen, str(Character.PACMAN.score), (30,16))
             render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
             pygame.display.flip()
             continue
+
+        if len(pointsGroup.sprites()) == 0:
+            ghostsprite.draw(screen)
+            render_message(screen, "PACMAN WINS THE GAME!")
+            render_score(screen, str(Character.PACMAN.score), (30,16))
+            render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
+            pygame.display.flip()
+            pygame.time.delay(2000)
+            screen.blit(pacman_background,Character.PACMAN.rect,Character.PACMAN.rect)
+            for character in ghostsprite.sprites():
+                screen.blit(pacman_background, character.rect, character.rect)
+            Character.PACMAN.reset_state(board_matrix)
+            for ghost in Character.GHOST_LIST:
+                ghost.reset_state(board_matrix)
+            pointsGroup = generate_pacman_points(board_matrix)
+            pointsGroup.draw(screen)
+            Character.GAME_OVER = False
+            change_mode(CHASE_MODE)
+            render_message(screen)
+            pygame.display.flip()
+            STARTING_GAME = True
+            continue
+
 
         # When detecting keyboard here, pacman moves faster
         if CURRENT_PLAYER == PLAYER_HUMAN:
@@ -316,7 +340,6 @@ def main():
             render_message(screen,"GAME OVER!")
             pygame.display.flip()
             pygame.time.delay(2000)
-
 
         ghost_mode_detector()
         # PyGame uses a double buffer to display images on screen
