@@ -96,6 +96,7 @@ class Character(pygame.sprite.Sprite):
         self.scatter_tile = boardMatrix[0][0]
         self.frightened_counter = 0
         self.frightened_tile = self.get_random_tile()
+        self.initial_position = (0,0)
 
     def stop(self):
         self.movepos = [0, 0]
@@ -482,6 +483,7 @@ class Inky(Character):
         self.ghost_tile = boardMatrix[self.ghost_tile_xy[0]][self.ghost_tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
+        self.initial_position = (self.rect.centerx, self.rect.centery)
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
         self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-1][TILE_HEIGHT_COUNT-1]
@@ -588,11 +590,11 @@ class Inky(Character):
         # We are in the center of the house, move each ghost to their respective side
         if self.rect.centery == self.ghost_tile.rect.centery:
             # Move to the desired side
-            if self.rect.centerx != self.ghost_tile.rect.centerx+4:
+            if self.rect.centerx != self.initial_position[0]:
                 self.rect.move_ip(self.get_direction_from_to(center_ghost_house,self.ghost_tile))
                 return True
             # We are positioned on the side we want
-            if self.rect.centerx == self.ghost_tile.rect.centerx+4:
+            if self.rect.centerx == self.initial_position[0]:
                 self.current_tile = self.ghost_tile
                 self.tile_xy = self.ghost_tile_xy
                 self.TIME_IN_GHOST_HOUSE = time.time()
