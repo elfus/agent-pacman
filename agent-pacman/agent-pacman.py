@@ -228,7 +228,7 @@ def main():
 
         if PAUSE_GAME:
             ghostsprite.draw(screen)
-            render_message(screen, "Press P to start the game")
+            render_message(screen, "Press P to unpause the game")
             screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
             pointsGroup.draw(screen)
             render_score(screen, str(Character.PACMAN.score), (30,16))
