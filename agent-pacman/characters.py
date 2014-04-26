@@ -568,24 +568,30 @@ class Inky(Character):
         enter_tile2 = self.board_matrix[14][14]
         center_ghost_house = self.board_matrix[13][17]
         enter_center = (enter_tile1.rect.right, enter_tile1.rect.centery)
+        # Position right above the ghost house
         if self.rect.centerx != enter_tile1.rect.right and self.rect.centery!=self.ghost_tile.rect.centery:
+            # Arriving from the left
             if self.rect.x < enter_center[0]:
                 self.move_to_tile(enter_tile1)
                 return True
+            # Arriving from the right
             elif self.rect.x >= enter_center[0]:
                 self.move_to_tile(enter_tile2)
                 return True
 
+        # Once we are position above the ghost house, move down
         if self.rect.centerx == enter_tile1.rect.right:
             if self.rect.centery < self.ghost_tile.rect.centery:
                 self.rect.move_ip(GO_DOWN)
                 return True
 
+        # We are in the center of the house, move each ghost to their respective side
         if self.rect.centery == self.ghost_tile.rect.centery:
+            # Move to the desired side
             if self.rect.centerx != self.ghost_tile.rect.centerx+4:
                 self.rect.move_ip(self.get_direction_from_to(center_ghost_house,self.ghost_tile))
                 return True
-
+            # We are positioned on the side we want
             if self.rect.centerx == self.ghost_tile.rect.centerx+4:
                 self.current_tile = self.ghost_tile
                 self.tile_xy = self.ghost_tile_xy
