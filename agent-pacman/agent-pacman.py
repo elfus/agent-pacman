@@ -66,7 +66,7 @@ def render_score(screen, score, center):
     text = font.render(score, 1, (220,252,199))
     textrect = text.get_rect()
     textrect.center = center
-    screen.fill((0,0,0), textrect)
+    screen.fill((0,0,0),  pygame.Rect(textrect.left-10,textrect.top,textrect.width+20,textrect.height))
     screen.blit(text, textrect)
 
 def render_message(screen, msg="", center=STATUS_MSG_COORDINATES):
@@ -116,8 +116,9 @@ def ghost_mode_detector():
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
-    PAUSE_GAME = True
-    UNPAUSE_COUNTER = 0
+    PAUSE_GAME = False
+    STARTING_GAME = True
+    COUNTDOWN = 3
     BOARD_RIGHT_PADDING = 300
 
     pygame.init()
@@ -209,6 +210,22 @@ def main():
                     if PAUSE_GAME == False:
                         render_message(screen)
 
+        if STARTING_GAME:
+            ghostsprite.draw(screen)
+            render_message(screen, "Starting game in "+str(COUNTDOWN))
+            screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
+            pointsGroup.draw(screen)
+            render_score(screen, str(Character.PACMAN.score), (30,16))
+            render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
+            pygame.display.flip()
+            pygame.time.delay(1000)
+            COUNTDOWN -= 1
+            if COUNTDOWN == 0:
+                STARTING_GAME = False
+                COUNTDOWN = 3
+                render_message(screen)
+            continue
+
         if PAUSE_GAME:
             ghostsprite.draw(screen)
             render_message(screen, "Press P to start the game")
@@ -238,13 +255,17 @@ def main():
         render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
 
         if(Character.GAME_OVER):
-            pygame.time.wait(2000)
+            pygame.time.delay(1000)
             Character.PACMAN.score = 0
             render_score(screen, str(Character.PACMAN.score), (30,16))
             render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
             pointsGroup = generate_pacman_points(board_matrix)
             Character.GAME_OVER = False
             change_mode(CHASE_MODE)
+            STARTING_GAME = True
+            render_message(screen,"GAME OVER!")
+            pygame.display.flip()
+            pygame.time.delay(2000)
 
 
         ghost_mode_detector()
