@@ -830,3 +830,17 @@ def get_characters_group(boardMatrix, pointsGroup):
     ghostsprite.add(clyde)
     ghostsprite.add(pacman)
     return ghostsprite, pacman
+
+def reinforcement_learning_get_direction():
+    """
+    This function is the one that learns the game and determines which direction
+    should pac man go.
+
+    This algorithm can see and knows about the same things as a human player, i.e.
+    the position of each ghost, the position of each point.
+
+    Pac man will have to learn what happens when it eats an energizer point, also
+    he has to learn when to reverse direction.
+    :return:
+    """
+    return GO_RIGHT

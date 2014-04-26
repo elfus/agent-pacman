@@ -318,6 +318,13 @@ def main():
             else:
                 pacman.movedirection(LAST_DIRECTION, pointsGroup)
                 PENDING_DIRECTION = direction
+        elif CURRENT_PLAYER == PLAYER_COMPUTER:
+            direction = reinforcement_learning_get_direction()
+            if pacman.movedirection(direction, pointsGroup) == True:
+                LAST_DIRECTION  = PENDING_DIRECTION = direction
+            else:
+                pacman.movedirection(LAST_DIRECTION, pointsGroup)
+                PENDING_DIRECTION = direction
 
         ghostsprite.update()
         ghostsprite.draw(screen)
