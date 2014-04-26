@@ -369,6 +369,7 @@ class Blinky(Character):
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
+        self.initial_position = (self.rect.centerx, self.rect.centery)
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
         self.scatter_tile = boardMatrix[TILE_WIDTH_COUNT-4][0]
@@ -410,6 +411,7 @@ class Pinky(Character):
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
+        self.initial_position = (self.rect.centerx, self.rect.centery)
         self.current_direction = GO_LEFT
         self.last_kg_direction = STAND_STILL
         self.scatter_tile = boardMatrix[3][0]
@@ -503,7 +505,7 @@ class Inky(Character):
             return
 
         if self.killed == True:
-            if self.inky_goes_back_home() == False:
+            if self.ghost_goes_back_home() == False:
                 print self.name, "ERROR: Could not go back home"
             return
 
@@ -565,7 +567,7 @@ class Inky(Character):
 
         return real_target
 
-    def inky_goes_back_home(self):
+    def ghost_goes_back_home(self):
         enter_tile1 = self.board_matrix[13][14]
         enter_tile2 = self.board_matrix[14][14]
         center_ghost_house = self.board_matrix[13][17]
@@ -654,6 +656,7 @@ class Clyde(Character):
         self.current_tile = boardMatrix[self.tile_xy[0]][self.tile_xy[1]]
         self.rect.center = self.current_tile.getCenter()
         self.rect.centerx += 4
+        self.initial_position = (self.rect.centerx, self.rect.centery)
         self.current_direction = GO_LEFT
         self.last_kg_direction = 0
         self.scatter_tile = boardMatrix[0][TILE_HEIGHT_COUNT-1]
