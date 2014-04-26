@@ -69,13 +69,13 @@ def render_score(screen, score, center):
     screen.fill((0,0,0),  pygame.Rect(textrect.left-10,textrect.top,textrect.width+20,textrect.height))
     screen.blit(text, textrect)
 
-def render_message(screen, msg="", center=STATUS_MSG_COORDINATES):
+def render_message(screen, msg="", center=STATUS_MSG_COORDINATES, font_size=20):
     """
     Renders pacman score on screen
     :param screen: Surface screen
     :param
     """
-    font = pygame.font.Font(None,20)
+    font = pygame.font.Font(None,font_size)
     text = font.render(msg, 1, (220,252,199))
     textrect = text.get_rect()
     textrect.center = center
@@ -119,6 +119,11 @@ def main():
     PAUSE_GAME = False
     STARTING_GAME = True
     COUNTDOWN = 3
+    PLAYER_CHOSEN = False
+    PLAYER_HUMAN = "Human"
+    PLAYER_COMPUTER = "Computer"
+    PLAYER_NA = "na"
+    CURRENT_PLAYER = PLAYER_NA
     BOARD_RIGHT_PADDING = 300
 
     pygame.init()
@@ -199,6 +204,10 @@ def main():
                 # print "Pacman coordinate: ", pacman.rect
                 if event.key == pygame.K_m:
                     next_mode()
+                elif event.key == pygame.K_h:
+                    CURRENT_PLAYER = PLAYER_HUMAN
+                elif event.key == pygame.K_c:
+                    CURRENT_PLAYER = PLAYER_COMPUTER
                 elif event.key == pygame.K_j:
                     change_mode(CHASE_MODE)
                 elif event.key == pygame.K_k:
@@ -209,6 +218,19 @@ def main():
                     PAUSE_GAME = not PAUSE_GAME
                     if PAUSE_GAME == False:
                         render_message(screen)
+
+        if PLAYER_CHOSEN == False:
+            render_message(screen, "Press H for Human, C for Computer",font_size=18)
+            screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
+            pygame.display.flip()
+            if CURRENT_PLAYER == PLAYER_COMPUTER or CURRENT_PLAYER == PLAYER_HUMAN:
+                render_message(screen)
+                render_message(screen,"Player type chosen: "+CURRENT_PLAYER)
+                pygame.display.flip()
+                pygame.time.delay(2000)
+                render_message(screen)
+                PLAYER_CHOSEN = True
+            continue
 
         if STARTING_GAME:
             ghostsprite.draw(screen)
