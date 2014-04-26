@@ -18,6 +18,7 @@ PENDING_DIRECTION = GO_LEFT
 
 CURRENT_MODE_START = time.time()
 CURRENT_MODE_END = 0
+STATUS_MSG_COORDINATES = ((BOARD_WIDTH/2),(BOARD_HEIGHT-8))
 
 def handle_event(event):
     """
@@ -65,7 +66,23 @@ def render_score(screen, score, center):
     text = font.render(score, 1, (220,252,199))
     textrect = text.get_rect()
     textrect.center = center
-    screen.fill((0,0,0), pygame.Rect(textrect.left-10,textrect.top,textrect.width+20,textrect.height) )
+    screen.fill((0,0,0), textrect)
+    screen.blit(text, textrect)
+
+def render_message(screen, msg="", center=STATUS_MSG_COORDINATES):
+    """
+    Renders pacman score on screen
+    :param screen: Surface screen
+    :param
+    """
+    font = pygame.font.Font(None,20)
+    text = font.render(msg, 1, (220,252,199))
+    textrect = text.get_rect()
+    textrect.center = center
+    if len(msg) == 0:
+        textrect.width = BOARD_WIDTH
+        textrect.x = 0
+    screen.fill((0,0,0), textrect )
     screen.blit(text, textrect)
 
 def ghost_mode_detector():
@@ -99,7 +116,8 @@ def ghost_mode_detector():
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
-    PAUSE_GAME = False
+    PAUSE_GAME = True
+    UNPAUSE_COUNTER = 0
     BOARD_RIGHT_PADDING = 300
 
     pygame.init()
@@ -188,8 +206,17 @@ def main():
                     change_mode(FRIGHTENED_MODE)
                 elif event.key == pygame.K_p:
                     PAUSE_GAME = not PAUSE_GAME
+                    if PAUSE_GAME == False:
+                        render_message(screen)
 
         if PAUSE_GAME:
+            ghostsprite.draw(screen)
+            render_message(screen, "Press P to start the game")
+            screen.fill((123,140,140),pygame.Rect(BOARD_WIDTH,0,BOARD_RIGHT_PADDING,BOARD_HEIGHT))
+            pointsGroup.draw(screen)
+            render_score(screen, str(Character.PACMAN.score), (30,16))
+            render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
+            pygame.display.flip()
             continue
 
         # When detecting keyboard here, pacman moves faster

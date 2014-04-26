@@ -153,6 +153,9 @@ class Character(pygame.sprite.Sprite):
                 elif Character.CURRENT_MODE == FRIGHTENED_MODE:
                     print "PACMAN just killed",self.name
                     self.killed = True
+                    Character.PACMAN.score += 10
+                    if Character.PACMAN.score > Character.PACMAN.highest_score:
+                        Character.PACMAN.highest_score = Character.PACMAN.score
 
     def get_adjacent_tile(self, facing_to):
         """
