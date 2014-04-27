@@ -327,10 +327,8 @@ def main():
                 PENDING_DIRECTION = direction
 
         ghostsprite.update()
-        ghostsprite.draw(screen)
-        # workaround to make sure when any character exits on the right side of the tunnel,
-        # it's always black
         pointsGroup.draw(screen)
+        ghostsprite.draw(screen)
 
         render_score(screen, str(Character.PACMAN.score), (30,16))
         render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
