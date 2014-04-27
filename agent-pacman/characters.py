@@ -61,6 +61,11 @@ def change_mode(new_mode):
     print "Game mode changed from",old_mode," to",MODE_STR[Character.CURRENT_MODE]
     return
 
+def collided(pacman, point):
+    if pacman.rect.center == point.rect.center:
+        return True
+    return False
+
 class Character(pygame.sprite.Sprite):
     """A Ghost that will move across the screen
     Returns: ball object
@@ -237,7 +242,7 @@ class Character(pygame.sprite.Sprite):
             self.rect.move_ip(direction)
 
         if self.name == "Pacman":
-            points_list = pygame.sprite.spritecollide(self,pointsGroup,True)
+            points_list = pygame.sprite.spritecollide(self,pointsGroup,True,collided)
             for point in points_list:
                 if point.is_energizer:
                     self.score += 5
