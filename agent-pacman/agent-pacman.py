@@ -166,6 +166,7 @@ def main():
 
     pointsGroup = generate_pacman_points(board_matrix)
 
+    SLOW_MOVEMENT = True
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
@@ -326,7 +327,18 @@ def main():
                 pacman.movedirection(LAST_DIRECTION, pointsGroup)
                 PENDING_DIRECTION = direction
 
-        ghostsprite.update()
+
+        if Character.CURRENT_MODE == FRIGHTENED_MODE:
+            for ghost in ghostsprite.sprites():
+                if SLOW_MOVEMENT:
+                    ghost.update()
+                    SLOW_MOVEMENT = False
+                else:
+                    SLOW_MOVEMENT = True
+                    if ghost.killed == True:
+                        ghost.update()
+        else:
+            ghostsprite.update()
         pointsGroup.draw(screen)
         ghostsprite.draw(screen)
 
