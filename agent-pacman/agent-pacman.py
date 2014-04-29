@@ -8,6 +8,7 @@ from pygame.locals import *
 from util import *
 from pacman_maze import *
 from characters import *
+from pacman_ai import reinforcement_learning_get_direction
 import time
 
 X_AXIS = 0
@@ -320,7 +321,7 @@ def main():
                 pacman.movedirection(LAST_DIRECTION, pointsGroup)
                 PENDING_DIRECTION = direction
         elif CURRENT_PLAYER == PLAYER_COMPUTER:
-            direction = reinforcement_learning_get_direction()
+            direction = reinforcement_learning_get_direction(pointsGroup)
             if pacman.movedirection(direction, pointsGroup) == True:
                 LAST_DIRECTION  = PENDING_DIRECTION = direction
             else:
