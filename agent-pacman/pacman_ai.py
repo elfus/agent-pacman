@@ -28,6 +28,16 @@ def getPossibleActions():
         possible_actions.append(GO_UP)
     return possible_actions
 
+def agent_policy(state, action):
+    """
+    Calculates the probability that the action will be performed in the current state
+    :param state:
+    :param action:
+    :return:
+    """
+
+    return 1
+
 def reinforcement_learning_get_direction(pointsGroup):
     """
     This function is the one that learns the game and determines which direction
@@ -42,5 +52,10 @@ def reinforcement_learning_get_direction(pointsGroup):
     """
     mState = WorldState.getState(pointsGroup)
     actions = getPossibleActions()
+    pr_list = []
+    for action in actions:
+        pr = agent_policy(mState, action)
+        pr_list.append((pr, action))
 
-    return GO_RIGHT
+    max_tuple = max(pr_list)
+    return max_tuple[1]
