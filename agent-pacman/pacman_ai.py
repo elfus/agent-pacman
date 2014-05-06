@@ -59,6 +59,7 @@ def reward_function(state, action, number_actions):
     ppoint_tile = get_tile_from_pacman_point(ppoint)
     desired_direction = Character.PACMAN.get_direction_from_to(state.pacman_tile,ppoint_tile)
     pr = 1.0/number_actions
+
     return pr
 
 
@@ -72,7 +73,7 @@ def agent_policy(state, action, number_actions):
     val = reward_function(state, action, number_actions)
     return val
 
-def reinforcement_learning_get_direction(pointsGroup):
+def get_direction_a_start(pointsGroup):
     """
     This function is the one that learns the game and determines which direction
     should pac man go.
@@ -80,8 +81,7 @@ def reinforcement_learning_get_direction(pointsGroup):
     This algorithm can see and knows about the same things as a human player, i.e.
     the position of each ghost, the position of each point.
 
-    Pac man will have to learn what happens when it eats an energizer point, also
-    he has to learn when to reverse direction.
+    The algorithm being used is A*
     :return:
     """
     mState = WorldState.getState(pointsGroup)
