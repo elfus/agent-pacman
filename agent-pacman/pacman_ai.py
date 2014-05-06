@@ -2,7 +2,7 @@ __author__ = 'aortegag'
 
 from characters import *
 import pygame
-
+OLD_DIRECTION = STAND_STILL
 class WorldState:
     def __init__(self, pointsGroup):
         self.pacman_xy = Character.PACMAN.rect.center
@@ -41,12 +41,19 @@ def next_direction(direction):
 
 
 def get_closest_pacman_point(state):
+    points_list = []
     h_list = []
     for point in state.dots:
+        if state.pacman_tile.rect.centerx == point.rect.centerx or \
+                        state.pacman_tile.rect.centery == point.rect.centery:
+            points_list.append(point)
+            continue
+
+    point = 0
+    for point in points_list:
         h = Character.PACMAN.pitagorazo(state.pacman_xy[0]-point.rect.centerx,
                                              state.pacman_xy[1]-point.rect.centery)
-        if state.pacman_tile.rect.center != point.rect.center:
-            h_list.append((h,point))
+        h_list.append((h,point))
 
     mtuple = min(h_list, key=lambda item:item[0])
     return mtuple[1]
@@ -109,6 +116,7 @@ def h(state, action, goal_tile):
     # de no regresarnos
     tile_list = []
     current_tile = state.pacman_tile
+
     while current_tile != goal_tile:
         facing_to = Character.PACMAN.get_facing(action)
         adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
@@ -117,13 +125,15 @@ def h(state, action, goal_tile):
             current_tile = adjacent_tile
             action = Character.PACMAN.get_closest_direction_excluding(action, current_tile, goal_tile,tile_list)
 
+    if len(tile_list) == 0:
+        return 0.0
 
-    return 0
+    cost = abs( (1.0/len(tile_list)) - 1.0 )
+    return cost
 
-def f(state, action, num_actions):
-    ppoint = get_closest_pacman_point(state)
-    ppoint_tile = get_tile_from_pacman_point(ppoint)
-    return h(state, action, ppoint_tile)
+def f(state, action, goal_tile):
+
+    return h(state, action, goal_tile)
 
 def get_direction_a_start(pointsGroup):
     """
@@ -136,13 +146,40 @@ def get_direction_a_start(pointsGroup):
     The algorithm being used is A*
     :return:
     """
+    global OLD_DIRECTION
     mState = WorldState.getState(pointsGroup)
     actions = getPossibleActions()
     pr_list = []
+    ppoint = get_closest_pacman_point(mState)
+    ppoint_tile = get_tile_from_pacman_point(ppoint)
     for action in actions:
-        pr_list.append( (f(mState, action, len(actions)), action) )
+        pr_list.append( (f(mState, action, ppoint_tile), action) )
+
+
+
+    #This is meant to cover the case in which  we get two options with the
+    # same probability, we choose to continue with the same direction we had
+    if ppoint_tile == mState.pacman_tile:
+        for opt in pr_list:
+            if opt[1] == action:
+                return OLD_DIRECTION
+
 
     # The value f() returns represents the risk to take that action
     # The lower the risk the better option it looks
     min_tuple = min(pr_list, key=lambda item:item[0])
+    OLD_DIRECTION = min_tuple[1]
+
+    i = 0
+    j = 0
+    while i < len(pr_list):
+        opt1 = pr_list[i]
+        j = i + 1
+        while j < len(pr_list):
+            opt2 = pr_list[j]
+            if opt1[0] == opt2[0]:
+                return OLD_DIRECTION
+            j += 1
+        i += 1
+
     return min_tuple[1]

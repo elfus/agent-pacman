@@ -151,10 +151,11 @@ class Character(pygame.sprite.Sprite):
                 if Character.CURRENT_MODE == CHASE_MODE or Character.CURRENT_MODE == SCATTER_MODE:
                     print "GAME OVER:",self.name,"killed Pacman"
                     # Reset world state
-                    Character.PACMAN.reset_state(self.board_matrix)
-                    for ghost in Character.GHOST_LIST:
-                        ghost.reset_state(self.board_matrix)
-                    Character.GAME_OVER = True
+                    # Remove this so ghosts can kill pacman!
+                    # Character.PACMAN.reset_state(self.board_matrix)
+                    # for ghost in Character.GHOST_LIST:
+                    #     ghost.reset_state(self.board_matrix)
+                    # Character.GAME_OVER = True
                 elif Character.CURRENT_MODE == FRIGHTENED_MODE:
                     print "PACMAN just killed",self.name
                     self.killed = True
@@ -596,6 +597,8 @@ class Pinky(Character):
 
     def get_pinky_target(self, pacman_facing, pacman_tile):
         target = 0
+        x = 0
+        y = 0
         if pacman_facing == FACING_LEFT:
             x,y = pacman_tile.board_coordinate[0]-4, pacman_tile.board_coordinate[1]
         elif pacman_facing == FACING_RIGHT:
