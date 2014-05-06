@@ -73,6 +73,28 @@ def agent_policy(state, action, number_actions):
     val = reward_function(state, action, number_actions)
     return val
 
+
+def g(position):
+    """
+    The g() function returns the cost from the initial node to the actual position
+
+    :return:
+    """
+    return 0
+
+def h(position, goal):
+    """
+    The h() function is the heuristic function that estimates the cost from the current
+    position to the goal.
+
+    :return:
+    """
+    return 0
+
+def f(state, action, num_actions):
+
+    return 1
+
 def get_direction_a_start(pointsGroup):
     """
     This function is the one that learns the game and determines which direction
@@ -88,9 +110,9 @@ def get_direction_a_start(pointsGroup):
     actions = getPossibleActions()
     pr_list = []
     for action in actions:
-        pr = agent_policy(mState, action, len(actions))
-        if pr != 0:
-            pr_list.append((pr, action))
+        pr_list.append( (f(mState, action, len(actions)), action) )
 
-    max_tuple = max(pr_list, key=lambda item:item[0])
-    return max_tuple[1]
+    # The value f() returns represents the risk to take that action
+    # The lower the risk the better option it looks
+    min_tuple = min(pr_list, key=lambda item:item[0])
+    return min_tuple[1]

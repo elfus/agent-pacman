@@ -233,6 +233,7 @@ class Character(pygame.sprite.Sprite):
         target_tile, target_xy = self.get_adjacent_tile(new_facing)
 
         self.facing = new_facing
+        #Update the current tile
         if target_tile.rect.collidepoint(self.rect.center) == True:
             self.current_tile = target_tile
             self.tile_xy = target_xy
