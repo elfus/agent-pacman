@@ -29,6 +29,17 @@ def getPossibleActions():
         possible_actions.append(GO_UP)
     return possible_actions
 
+def next_direction(direction):
+    if direction == GO_LEFT:
+        return GO_UP
+    if direction == GO_UP:
+        return GO_RIGHT
+    if direction == GO_RIGHT:
+        return GO_DOWN
+    if direction == GO_DOWN:
+        return GO_LEFT
+
+
 def get_closest_pacman_point(state):
     h_list = []
     for point in state.dots:
@@ -74,26 +85,45 @@ def agent_policy(state, action, number_actions):
     return val
 
 
-def g(position):
+def g(state, action):
     """
     The g() function returns the cost from the initial node to the actual position
 
+    :param state: Current World state
+    :param action: The action we want to take
     :return:
     """
     return 0
 
-def h(position, goal):
+def h(state, action, goal_tile):
     """
     The h() function is the heuristic function that estimates the cost from the current
     position to the goal.
 
+    :param state:  Current World state
+    :param action: The action we want to take
+    :param goal: Where we want to get
     :return:
     """
+    # Obtener una lista de tiles del tile actual al goal_tile empezando con la action cuidando
+    # de no regresarnos
+    tile_list = []
+    current_tile = state.pacman_tile
+    while current_tile != goal_tile:
+        facing_to = Character.PACMAN.get_facing(action)
+        adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
+        if adjacent_tile not in tile_list:
+            tile_list.append(adjacent_tile)
+            current_tile = adjacent_tile
+            action = Character.PACMAN.get_closest_direction_excluding(action, current_tile, goal_tile,tile_list)
+
+
     return 0
 
 def f(state, action, num_actions):
-
-    return 1
+    ppoint = get_closest_pacman_point(state)
+    ppoint_tile = get_tile_from_pacman_point(ppoint)
+    return h(state, action, ppoint_tile)
 
 def get_direction_a_start(pointsGroup):
     """

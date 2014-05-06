@@ -162,14 +162,57 @@ class Character(pygame.sprite.Sprite):
                     if Character.PACMAN.score > Character.PACMAN.highest_score:
                         Character.PACMAN.highest_score = Character.PACMAN.score
 
+    def get_adjacent_tile_to(self, ctile, facing_to):
+        """
+        Gets the adjacent tile to this character depending on where it is facing.
+        This variable assumes the attribute variable self.facing is set before
+        calling this method.
+
+        :param facing_to: Where we are facing
+        :return: The tile in board matrix and its coordinates in the board matrix
+        """
+        target_tile = (-1,-1)
+
+        if facing_to == FACING_LEFT:
+            target_tile = (ctile.board_coordinate[0]-1,ctile.board_coordinate[1])
+        elif facing_to == FACING_RIGHT:
+            target_tile = (ctile.board_coordinate[0]+1,ctile.board_coordinate[1])
+        elif facing_to == FACING_UP:
+            target_tile = (ctile.board_coordinate[0],ctile.board_coordinate[1]-1)
+        elif facing_to == FACING_DOWN:
+            target_tile = (ctile.board_coordinate[0],ctile.board_coordinate[1]+1)
+
+        if target_tile[0] >= TILE_WIDTH_COUNT:
+            target_tile = (0,target_tile[1])
+
+        if target_tile[0] < 0:
+            target_tile = (TILE_WIDTH_COUNT-1,target_tile[1])
+
+        if target_tile[1] >= TILE_HEIGHT_COUNT:
+            target_tile = (target_tile[0], 0)
+
+        adjacent_tile = self.board_matrix[target_tile[0]][target_tile[1]]
+        if adjacent_tile.isWalkable() == False:
+            # print self.name,": the tile facing",facing_to,"is NOT walkable"
+            if facing_to == FACING_LEFT or facing_to == FACING_RIGHT:
+                if self.current_tile.rect.centerx != self.rect.centerx:
+                    adjacent_tile = ctile
+                    target_tile = ctile.board_coordinate
+            elif facing_to == FACING_UP or facing_to == FACING_DOWN:
+                if self.current_tile.rect.centery != self.rect.centery:
+                    adjacent_tile = self.current_tile
+                    target_tile = self.tile_xy
+
+        return adjacent_tile, target_tile
+
     def get_adjacent_tile(self, facing_to):
         """
         Gets the adjacent tile to this character depending on where it is facing.
         This variable assumes the attribute variable self.facing is set before
         calling this method.
 
-        :rtype : The tile (Rect) object adjacent where the character is facing
-        :return: The tile coordinates in the board matrix
+        :param facing_to: Where we are facing
+        :return: The tile in board matrix and its coordinates in the board matrix
         """
         adjacent_tile = 0
         target_tile = (-1,-1)
@@ -314,6 +357,7 @@ class Character(pygame.sprite.Sprite):
     def get_closest_direction(self, current_direction, from_tile, to_tile):
         """
         Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
+        This method ignores the current tile, and the tile we came from.
         :param from_tile:
         :param to_tile:
         """
@@ -335,6 +379,32 @@ class Character(pygame.sprite.Sprite):
         index = d_list.index(closest)
 
         return self.get_direction_from_to(from_tile,neighbors[index])
+
+    def get_closest_direction_excluding(self, current_direction, from_tile, to_tile, banned_list):
+        """
+        Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
+        This method ignores the current tile, and the tile we came from.
+        :param from_tile:
+        :param to_tile:
+        """
+        opposite_direction = self.get_opposite_direction(current_direction)
+        back_facing = self.get_facing(opposite_direction)
+        back_tile, back_tile_xy = self.get_adjacent_tile(back_facing)
+        neighbors = get_tile_neighbors(self.board_matrix, from_tile)
+        for tile in neighbors:
+            for banned in banned_list:
+                if tile == banned:
+                    neighbors.remove(banned)
+        d_list = []
+        for tile in neighbors:
+            distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
+                                       tile.rect.centery-to_tile.rect.centery)
+            d_list.append(distance)
+        closest = min(d_list)
+        index = d_list.index(closest)
+
+        return self.get_direction_from_to(from_tile,neighbors[index])
+
 
     def get_random_tile(self):
         x = random.randrange(0, TILE_WIDTH_COUNT-1)
