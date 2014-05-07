@@ -174,7 +174,7 @@ def f(state, action, goal_tile):
 
     return h(state, action, goal_tile)
 
-def get_direction_a_start(pointsGroup):
+def get_direction_a_star(pointsGroup):
     """
     This function is the one that learns the game and determines which direction
     should pac man go.
