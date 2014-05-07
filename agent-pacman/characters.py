@@ -402,6 +402,11 @@ class Character(pygame.sprite.Sprite):
             distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
                                        tile.rect.centery-to_tile.rect.centery)
             d_list.append(distance)
+        if len(d_list) == 0:
+            if from_tile.board_coordinate == (0,17):
+                return GO_LEFT
+            if from_tile.board_coordinate == (TILE_WIDTH_COUNT-1,17):
+                return GO_RIGHT
         closest = min(d_list)
         index = d_list.index(closest)
 
