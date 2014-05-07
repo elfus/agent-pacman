@@ -9,6 +9,7 @@ from util import *
 from pacman_maze import *
 from characters import *
 from pacman_ai import get_direction_a_star
+from pacman_ai import reset_old_direction
 import time
 
 X_AXIS = 0
@@ -122,13 +123,19 @@ def turn_on_point_flag(board_matrix, pointsGroup):
                 if tile.rect.center == point.rect.center:
                     tile.point_exists = True
 
+def reset_board_tiles(board_matrix):
+    for row in board_matrix:
+        for tile in row:
+            tile.visited = False
+            tile.point_exists = False
+
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
     global CURRENT_MODE_START
     PAUSE_GAME = False
     STARTING_GAME = True
-    COUNTDOWN = 3
+    COUNTDOWN = 1
     PLAYER_CHOSEN = False
     PLAYER_HUMAN = "Human"
     PLAYER_COMPUTER = "Computer"
@@ -257,6 +264,9 @@ def main():
                 Character.GAME_OVER = False
                 change_mode(CHASE_MODE)
                 Character.PACMAN.reset_state(board_matrix)
+                reset_board_tiles(board_matrix)
+                turn_on_point_flag(board_matrix, pointsGroup)
+                reset_old_direction()
                 for ghost in Character.GHOST_LIST:
                     ghost.reset_state(board_matrix)
             continue
@@ -365,6 +375,9 @@ def main():
             Character.GAME_OVER = False
             change_mode(CHASE_MODE)
             STARTING_GAME = True
+            reset_board_tiles(board_matrix)
+            turn_on_point_flag(board_matrix, pointsGroup)
+            reset_old_direction()
             render_message(screen,"GAME OVER!")
             pygame.display.flip()
             pygame.time.delay(2000)

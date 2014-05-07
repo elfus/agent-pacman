@@ -152,10 +152,10 @@ class Character(pygame.sprite.Sprite):
                     print "GAME OVER:",self.name,"killed Pacman"
                     # Reset world state
                     # Remove this so ghosts can kill pacman!
-                    # Character.PACMAN.reset_state(self.board_matrix)
-                    # for ghost in Character.GHOST_LIST:
-                    #     ghost.reset_state(self.board_matrix)
-                    # Character.GAME_OVER = True
+                    Character.PACMAN.reset_state(self.board_matrix)
+                    for ghost in Character.GHOST_LIST:
+                        ghost.reset_state(self.board_matrix)
+                    Character.GAME_OVER = True
                 elif Character.CURRENT_MODE == FRIGHTENED_MODE:
                     print "PACMAN just killed",self.name
                     self.killed = True

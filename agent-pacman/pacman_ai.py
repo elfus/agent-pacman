@@ -2,20 +2,24 @@ __author__ = 'aortegag'
 
 from characters import *
 import pygame
+
 OLD_DIRECTION = STAND_STILL
+
+
 class WorldState:
     def __init__(self, pointsGroup):
         self.pacman_xy = Character.PACMAN.rect.center
         self.pacman_tile = Character.PACMAN.current_tile
         self.ghost_list = []
         for ghost in Character.GHOST_LIST:
-            self.ghost_list.append((ghost.rect.center,ghost.current_tile))
+            self.ghost_list.append((ghost.rect.center, ghost.current_tile))
         self.dots = pointsGroup
         self.game_mode = Character.CURRENT_MODE
 
     @staticmethod
     def getState(pointsGroup):
         return WorldState(pointsGroup)
+
 
 def getPossibleActions():
     possible_actions = []
@@ -29,6 +33,7 @@ def getPossibleActions():
         possible_actions.append(GO_UP)
     return possible_actions
 
+
 def next_direction(direction):
     if direction == GO_LEFT:
         return GO_UP
@@ -38,6 +43,7 @@ def next_direction(direction):
         return GO_DOWN
     if direction == GO_DOWN:
         return GO_LEFT
+
 
 def find_pacman_points(current_tile, last_tile):
     tile_list = []
@@ -63,14 +69,14 @@ def find_pacman_points(current_tile, last_tile):
 
     # handle the tunnel condition
     if len(tile_list) == 0:
-        if current_tile.board_coordinate == (0,17):
+        if current_tile.board_coordinate == (0, 17):
             sublist = []
             sublist.append(current_tile)
-            new_tile = Character.PACMAN.board_matrix[TILE_WIDTH_COUNT-1][17]
+            new_tile = Character.PACMAN.board_matrix[TILE_WIDTH_COUNT - 1][17]
             tile_eaten = find_pacman_points(new_tile, current_tile)
             sublist.extend(tile_eaten[-1])
             tile_list.append(sublist)
-        elif current_tile.board_coordinate == (TILE_WIDTH_COUNT-1,17):
+        elif current_tile.board_coordinate == (TILE_WIDTH_COUNT - 1, 17):
             sublist = []
             sublist.append(current_tile)
             new_tile = Character.PACMAN.board_matrix[0][17]
@@ -95,14 +101,16 @@ def get_closest_pacman_point(state):
 
     return last_point
 
+
 def get_tile_from_pacman_point(ppoint):
     board = Character.PACMAN.board_matrix
-    i  = 0
+    i = 0
     for row in board:
         for tile in row:
             if ppoint.rect.center == tile.rect.center:
                 return tile
     return 0
+
 
 def reward_function(state, action, number_actions):
     """
@@ -112,8 +120,8 @@ def reward_function(state, action, number_actions):
     """
     ppoint = get_closest_pacman_point(state)
     ppoint_tile = get_tile_from_pacman_point(ppoint)
-    desired_direction = Character.PACMAN.get_direction_from_to(state.pacman_tile,ppoint_tile)
-    pr = 1.0/number_actions
+    desired_direction = Character.PACMAN.get_direction_from_to(state.pacman_tile, ppoint_tile)
+    pr = 1.0 / number_actions
 
     return pr
 
@@ -155,6 +163,7 @@ def find_path(current_tile, last_tile, goal_tile, direction):
     tile_list.extend(subpath)
     return tile_list
 
+
 def get_real_tile(state):
     real_tile = 0
     x = state.pacman_tile.board_coordinate[0]
@@ -184,6 +193,7 @@ def get_real_tile(state):
     real_tile = Character.PACMAN.board_matrix[x][y]
     return real_tile
 
+
 def prune_list(tile_list, goal_tile):
     """
     This function iterates over the tiles in the list, and if any of those tiles happens
@@ -195,12 +205,13 @@ def prune_list(tile_list, goal_tile):
         tile = tile_list[i]
         neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, tile)
         if goal_tile in neighbors:
-            new_list = tile_list[:i+1]
+            new_list = tile_list[:i + 1]
             new_list.extend(tile_list[-1:])
             break
         i += 1
 
     return new_list
+
 
 def h(state, direction, goal_tile):
     """
@@ -225,12 +236,13 @@ def h(state, direction, goal_tile):
     if len(tile_list) == 0:
         return 0.0
 
-    cost = abs( (1.0/len(tile_list)) - 1.0 )
+    cost = abs((1.0 / len(tile_list)) - 1.0)
     return cost
 
-def f(state, action, goal_tile):
 
+def f(state, action, goal_tile):
     return h(state, action, goal_tile)
+
 
 def get_direction_a_star(pointsGroup):
     """
@@ -250,7 +262,7 @@ def get_direction_a_star(pointsGroup):
     goal_tile = get_closest_pacman_point(mState)
     # ppoint_tile = get_tile_from_pacman_point(ppoint)
     for action in actions:
-        pr_list.append( (f(mState, action, goal_tile), action) )
+        pr_list.append((f(mState, action, goal_tile), action))
 
     #This is meant to cover the case in which  we get two options with the
     # same probability, we choose to continue with the same direction we had
@@ -262,7 +274,7 @@ def get_direction_a_star(pointsGroup):
 
     # The value f() returns represents the risk to take that action
     # The lower the risk the better option it looks
-    min_tuple = min(pr_list, key=lambda item:item[0])
+    min_tuple = min(pr_list, key=lambda item: item[0])
     OLD_DIRECTION = min_tuple[1]
 
     i = 0
@@ -279,3 +291,8 @@ def get_direction_a_star(pointsGroup):
         i += 1
 
     return min_tuple[1]
+
+
+def reset_old_direction():
+    global OLD_DIRECTION
+    OLD_DIRECTION = STAND_STILL
