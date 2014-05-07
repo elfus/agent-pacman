@@ -39,24 +39,39 @@ def next_direction(direction):
     if direction == GO_DOWN:
         return GO_LEFT
 
+def find_pacman_points(current_tile, last_tile):
+    tile_list = []
+
+    if current_tile.point_eaten == False:
+        tile_list.append([current_tile])
+        return tile_list
+
+    neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current_tile)
+
+    for tile in neighbors:
+        if tile == last_tile:
+            continue
+        sublist = []
+        sublist.append(current_tile)
+        tile_eaten = find_pacman_points(tile, current_tile)
+        sublist.extend(tile_eaten[-1])
+        tile_list.append(sublist)
+
+    return tile_list
+
 
 def get_closest_pacman_point(state):
-    points_list = []
+    list_of_list = []
     h_list = []
-    for point in state.dots:
-        if state.pacman_tile.rect.centerx == point.rect.centerx or \
-                        state.pacman_tile.rect.centery == point.rect.centery:
-            points_list.append(point)
-            continue
 
-    point = 0
-    for point in points_list:
-        h = Character.PACMAN.pitagorazo(state.pacman_xy[0]-point.rect.centerx,
-                                             state.pacman_xy[1]-point.rect.centery)
-        h_list.append((h,point))
+    current_tile = state.pacman_tile
+    list_of_list = find_pacman_points(current_tile, current_tile)
 
-    mtuple = min(h_list, key=lambda item:item[0])
-    return mtuple[1]
+    list = min(list_of_list, key=lambda list: len(list))
+
+    last_point = list[-1]
+
+    return last_point
 
 def get_tile_from_pacman_point(ppoint):
     board = Character.PACMAN.board_matrix
@@ -150,8 +165,8 @@ def get_direction_a_start(pointsGroup):
     mState = WorldState.getState(pointsGroup)
     actions = getPossibleActions()
     pr_list = []
-    ppoint = get_closest_pacman_point(mState)
-    ppoint_tile = get_tile_from_pacman_point(ppoint)
+    ppoint_tile = get_closest_pacman_point(mState)
+    # ppoint_tile = get_tile_from_pacman_point(ppoint)
     for action in actions:
         pr_list.append( (f(mState, action, ppoint_tile), action) )
 
