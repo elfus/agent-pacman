@@ -139,6 +139,69 @@ def g(state, action):
     """
     return 0
 
+
+def find_path(current_tile, last_tile, goal_tile, direction):
+    tile_list = []
+
+    if current_tile == goal_tile:
+        tile_list.append(current_tile)
+        return tile_list
+
+    facing_to = Character.PACMAN.get_facing(direction)
+    adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
+    tile_list.append(current_tile)
+    direction = Character.PACMAN.get_closest_direction_excluding(direction, adjacent_tile, goal_tile, tile_list)
+    subpath = find_path(adjacent_tile, current_tile, goal_tile, direction)
+    tile_list.extend(subpath)
+    return tile_list
+
+def get_real_tile(state):
+    real_tile = 0
+    x = state.pacman_tile.board_coordinate[0]
+    y = state.pacman_tile.board_coordinate[1]
+
+    #This means we are on the same row
+    if state.pacman_xy[0] == state.pacman_tile.rect.centerx:
+        # it means pacman is below the current tile center
+        if state.pacman_xy[1] > state.pacman_tile.rect.centery:
+            x = state.pacman_tile.board_coordinate[0]
+            y = state.pacman_tile.board_coordinate[1] + 1
+        # it means pacman is above the current tile center
+        if state.pacman_xy[1] < state.pacman_tile.rect.centery:
+            x = state.pacman_tile.board_coordinate[0]
+            y = state.pacman_tile.board_coordinate[1] - 1
+    # This means we are on the same column
+    elif state.pacman_xy[1] == state.pacman_tile.rect.centery:
+        # it means pacman is to the right of the current tile center
+        if state.pacman_xy[0] > state.pacman_tile.rect.centerx:
+            x = state.pacman_tile.board_coordinate[0] + 1
+            y = state.pacman_tile.board_coordinate[1]
+        # it means pacman is to the left of the current tile center
+        if state.pacman_xy[0] < state.pacman_tile.rect.centerx:
+            x = state.pacman_tile.board_coordinate[0] - 1
+            y = state.pacman_tile.board_coordinate[1]
+
+    real_tile = Character.PACMAN.board_matrix[x][y]
+    return real_tile
+
+def prune_list(tile_list, goal_tile):
+    """
+    This function iterates over the tiles in the list, and if any of those tiles happens
+    to be a neighbor from the goal_tile then it's pruned.
+    """
+    i = 0
+    new_list = []
+    while i < len(tile_list):
+        tile = tile_list[i]
+        neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, tile)
+        if goal_tile in neighbors:
+            new_list = tile_list[:i+1]
+            new_list.extend(tile_list[-1:])
+            break
+        i += 1
+
+    return new_list
+
 def h(state, direction, goal_tile):
     """
     The h() function is the heuristic function that estimates the cost from the current
@@ -151,18 +214,13 @@ def h(state, direction, goal_tile):
     """
     # Obtener una lista de tiles del tile actual al goal_tile empezando con la action cuidando
     # de no regresarnos
-    tile_list = []
+
     current_tile = state.pacman_tile
+    tile_list = find_path(current_tile, current_tile, goal_tile, direction)
+    #tile_list = prune_list(tile_list, goal_tile)
 
     # TODO: Cambiar este algoritmo, NECESITAS USAR LA LISTA DE TILES QUE YA SE GENERA
     # EN LA FUNCION RECURSIVA!! ESE ES EL CAMINO A SEGUIR :)
-    while current_tile != goal_tile:
-        facing_to = Character.PACMAN.get_facing(direction)
-        adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
-        if adjacent_tile not in tile_list:
-            tile_list.append(adjacent_tile)
-            current_tile = adjacent_tile
-            direction = Character.PACMAN.get_closest_direction_excluding(direction, current_tile, goal_tile,tile_list)
 
     if len(tile_list) == 0:
         return 0.0
@@ -189,16 +247,14 @@ def get_direction_a_star(pointsGroup):
     mState = WorldState.getState(pointsGroup)
     actions = getPossibleActions()
     pr_list = []
-    ppoint_tile = get_closest_pacman_point(mState)
+    goal_tile = get_closest_pacman_point(mState)
     # ppoint_tile = get_tile_from_pacman_point(ppoint)
     for action in actions:
-        pr_list.append( (f(mState, action, ppoint_tile), action) )
-
-
+        pr_list.append( (f(mState, action, goal_tile), action) )
 
     #This is meant to cover the case in which  we get two options with the
     # same probability, we choose to continue with the same direction we had
-    if ppoint_tile == mState.pacman_tile:
+    if goal_tile == mState.pacman_tile:
         for opt in pr_list:
             if opt[1] == action:
                 return OLD_DIRECTION
@@ -217,7 +273,8 @@ def get_direction_a_star(pointsGroup):
         while j < len(pr_list):
             opt2 = pr_list[j]
             if opt1[0] == opt2[0]:
-                return OLD_DIRECTION
+                if opt1[0] <= min_tuple[0]:
+                    return OLD_DIRECTION
             j += 1
         i += 1
 
