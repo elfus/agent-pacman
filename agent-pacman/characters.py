@@ -289,7 +289,7 @@ class Character(pygame.sprite.Sprite):
         if self.name == "Pacman":
             points_list = pygame.sprite.spritecollide(self,pointsGroup,True,collided)
             for point in points_list:
-                self.current_tile.point_eaten = True
+                self.current_tile.point_exists = False
                 if point.is_energizer:
                     self.score += 5
                     Character.CHANGE_TO_FRIGHTENED = True

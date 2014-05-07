@@ -35,7 +35,8 @@ class Tile:
         self.board_coordinate = (0,0)
         self.is_in_ghost_house = False
         self.is_scatter_tile = False
-        self.point_eaten = False
+        self.point_exists = False
+        self.visited = False
 
     def setWalkable(self, isWakable):
         self.is_walkable = isWakable

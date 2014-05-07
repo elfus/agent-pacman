@@ -41,9 +41,11 @@ def next_direction(direction):
 
 def find_pacman_points(current_tile, last_tile):
     tile_list = []
+    current_tile.visited = True
 
-    if current_tile.point_eaten == False:
+    if current_tile.point_exists == True:
         tile_list.append([current_tile])
+        current_tile.visited = False
         return tile_list
 
     neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current_tile)
@@ -53,10 +55,30 @@ def find_pacman_points(current_tile, last_tile):
             continue
         sublist = []
         sublist.append(current_tile)
-        tile_eaten = find_pacman_points(tile, current_tile)
-        sublist.extend(tile_eaten[-1])
+        if tile.visited == False:
+            tile_eaten = find_pacman_points(tile, current_tile)
+            sublist.extend(tile_eaten[-1])
         tile_list.append(sublist)
 
+
+    # handle the tunnel condition
+    if len(tile_list) == 0:
+        if current_tile.board_coordinate == (0,17):
+            sublist = []
+            sublist.append(current_tile)
+            new_tile = Character.PACMAN.board_matrix[TILE_WIDTH_COUNT-1][17]
+            tile_eaten = find_pacman_points(new_tile, current_tile)
+            sublist.extend(tile_eaten[-1])
+            tile_list.append(sublist)
+        elif current_tile.board_coordinate == (TILE_WIDTH_COUNT-1,17):
+            sublist = []
+            sublist.append(current_tile)
+            new_tile = Character.PACMAN.board_matrix[0][17]
+            tile_eaten = find_pacman_points(new_tile, current_tile)
+            sublist.extend(tile_eaten[-1])
+            tile_list.append(sublist)
+
+    current_tile.visited = False
     return tile_list
 
 
@@ -117,13 +139,13 @@ def g(state, action):
     """
     return 0
 
-def h(state, action, goal_tile):
+def h(state, direction, goal_tile):
     """
     The h() function is the heuristic function that estimates the cost from the current
     position to the goal.
 
     :param state:  Current World state
-    :param action: The action we want to take
+    :param direction: The action we want to take
     :param goal: Where we want to get
     :return:
     """
@@ -132,13 +154,15 @@ def h(state, action, goal_tile):
     tile_list = []
     current_tile = state.pacman_tile
 
+    # TODO: Cambiar este algoritmo, NECESITAS USAR LA LISTA DE TILES QUE YA SE GENERA
+    # EN LA FUNCION RECURSIVA!! ESE ES EL CAMINO A SEGUIR :)
     while current_tile != goal_tile:
-        facing_to = Character.PACMAN.get_facing(action)
+        facing_to = Character.PACMAN.get_facing(direction)
         adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
         if adjacent_tile not in tile_list:
             tile_list.append(adjacent_tile)
             current_tile = adjacent_tile
-            action = Character.PACMAN.get_closest_direction_excluding(action, current_tile, goal_tile,tile_list)
+            direction = Character.PACMAN.get_closest_direction_excluding(direction, current_tile, goal_tile,tile_list)
 
     if len(tile_list) == 0:
         return 0.0

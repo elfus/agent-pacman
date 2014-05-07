@@ -114,6 +114,14 @@ def ghost_mode_detector():
             CURRENT_MODE_START = time.time()
             print "Elapsed time",elapsed_time,"seconds"
 
+
+def turn_on_point_flag(board_matrix, pointsGroup):
+    for row in board_matrix:
+        for tile in row:
+            for point in pointsGroup:
+                if tile.rect.center == point.rect.center:
+                    tile.point_exists = True
+
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
@@ -168,6 +176,8 @@ def main():
     pointsGroup = generate_pacman_points(board_matrix)
 
     SLOW_MOVEMENT = True
+
+    turn_on_point_flag(board_matrix, pointsGroup)
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
