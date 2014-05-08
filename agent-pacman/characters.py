@@ -407,6 +407,7 @@ class Character(pygame.sprite.Sprite):
                 return GO_LEFT
             if from_tile.board_coordinate == (TILE_WIDTH_COUNT-1,17):
                 return GO_RIGHT
+            return current_direction
         closest = min(d_list)
         index = d_list.index(closest)
 

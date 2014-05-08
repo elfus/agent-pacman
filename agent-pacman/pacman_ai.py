@@ -147,6 +147,8 @@ def find_path(current_tile, last_tile, goal_tile, direction):
 
     facing_to = Character.PACMAN.get_facing(direction)
     adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
+    if adjacent_tile.is_walkable == False:
+        adjacent_tile = current_tile
     tile_list.append(current_tile)
     direction = Character.PACMAN.get_closest_direction_excluding(direction, adjacent_tile, goal_tile, tile_list)
     subpath = find_path(adjacent_tile, current_tile, goal_tile, direction)
@@ -243,7 +245,7 @@ def get_direction_a_star(pointsGroup):
     """
     global OLD_DIRECTION
     mState = WorldState.getState(pointsGroup)
-    actions = getPossibleActions()
+    actions = [GO_UP, GO_LEFT, GO_DOWN, GO_RIGHT]
     pr_list = []
     goal_tile = get_closest_pacman_point(mState)
     # ppoint_tile = get_tile_from_pacman_point(ppoint)
