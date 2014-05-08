@@ -5,6 +5,7 @@ __author__ = 'aortegag'
 from util import *
 import random
 import time
+import datetime
 
 POINTS_LIST = 0
 
@@ -881,14 +882,29 @@ class Pacman(Character):
         self.game_count = 0
         self.games_won = 0
         self.games_lost = 0
+        self.log = open(self.generate_name(), 'w', )
+        self.log.write("New pacman game!\n")
+        self.log.flush()
         print 'Pacman constructor'
+
+    def generate_name(self):
+        name = "pacman-log-"
+        name +=  datetime.datetime.now().strftime("%I%M%p-%B-%d-%Y") + ".txt"
+        return name
+
 
     def game_over(self, boardMatrix, pacman_wins=False):
         self.game_count += 1
+        status = ""
         if pacman_wins == True:
             self.games_won += 1
+            status = "WON "
         elif pacman_wins == False:
             self.games_lost += 1
+            status = "LOST"
+        time = "["+datetime.datetime.now().strftime("%I:%M:%S %p")+"] "
+        self.log.write(time+"[Game status: "+status+"] [Current score: "+str(self.score)+"] [Highest score: "+str(self.highest_score)+"] Game summary [count: "+str(self.game_count)+"] [won:"+str(self.games_won)+"] [lost:"+str(self.games_lost)+"]\n")
+        self.log.flush()
         self.reset_state(boardMatrix)
 
     def reset_state(self, boardMatrix):
