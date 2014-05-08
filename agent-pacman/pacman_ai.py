@@ -235,7 +235,8 @@ def get_direction_a_star(pointsGroup):
     goal_tile = get_closest_pacman_point(mState)
     # ppoint_tile = get_tile_from_pacman_point(ppoint)
     for action in actions:
-        pr_list.append((f(mState, action, goal_tile), action))
+        probability = f(mState, action, goal_tile)
+        pr_list.append((probability, action))
 
     #This is meant to cover the case in which  we get two options with the
     # same probability, we choose to continue with the same direction we had
