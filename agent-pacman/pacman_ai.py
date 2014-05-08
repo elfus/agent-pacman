@@ -53,6 +53,9 @@ def find_pacman_points(current_tile, last_tile):
     :return: A list of tiles representing the path.
     """
     tile_list = []
+    if current_tile.visited == True:
+        return tile_list
+
     current_tile.visited = True
 
     if current_tile.point_exists == True:
@@ -93,6 +96,17 @@ def find_pacman_points(current_tile, last_tile):
     current_tile.visited = False
     return tile_list
 
+def find_closest_pacman_point(state):
+    h_list = []
+    for dot in state.dots:
+        px = Character.PACMAN.rect.x
+        py = Character.PACMAN.rect.y
+        tx = dot.rect.x
+        ty = dot.rect.y
+        h = Character.PACMAN.pitagorazo(px-tx, py-ty)
+        h_list.append((h,dot))
+    h_list = sorted(h_list,key=lambda item:item[0])
+    return h_list[0][1]
 
 def get_closest_pacman_point(state):
     """
@@ -105,14 +119,11 @@ def get_closest_pacman_point(state):
     :return:
     """
     current_tile = state.pacman_tile
-    list_of_list = find_pacman_points(current_tile, current_tile)
 
-    # TODO: Randomize the choosing of two lists with the same path cost
-    list = min(list_of_list, key=lambda list: len(list))
+    point = find_closest_pacman_point(state)
 
-    last_point = list[-1]
 
-    return last_point
+    return point.board_tile
 
 
 def g(state, action):
@@ -160,6 +171,9 @@ def find_path(current_tile, last_tile, goal_tile, direction):
 
     if current_tile == goal_tile:
         tile_list.append(current_tile)
+        return tile_list
+
+    if current_tile.is_in_ghost_house == True:
         return tile_list
 
     if is_going_away_from_goal(current_tile,goal_tile,direction) == True:

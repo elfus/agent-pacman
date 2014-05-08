@@ -47,6 +47,8 @@ class PacmanPoint(pygame.sprite.Sprite):
         # If it's not an energize is assumed to be a normal point
         self.set_energizer(False)
 
+        self.board_tile = 0
+
     def set_energizer(self, boolean):
         self.is_energizer = boolean
         if boolean == False:
@@ -127,6 +129,10 @@ def detect_intersections(boardMatrix):
 
             if tile.board_coordinate == (3,0) or tile.board_coordinate == (TILE_WIDTH_COUNT-4,0):
                 tile.is_scatter_tile = True
+    boardMatrix[12][15].is_in_ghost_house = True
+    boardMatrix[13][15].is_in_ghost_house = True
+    boardMatrix[14][15].is_in_ghost_house = True
+    boardMatrix[15][15].is_in_ghost_house = True
 
 
 def create_wall(maze, x, y):
@@ -207,5 +213,6 @@ def generate_pacman_points(boardMatrix):
                         point.image = point.big_dot
                     else:
                         point = PacmanPoint(tile.rect.centerx, tile.rect.centery)
+                    point.board_tile = tile
                     pointsGroup.add(point)
     return pointsGroup
