@@ -149,7 +149,7 @@ class Character(pygame.sprite.Sprite):
                     print "GAME OVER:",self.name,"killed Pacman"
                     # Reset world state
                     # Remove this so ghosts can kill pacman!
-                    Character.PACMAN.reset_state(self.board_matrix)
+                    Character.PACMAN.game_over(self.board_matrix, False)
                     for ghost in Character.GHOST_LIST:
                         ghost.reset_state(self.board_matrix)
                     Character.GAME_OVER = True
@@ -878,7 +878,18 @@ class Pacman(Character):
         Character.PACMAN = self
         self.highest_score = 0
         self.reset_state(boardMatrix)
+        self.game_count = 0
+        self.games_won = 0
+        self.games_lost = 0
         print 'Pacman constructor'
+
+    def game_over(self, boardMatrix, pacman_wins=False):
+        self.game_count += 1
+        if pacman_wins == True:
+            self.games_won += 1
+        elif pacman_wins == False:
+            self.games_lost += 1
+        self.reset_state(boardMatrix)
 
     def reset_state(self, boardMatrix):
         Character.reset_state(self,boardMatrix)

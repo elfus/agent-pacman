@@ -38,6 +38,9 @@ class Tile:
         self.point_exists = False
         self.visited = False
 
+    def __coerce__(self, other):
+        return self, other
+
     def setWalkable(self, isWakable):
         self.is_walkable = isWakable
 

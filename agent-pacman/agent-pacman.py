@@ -185,6 +185,10 @@ def main():
     SLOW_MOVEMENT = True
 
     turn_on_point_flag(board_matrix, pointsGroup)
+
+    render_message(screen, "Current Score", (32,4), 14)
+    render_message(screen, "Won", ((BOARD_WIDTH-45),4), 14)
+    render_message(screen, "Lost", ((BOARD_WIDTH-15),4), 14)
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
@@ -319,7 +323,7 @@ def main():
             screen.blit(pacman_background,Character.PACMAN.rect,Character.PACMAN.rect)
             for character in ghostsprite.sprites():
                 screen.blit(pacman_background, character.rect, character.rect)
-            Character.PACMAN.reset_state(board_matrix)
+            Character.PACMAN.game_over(board_matrix,True)
             for ghost in Character.GHOST_LIST:
                 ghost.reset_state(board_matrix)
             pointsGroup = generate_pacman_points(board_matrix)
@@ -364,7 +368,9 @@ def main():
         ghostsprite.draw(screen)
 
         render_score(screen, str(Character.PACMAN.score), (30,16))
-        render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2),16))
+        render_score(screen, str(Character.PACMAN.highest_score), ((BOARD_WIDTH/2), 16))
+        render_score(screen, str(Character.PACMAN.games_won), ((BOARD_WIDTH-45), 16))
+        render_score(screen, str(Character.PACMAN.games_lost), ((BOARD_WIDTH-15), 16))
 
         if(Character.GAME_OVER):
             pygame.time.delay(1000)
