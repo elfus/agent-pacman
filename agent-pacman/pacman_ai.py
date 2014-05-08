@@ -127,6 +127,23 @@ def g(state, action):
     """
     return 0
 
+def is_going_away_from_goal(current_tile, goal_tile, direction):
+    """
+    This function checks the special case in which the current_tile is neighbor from the goal_tile
+    but the current direction about to be applied makes pacman go away from the goal_tile
+    :param current_tile:
+    :param goal_tile:
+    :param direction:
+    :return: True when direction makes pacman go away from goal_tile when it's a neighbor
+    """
+    neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current_tile)
+    for tile in neighbors:
+        if tile == goal_tile:
+            real_direction = Character.PACMAN.get_direction_from_to(current_tile, goal_tile)
+            if real_direction != direction:
+                return True
+    return False
+
 
 def find_path(current_tile, last_tile, goal_tile, direction):
     """
@@ -144,6 +161,9 @@ def find_path(current_tile, last_tile, goal_tile, direction):
     if current_tile == goal_tile:
         tile_list.append(current_tile)
         return tile_list
+
+    if is_going_away_from_goal(current_tile,goal_tile,direction) == True:
+        return -1
 
     facing_to = Character.PACMAN.get_facing(direction)
     adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
@@ -220,6 +240,9 @@ def h(state, direction, goal_tile):
 
     current_tile = state.pacman_tile
     tile_list = find_path(current_tile, current_tile, goal_tile, direction)
+
+    if tile_list == -1:
+        return 1.0
 
     if len(tile_list) == 0:
         return 0.0
