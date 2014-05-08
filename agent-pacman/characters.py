@@ -385,7 +385,7 @@ class Character(pygame.sprite.Sprite):
     def get_closest_direction_excluding(self, current_direction, from_tile, to_tile, banned_list):
         """
         Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
-        This method ignores the current tile, and the tile we came from.
+        This method ignores the current tile, and the tile we came from, and the ones in the banned list
         :param from_tile:
         :param to_tile:
         """

@@ -46,6 +46,12 @@ def next_direction(direction):
 
 
 def find_pacman_points(current_tile, last_tile):
+    """
+    This function recursively finds the closest point to the current_tile
+    :param current_tile: Current tile where we are now
+    :param last_tile: The last tile we visited.
+    :return: A list of tiles representing the path.
+    """
     tile_list = []
     current_tile.visited = True
 
@@ -89,12 +95,19 @@ def find_pacman_points(current_tile, last_tile):
 
 
 def get_closest_pacman_point(state):
-    list_of_list = []
-    h_list = []
+    """
+    Gets the closest pacman point to pacman in terms of number of tiles in a path.
 
+    @BUG This function has a problem when two different paths have the same length, the one
+    that will be chosen is the first occurrence in the list. We have to randomize that somehow
+
+    :param state:
+    :return:
+    """
     current_tile = state.pacman_tile
     list_of_list = find_pacman_points(current_tile, current_tile)
 
+    # TODO: Randomize the choosing of two lists with the same path cost
     list = min(list_of_list, key=lambda list: len(list))
 
     last_point = list[-1]
@@ -102,44 +115,11 @@ def get_closest_pacman_point(state):
     return last_point
 
 
-def get_tile_from_pacman_point(ppoint):
-    board = Character.PACMAN.board_matrix
-    i = 0
-    for row in board:
-        for tile in row:
-            if ppoint.rect.center == tile.rect.center:
-                return tile
-    return 0
-
-
-def reward_function(state, action, number_actions):
-    """
-    The reward function tells pacman what is good in an immediate sense. It tells pacman
-    the desirability to apply the given action in the current state
-
-    """
-    ppoint = get_closest_pacman_point(state)
-    ppoint_tile = get_tile_from_pacman_point(ppoint)
-    desired_direction = Character.PACMAN.get_direction_from_to(state.pacman_tile, ppoint_tile)
-    pr = 1.0 / number_actions
-
-    return pr
-
-
-def agent_policy(state, action, number_actions):
-    """
-    Calculates the probability that the action will be performed in the current state
-    :param state:
-    :param action:
-    :return:
-    """
-    val = reward_function(state, action, number_actions)
-    return val
-
-
 def g(state, action):
     """
     The g() function returns the cost from the initial node to the actual position
+
+    TODO: Implement :)
 
     :param state: Current World state
     :param action: The action we want to take
@@ -149,6 +129,16 @@ def g(state, action):
 
 
 def find_path(current_tile, last_tile, goal_tile, direction):
+    """
+    Finds a path from the current_tile to the goal_tile using the given direction and making sure
+    we don't go back through the last_tile.
+
+    :param current_tile:
+    :param last_tile:
+    :param goal_tile:
+    :param direction:
+    :return:
+    """
     tile_list = []
 
     if current_tile == goal_tile:
@@ -228,10 +218,6 @@ def h(state, direction, goal_tile):
 
     current_tile = state.pacman_tile
     tile_list = find_path(current_tile, current_tile, goal_tile, direction)
-    #tile_list = prune_list(tile_list, goal_tile)
-
-    # TODO: Cambiar este algoritmo, NECESITAS USAR LA LISTA DE TILES QUE YA SE GENERA
-    # EN LA FUNCION RECURSIVA!! ESE ES EL CAMINO A SEGUIR :)
 
     if len(tile_list) == 0:
         return 0.0
