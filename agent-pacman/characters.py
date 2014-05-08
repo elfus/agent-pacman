@@ -2,9 +2,6 @@ from math import sqrt
 
 __author__ = 'aortegag'
 
-import pygame
-from pygame.locals import *
-from pygame.locals import *
 from util import *
 import random
 import time
@@ -347,6 +344,8 @@ class Character(pygame.sprite.Sprite):
         new_facing = self.get_facing(direction)
         target_tile, target_xy = self.get_adjacent_tile(new_facing)
         if target_tile.isWalkable() == False:
+            return False
+        if target_tile.is_in_ghost_house == True:
             return False
         if new_facing == FACING_UP or new_facing == FACING_DOWN:
             if target_tile.rect.centerx != self.rect.centerx:
