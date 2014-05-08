@@ -11,6 +11,7 @@ from characters import *
 from pacman_ai import get_direction_a_star
 from pacman_ai import reset_old_direction
 import time
+import sys
 
 X_AXIS = 0
 Y_AXIS = 1
