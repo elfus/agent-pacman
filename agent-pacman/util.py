@@ -62,6 +62,12 @@ def load_image(name):
     return image, image.get_rect()
 
 def get_tile_neighbors(boardMatrix, tile):
+    """
+    Gets the north, south, west and east neighbors from the tile. This function returns neighbors that are walkable
+    :param boardMatrix:
+    :param tile:
+    :return:
+    """
     up = (tile.board_coordinate[0],tile.board_coordinate[1]-1)
     down = (tile.board_coordinate[0],tile.board_coordinate[1]+1)
     left = (tile.board_coordinate[0]-1,tile.board_coordinate[1])
