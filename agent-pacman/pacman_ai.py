@@ -118,10 +118,7 @@ def get_closest_pacman_point(state):
     :param state:
     :return:
     """
-    current_tile = state.pacman_tile
-
     point = find_closest_pacman_point(state)
-
 
     return point.board_tile
 
@@ -188,55 +185,6 @@ def find_path(current_tile, last_tile, goal_tile, direction):
     subpath = find_path(adjacent_tile, current_tile, goal_tile, direction)
     tile_list.extend(subpath)
     return tile_list
-
-
-def get_real_tile(state):
-    real_tile = 0
-    x = state.pacman_tile.board_coordinate[0]
-    y = state.pacman_tile.board_coordinate[1]
-
-    #This means we are on the same row
-    if state.pacman_xy[0] == state.pacman_tile.rect.centerx:
-        # it means pacman is below the current tile center
-        if state.pacman_xy[1] > state.pacman_tile.rect.centery:
-            x = state.pacman_tile.board_coordinate[0]
-            y = state.pacman_tile.board_coordinate[1] + 1
-        # it means pacman is above the current tile center
-        if state.pacman_xy[1] < state.pacman_tile.rect.centery:
-            x = state.pacman_tile.board_coordinate[0]
-            y = state.pacman_tile.board_coordinate[1] - 1
-    # This means we are on the same column
-    elif state.pacman_xy[1] == state.pacman_tile.rect.centery:
-        # it means pacman is to the right of the current tile center
-        if state.pacman_xy[0] > state.pacman_tile.rect.centerx:
-            x = state.pacman_tile.board_coordinate[0] + 1
-            y = state.pacman_tile.board_coordinate[1]
-        # it means pacman is to the left of the current tile center
-        if state.pacman_xy[0] < state.pacman_tile.rect.centerx:
-            x = state.pacman_tile.board_coordinate[0] - 1
-            y = state.pacman_tile.board_coordinate[1]
-
-    real_tile = Character.PACMAN.board_matrix[x][y]
-    return real_tile
-
-
-def prune_list(tile_list, goal_tile):
-    """
-    This function iterates over the tiles in the list, and if any of those tiles happens
-    to be a neighbor from the goal_tile then it's pruned.
-    """
-    i = 0
-    new_list = []
-    while i < len(tile_list):
-        tile = tile_list[i]
-        neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, tile)
-        if goal_tile in neighbors:
-            new_list = tile_list[:i + 1]
-            new_list.extend(tile_list[-1:])
-            break
-        i += 1
-
-    return new_list
 
 
 def h(state, direction, goal_tile):
