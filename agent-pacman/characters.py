@@ -167,6 +167,9 @@ class Character(pygame.sprite.Sprite):
         This variable assumes the attribute variable self.facing is set before
         calling this method.
 
+        @NOTE WHEN THERE IS AN ADJACENT TILE THAT IS NOT WALKABLE, THIS FUNCTION
+        WILL RETURN THE SAME TILE received as input
+
         :param facing_to: Where we are facing
         :return: The tile in board matrix and its coordinates in the board matrix
         """
