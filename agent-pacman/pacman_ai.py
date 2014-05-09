@@ -262,6 +262,9 @@ def get_direction_a_star(pointsGroup):
     # The lower the risk the better option it looks
     min_tuple = min(pr_list, key=lambda item: item[0])
     Character.PACMAN.goal_tile = goal_tile
+
+    # This represents when there are two that have the same probability.
+    # Pick the one that is closest to the goal
     i = 0
     j = 0
     while i < len(pr_list):
@@ -271,13 +274,17 @@ def get_direction_a_star(pointsGroup):
             opt2 = pr_list[j]
             if opt1[0] == opt2[0]:
                 if opt1[0] <= min_tuple[0]:
-                    return OLD_DIRECTION
+                    return get_closest_direction(opt1[1], min_tuple[1], goal_tile)
             j += 1
         i += 1
     OLD_DIRECTION = min_tuple[1]
     Character.PACMAN.tile_list = [L[1] for L in Character.PACMAN.tile_list_options if min_tuple[1] == L[0] ][0]
     return min_tuple[1]
 
+def get_closest_direction(dir1, dir2, goal_tile):
+    direction = Character.PACMAN.get_direction(Character.PACMAN.facing)
+    closest = Character.PACMAN.get_closest_direction(direction, Character.PACMAN.current_tile, goal_tile)
+    return closest
 
 def reset_old_direction():
     global OLD_DIRECTION
