@@ -192,7 +192,10 @@ def find_path(current_tile, last_tile, goal_tile, direction):
     direction = Character.PACMAN.get_closest_direction_excluding(direction, adjacent_tile, goal_tile, tile_list)
     subpath = find_path(adjacent_tile, current_tile, goal_tile, direction)
     if isinstance(subpath, list):
-            tile_list.extend(subpath)
+        tile_list.extend(subpath)
+    if isinstance(subpath, int):
+        if subpath == -1:
+            tile_list = -1
     current_tile.visited = False
     return tile_list
 
@@ -247,15 +250,6 @@ def get_direction_a_star(pointsGroup):
     for action in actions:
         probability = f(mState, action, goal_tile)
         pr_list.append((probability, action))
-
-
-    new_list = []
-    old_list = pr_list
-    for tup in pr_list:
-        direction = tup[1]
-        if Character.PACMAN.can_move_to(direction):
-            new_list.append(tup)
-    pr_list = new_list
 
     #This is meant to cover the case in which  we get two options with the
     # same probability, we choose to continue with the same direction we had
