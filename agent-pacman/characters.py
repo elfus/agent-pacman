@@ -885,6 +885,10 @@ class Pacman(Character):
         self.log = open(self.generate_name(), 'w', )
         self.log.write("New pacman game!\n")
         self.log.flush()
+        self.screen = 0
+        self.tile_list = []
+        self.tile_list_options = []
+        self.goal_tile = boardMatrix[0][0]
         print 'Pacman constructor'
 
     def generate_name(self):

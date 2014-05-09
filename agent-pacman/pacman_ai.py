@@ -216,8 +216,7 @@ def h(state, direction, goal_tile):
     if tile_list == -1:
         return 1.0
 
-    if len(tile_list) == 0:
-        return 0.0
+    Character.PACMAN.tile_list_options.append((direction, tile_list))
 
     cost = abs((1.0 / len(tile_list)) - 1.0)
     return cost
@@ -239,6 +238,7 @@ def get_direction_a_star(pointsGroup):
     :return:
     """
     global OLD_DIRECTION
+    Character.PACMAN.tile_list_options = []
     mState = WorldState.getState(pointsGroup)
     actions = [GO_UP, GO_LEFT, GO_DOWN, GO_RIGHT]
     pr_list = []
@@ -268,7 +268,7 @@ def get_direction_a_star(pointsGroup):
     # The value f() returns represents the risk to take that action
     # The lower the risk the better option it looks
     min_tuple = min(pr_list, key=lambda item: item[0])
-
+    Character.PACMAN.goal_tile = goal_tile
     i = 0
     j = 0
     while i < len(pr_list):
@@ -282,6 +282,7 @@ def get_direction_a_star(pointsGroup):
             j += 1
         i += 1
     OLD_DIRECTION = min_tuple[1]
+    Character.PACMAN.tile_list = [L[1] for L in Character.PACMAN.tile_list_options if min_tuple[1] == L[0] ][0]
     return min_tuple[1]
 
 

@@ -190,6 +190,7 @@ def main():
     render_message(screen, "Current Score", (32,4), 14)
     render_message(screen, "Won", ((BOARD_WIDTH-45),4), 14)
     render_message(screen, "Lost", ((BOARD_WIDTH-15),4), 14)
+    pacman.screen = screen
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
@@ -210,6 +211,11 @@ def main():
         #         if tile.is_scatter_tile:
         #             screen.fill(PURPLE,tile.rect)
         ## Used for debugging
+
+        for tile in pacman.tile_list:
+            screen.blit(pacman_background, tile.rect,tile.rect)
+
+        screen.blit(pacman_background, pacman.goal_tile.rect,pacman.goal_tile.rect)
 
         for character in ghostsprite.sprites():
             screen.blit(pacman_background, character.rect, character.rect)
@@ -353,6 +359,10 @@ def main():
                 pacman.movedirection(LAST_DIRECTION, pointsGroup)
                 PENDING_DIRECTION = direction
 
+        for tile in pacman.tile_list:
+            screen.fill(GREEN, tile.rect)
+
+        screen.fill(PURPLE, pacman.goal_tile.rect)
 
         if Character.CURRENT_MODE == FRIGHTENED_MODE:
             for ghost in ghostsprite.sprites():
