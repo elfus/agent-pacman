@@ -333,6 +333,7 @@ def main():
             Character.PACMAN.game_over(board_matrix,True)
             for ghost in Character.GHOST_LIST:
                 ghost.reset_state(board_matrix)
+            reset_old_direction()
             pointsGroup = generate_pacman_points(board_matrix)
             pointsGroup.draw(screen)
             Character.GAME_OVER = False
@@ -361,6 +362,8 @@ def main():
 
         for tile in pacman.tile_list:
             screen.fill(GREEN, tile.rect)
+        render_message(screen)
+        render_message(screen,"Path cost: "+str(len(pacman.tile_list)))
 
         screen.fill(PURPLE, pacman.goal_tile.rect)
 

@@ -246,7 +246,6 @@ def get_direction_a_star(pointsGroup):
     actions = [GO_UP, GO_LEFT, GO_DOWN, GO_RIGHT]
     pr_list = []
     goal_tile = get_closest_pacman_point(mState)
-    action = Character.PACMAN.get_direction_from_to(mState.pacman_tile, goal_tile)
     for action in actions:
         probability = f(mState, action, goal_tile)
         pr_list.append((probability, action))
