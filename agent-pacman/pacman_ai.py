@@ -165,26 +165,35 @@ def find_path(current_tile, last_tile, goal_tile, direction):
     :return:
     """
     tile_list = []
+    if current_tile.visited == True:
+        return -1
+
+    current_tile.visited = True
 
     if current_tile == goal_tile:
         tile_list.append(current_tile)
+        current_tile.visited = False
         return tile_list
 
     if current_tile.is_in_ghost_house == True:
+        current_tile.visited = False
         return tile_list
 
     if is_going_away_from_goal(current_tile,goal_tile,direction) == True:
+        current_tile.visited = False
         return -1
 
     facing_to = Character.PACMAN.get_facing(direction)
     adjacent_tile, tile_xy = Character.PACMAN.get_adjacent_tile_to(current_tile, facing_to)
     if adjacent_tile.is_walkable == False:
+        current_tile.visited = False
         return -1
     tile_list.append(current_tile)
     direction = Character.PACMAN.get_closest_direction_excluding(direction, adjacent_tile, goal_tile, tile_list)
     subpath = find_path(adjacent_tile, current_tile, goal_tile, direction)
     if isinstance(subpath, list):
-        tile_list.extend(subpath)
+            tile_list.extend(subpath)
+    current_tile.visited = False
     return tile_list
 
 
@@ -239,6 +248,15 @@ def get_direction_a_star(pointsGroup):
         probability = f(mState, action, goal_tile)
         pr_list.append((probability, action))
 
+
+    new_list = []
+    old_list = pr_list
+    for tup in pr_list:
+        direction = tup[1]
+        if Character.PACMAN.can_move_to(direction):
+            new_list.append(tup)
+    pr_list = new_list
+
     #This is meant to cover the case in which  we get two options with the
     # same probability, we choose to continue with the same direction we had
     if goal_tile == mState.pacman_tile:
@@ -250,7 +268,6 @@ def get_direction_a_star(pointsGroup):
     # The value f() returns represents the risk to take that action
     # The lower the risk the better option it looks
     min_tuple = min(pr_list, key=lambda item: item[0])
-    OLD_DIRECTION = min_tuple[1]
 
     i = 0
     j = 0
@@ -264,7 +281,7 @@ def get_direction_a_star(pointsGroup):
                     return OLD_DIRECTION
             j += 1
         i += 1
-
+    OLD_DIRECTION = min_tuple[1]
     return min_tuple[1]
 
 
