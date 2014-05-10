@@ -124,7 +124,7 @@ def get_closest_pacman_point(state):
     expanded = []
     while len(queue) > 0:
         current = queue.popleft()
-        current.visited = True
+        expanded.append(current)
 
         if current.point_exists:
             apath = [current] # In case current pacman point has a point
@@ -132,21 +132,17 @@ def get_closest_pacman_point(state):
                 current = current.parent
                 apath.append(current)
             list_of_lists.append(apath)
-            continue
+            break
 
         neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current)
-        expanded.append(current)
 
         for n in neighbors:
             if n not in expanded:
                 n.parent = current
                 queue.append(n)
 
-
-    for sublist in list_of_lists:
-        for tile in sublist:
-            tile.parent = 0
-            tile.visited = False
+    for tile in expanded:
+        tile.parent = 0
 
     Character.PACMAN.tile_list = list_of_lists[0]
     return list_of_lists[0][0]
