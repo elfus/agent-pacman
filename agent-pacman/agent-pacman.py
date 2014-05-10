@@ -135,7 +135,7 @@ def get_energizers_location(pointsGroup):
     energizers = []
     for point in pointsGroup:
         if point.is_energizer:
-            energizers.append(point.board_tile)
+            energizers.append(point)
     return energizers
 
 def main():

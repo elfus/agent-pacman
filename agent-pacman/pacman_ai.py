@@ -9,6 +9,7 @@ OLD_PATH = []
 
 class WorldState:
     def __init__(self, pointsGroup):
+        self.pacman = Character.PACMAN
         self.pacman_xy = Character.PACMAN.rect.center
         self.pacman_tile = Character.PACMAN.current_tile
         self.ghost_list = []
@@ -24,6 +25,8 @@ class WorldState:
         return WorldState(pointsGroup)
 
 def detect_ghosts_nearby(state):
+    if Character.CURRENT_MODE == FRIGHTENED_MODE:
+        return False
     pac = Character.PACMAN
     ref_tile = pac.board_matrix[pac.tile_xy[0]][pac.tile_xy[1]-5]
     px = pac.current_tile.board_coordinate[0]
@@ -35,13 +38,57 @@ def detect_ghosts_nearby(state):
             continue
         gx = ghost_tile.board_coordinate[0]
         gy = ghost_tile.board_coordinate[1]
-        if abs(px-gx) <= 7 and abs(py-gy) <= 6:
+        if abs(px-gx) <= 8 and abs(py-gy) <= 6:
             count += 1
 
     if count >= 3:
         return True
     return False
 
+def get_direction_to_closest_energizer(state):
+    list_of_lists = []
+    queue = deque([state.pacman_tile])
+    expanded = []
+    pacman_tile = state.pacman.current_tile
+
+    h_list = []
+    for dot in state.pacman.energizer_tiles:
+        h = state.pacman.pitagorazo(pacman_tile.rect.x - dot.rect.x, pacman_tile.rect.y - dot.rect.y)
+        h_list.append((h,dot))
+    if len(h_list) >= 1:
+        tu = min(h_list, key=lambda item:item[0])
+        target_energizer = tu[1]
+    elif len(h_list) == 0:
+        OLD_GOAL, OLD_PATH = get_closest_pacman_point(state)
+        return OLD_GOAL, OLD_PATH
+    
+    while len(queue) > 0:
+        current = queue.popleft()
+        expanded.append(current)
+
+        if current == target_energizer.board_tile:
+            apath = [current] # In case current pacman point has a point
+            while current.parent != 0 :
+                current = current.parent
+                apath.append(current)
+            apath.reverse()
+            list_of_lists.append(apath)
+            break
+
+        neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current)
+
+        for n in neighbors:
+            if n not in expanded:
+                n.parent = current
+                queue.append(n)
+
+    for tile in expanded:
+        tile.parent = 0
+
+    list_of_lists = sorted(list_of_lists,key= lambda L:len(L))
+    chosen_list = list_of_lists[0]
+    Character.PACMAN.tile_list = chosen_list
+    return chosen_list[-1], chosen_list
 
 def get_direction_to_closest_ghost(state):
     global OLD_PATH
@@ -168,12 +215,15 @@ def get_direction_a_star(pointsGroup):
     Character.PACMAN.tile_list_options = []
     mState = WorldState.getState(pointsGroup)
     direction = STAND_STILL
-
+    ghosts_nearby = False
     if detect_ghosts_nearby(mState):
         print '3 or more ghosts nearby!'
+        ghosts_nearby = True
 
     if OLD_GOAL.point_exists == False:
-        if Character.CURRENT_MODE == FRIGHTENED_MODE:
+        if ghosts_nearby:
+            OLD_GOAL, OLD_PATH = get_direction_to_closest_energizer(mState)
+        elif Character.CURRENT_MODE == FRIGHTENED_MODE:
             OLD_GOAL, OLD_PATH = get_direction_to_closest_ghost(mState)
         else:
             OLD_GOAL, OLD_PATH = get_closest_pacman_point(mState)
