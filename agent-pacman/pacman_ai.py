@@ -72,11 +72,15 @@ def get_closest_pacman_point(state):
     chosen_list = list_of_lists[0]
     # When we have two options with the same path cost (number of tiles to walk)
     # use a random index to have different games according to the system time
-    if len(list_of_lists) > 1:
-        if len(list_of_lists[0]) == len(list_of_lists[1]):
-            random.seed()
+    random.seed()
+    i = 0
+    if len(list_of_lists) == 3:
+        if len(list_of_lists[0]) == len(list_of_lists[1]) == len(list_of_lists[2]):
+            i = random.randrange(3)
+        if len(list_of_lists[0]) == len(list_of_lists[1]) != len(list_of_lists[2]):
             i = random.randrange(2)
-            chosen_list = list_of_lists[i]
+
+    chosen_list = list_of_lists[i]
     Character.PACMAN.tile_list = chosen_list
     return chosen_list[-1], chosen_list
 
