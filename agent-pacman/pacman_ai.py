@@ -4,7 +4,8 @@ from characters import *
 from collections import deque
 
 OLD_DIRECTION = STAND_STILL
-
+OLD_GOAL = 0
+OLD_PATH = []
 
 class WorldState:
     def __init__(self, pointsGroup):
@@ -144,8 +145,9 @@ def get_closest_pacman_point(state):
     for tile in expanded:
         tile.parent = 0
 
+    list_of_lists[0].reverse()
     Character.PACMAN.tile_list = list_of_lists[0]
-    return list_of_lists[0][0]
+    return list_of_lists[0][-1], list_of_lists[0]
 
 
 def g(state, action):
@@ -266,13 +268,26 @@ def get_direction_a_star(pointsGroup):
     :return:
     """
     global OLD_DIRECTION
+    global OLD_GOAL
+    global OLD_PATH
     Character.PACMAN.tile_list_options = []
     mState = WorldState.getState(pointsGroup)
-    actions = [GO_UP, GO_LEFT, GO_DOWN, GO_RIGHT]
-    pr_list = []
-    goal_tile = get_closest_pacman_point(mState)
-    Character.PACMAN.goal_tile = goal_tile
-    direction = Character.PACMAN.get_closest_direction(mState.current_direction,mState.pacman_tile,goal_tile)
+    direction = STAND_STILL
+    if OLD_GOAL.point_exists == False:
+        OLD_GOAL, OLD_PATH = get_closest_pacman_point(mState)
+    Character.PACMAN.goal_tile = OLD_GOAL
+
+    if len(OLD_PATH) >= 2 and OLD_PATH[1] == mState.pacman_tile:
+        OLD_PATH.pop(0)
+
+    if len(OLD_PATH) == 1:
+        direction = Character.PACMAN.get_closest_direction2(mState.pacman_tile,OLD_PATH[0])
+    elif len(OLD_PATH) >= 2:
+        direction = Character.PACMAN.get_closest_direction2(OLD_PATH[0],OLD_PATH[1])
+        OLD_DIRECTION = direction
+
+    if direction == STAND_STILL:
+        direction = OLD_DIRECTION
 
     return direction
 
@@ -283,4 +298,8 @@ def get_closest_direction(dir1, dir2, goal_tile):
 
 def reset_old_direction():
     global OLD_DIRECTION
+    global OLD_GOAL
+    global OLD_PATH
     OLD_DIRECTION = STAND_STILL
+    OLD_PATH = []
+    OLD_GOAL = Character.PACMAN.board_matrix[0][0]

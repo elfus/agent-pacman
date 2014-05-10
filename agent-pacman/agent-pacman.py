@@ -192,6 +192,7 @@ def main():
     render_message(screen, "Won", ((BOARD_WIDTH-45),4), 14)
     render_message(screen, "Lost", ((BOARD_WIDTH-15),4), 14)
     pacman.screen = screen
+    reset_old_direction()
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)

@@ -387,6 +387,30 @@ class Character(pygame.sprite.Sprite):
 
         return self.get_direction_from_to(from_tile,neighbors[index])
 
+    def get_closest_direction2(self, from_tile, to_tile):
+        """
+        Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
+        This method ignores the current tile, and the tile we came from.
+        :param from_tile:
+        :param to_tile:
+        """
+        if from_tile == to_tile:
+            return self.get_direction_from_to(from_tile,to_tile)
+
+        neighbors = get_tile_neighbors(self.board_matrix, from_tile)
+        for tile in neighbors:
+            if tile == self.current_tile:
+                neighbors.remove(self.current_tile)
+        d_list = []
+        for tile in neighbors:
+            distance = self.pitagorazo(tile.rect.centerx-to_tile.rect.centerx,
+                                       tile.rect.centery-to_tile.rect.centery)
+            d_list.append(distance)
+        closest = min(d_list)
+        index = d_list.index(closest)
+
+        return self.get_direction_from_to(from_tile,neighbors[index])
+
     def get_closest_direction_excluding(self, current_direction, from_tile, to_tile, banned_list):
         """
         Gets the neighbors from tile from_tile, and then determines the closest tile to to_tile.
