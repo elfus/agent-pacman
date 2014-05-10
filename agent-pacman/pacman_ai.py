@@ -1,7 +1,7 @@
 __author__ = 'aortegag'
 
 from characters import *
-import pygame
+from collections import deque
 
 OLD_DIRECTION = STAND_STILL
 
@@ -15,6 +15,8 @@ class WorldState:
             self.ghost_list.append((ghost.rect.center, ghost.current_tile))
         self.dots = pointsGroup
         self.game_mode = Character.CURRENT_MODE
+        self.facing = Character.PACMAN.facing
+        self.current_direction = Character.PACMAN.get_direction(self.facing)
 
     @staticmethod
     def getState(pointsGroup):
@@ -112,15 +114,40 @@ def get_closest_pacman_point(state):
     """
     Gets the closest pacman point to pacman in terms of number of tiles in a path.
 
-    @BUG This function has a problem when two different paths have the same length, the one
-    that will be chosen is the first occurrence in the list. We have to randomize that somehow
+    This function makes a breadth-first search
 
     :param state:
     :return:
     """
-    point = find_closest_pacman_point(state)
+    list_of_lists = []
+    queue = deque([state.pacman_tile])
+    expanded = []
+    while len(queue) > 0:
+        current = queue.popleft()
+        current.visited = True
 
-    return point.board_tile
+        if current.point_exists:
+            apath = [current] # In case current pacman point has a point
+            while current.parent != 0 :
+                current = current.parent
+                apath.append(current)
+            list_of_lists.append(apath)
+            continue
+
+        neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current)
+        expanded.append(current)
+
+        for n in neighbors:
+            if n not in expanded:
+                n.parent = current
+                queue.append(n)
+
+
+    for sublist in list_of_lists:
+        for tile in sublist:
+            tile.parent = 0
+            tile.visited = False
+    return list_of_lists[0].pop()
 
 
 def g(state, action):
@@ -246,40 +273,9 @@ def get_direction_a_star(pointsGroup):
     actions = [GO_UP, GO_LEFT, GO_DOWN, GO_RIGHT]
     pr_list = []
     goal_tile = get_closest_pacman_point(mState)
-    for action in actions:
-        probability = f(mState, action, goal_tile)
-        pr_list.append((probability, action))
+    direction = Character.PACMAN.get_closest_direction(mState.current_direction,mState.pacman_tile,goal_tile)
 
-    #This is meant to cover the case in which  we get two options with the
-    # same probability, we choose to continue with the same direction we had
-    if goal_tile == mState.pacman_tile:
-        for opt in pr_list:
-            if opt[1] == action:
-                return OLD_DIRECTION
-
-
-    # The value f() returns represents the risk to take that action
-    # The lower the risk the better option it looks
-    min_tuple = min(pr_list, key=lambda item: item[0])
-    Character.PACMAN.goal_tile = goal_tile
-
-    # This represents when there are two that have the same probability.
-    # Pick the one that is closest to the goal
-    i = 0
-    j = 0
-    while i < len(pr_list):
-        opt1 = pr_list[i]
-        j = i + 1
-        while j < len(pr_list):
-            opt2 = pr_list[j]
-            if opt1[0] == opt2[0]:
-                if opt1[0] <= min_tuple[0]:
-                    return get_closest_direction(opt1[1], min_tuple[1], goal_tile)
-            j += 1
-        i += 1
-    OLD_DIRECTION = min_tuple[1]
-    Character.PACMAN.tile_list = [L[1] for L in Character.PACMAN.tile_list_options if min_tuple[1] == L[0] ][0]
-    return min_tuple[1]
+    return direction
 
 def get_closest_direction(dir1, dir2, goal_tile):
     direction = Character.PACMAN.get_direction(Character.PACMAN.facing)

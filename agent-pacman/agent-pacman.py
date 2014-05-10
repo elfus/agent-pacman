@@ -129,6 +129,7 @@ def reset_board_tiles(board_matrix):
         for tile in row:
             tile.visited = False
             tile.point_exists = False
+            tile.parent = 0
 
 def main():
     global LAST_DIRECTION

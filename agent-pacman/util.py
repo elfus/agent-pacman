@@ -37,6 +37,7 @@ class Tile:
         self.is_scatter_tile = False
         self.point_exists = False
         self.visited = False
+        self.parent = 0
 
     def __coerce__(self, other):
         return self, other
