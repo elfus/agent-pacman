@@ -36,6 +36,8 @@ def get_closest_pacman_point(state):
     list_of_lists = []
     queue = deque([state.pacman_tile])
     expanded = []
+    options_count = 0
+    OPTIONS_LIMIT = 3
     while len(queue) > 0:
         current = queue.popleft()
         expanded.append(current)
@@ -45,8 +47,16 @@ def get_closest_pacman_point(state):
             while current.parent != 0 :
                 current = current.parent
                 apath.append(current)
+            apath.reverse()
             list_of_lists.append(apath)
-            break
+            options_count += 1
+            # when there are a few dots cut the search when we find the first one
+            if len(state.dots.sprites()) <= 25:
+                break;
+            # find up to OPTIONS_LIMIT dots
+            if options_count == OPTIONS_LIMIT:
+                break
+            continue
 
         neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current)
 
@@ -58,9 +68,17 @@ def get_closest_pacman_point(state):
     for tile in expanded:
         tile.parent = 0
 
-    list_of_lists[0].reverse()
-    Character.PACMAN.tile_list = list_of_lists[0]
-    return list_of_lists[0][-1], list_of_lists[0]
+    list_of_lists = sorted(list_of_lists,key= lambda L:len(L))
+    chosen_list = list_of_lists[0]
+    # When we have two options with the same path cost (number of tiles to walk)
+    # use a random index to have different games according to the system time
+    if len(list_of_lists) > 1:
+        if len(list_of_lists[0]) == len(list_of_lists[1]):
+            random.seed()
+            i = random.randrange(2)
+            chosen_list = list_of_lists[i]
+    Character.PACMAN.tile_list = chosen_list
+    return chosen_list[-1], chosen_list
 
 def get_direction_a_star(pointsGroup):
     """
