@@ -147,7 +147,9 @@ def get_closest_pacman_point(state):
         for tile in sublist:
             tile.parent = 0
             tile.visited = False
-    return list_of_lists[0].pop()
+
+    Character.PACMAN.tile_list = list_of_lists[0]
+    return list_of_lists[0][0]
 
 
 def g(state, action):
@@ -273,6 +275,7 @@ def get_direction_a_star(pointsGroup):
     actions = [GO_UP, GO_LEFT, GO_DOWN, GO_RIGHT]
     pr_list = []
     goal_tile = get_closest_pacman_point(mState)
+    Character.PACMAN.goal_tile = goal_tile
     direction = Character.PACMAN.get_closest_direction(mState.current_direction,mState.pacman_tile,goal_tile)
 
     return direction
