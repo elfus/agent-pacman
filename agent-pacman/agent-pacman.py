@@ -338,6 +338,7 @@ def main():
             reset_old_direction()
             pointsGroup = generate_pacman_points(board_matrix)
             pointsGroup.draw(screen)
+            turn_on_point_flag(board_matrix, pointsGroup)
             Character.GAME_OVER = False
             change_mode(CHASE_MODE)
             render_message(screen)
