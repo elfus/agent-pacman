@@ -24,6 +24,54 @@ class WorldState:
         return WorldState(pointsGroup)
 
 
+def get_direction_to_closest_ghost(state):
+    global OLD_PATH
+    global OLD_GOAL
+    list_of_lists = []
+    queue = deque([state.pacman_tile])
+    expanded = []
+
+    h_list = []
+    pt = state.pacman_tile
+    for ghost in Character.GHOST_LIST:
+        if ghost.killed or ghost.current_tile.is_in_ghost_house:
+            continue
+        h = Character.PACMAN.pitagorazo(pt.rect.x-ghost.rect.x, pt.rect.y-ghost.rect.y)
+        h_list.append((h,ghost))
+    if len(h_list) >= 1:
+        tup = min(h_list,key=lambda item:item[0])
+        target = tup[1]
+    elif len(h_list) == 0:
+        OLD_GOAL, OLD_PATH = get_closest_pacman_point(state)
+        return OLD_GOAL, OLD_PATH
+
+    while len(queue) > 0:
+        current = queue.popleft()
+        expanded.append(current)
+
+        if current == target.current_tile:
+            apath = [current] # In case current pacman point has a point
+            while current.parent != 0 :
+                current = current.parent
+                apath.append(current)
+            apath.reverse()
+            list_of_lists.append(apath)
+            break
+
+        neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, current)
+
+        for n in neighbors:
+            if n not in expanded:
+                n.parent = current
+                queue.append(n)
+
+    for tile in expanded:
+        tile.parent = 0
+
+    path = list_of_lists[0]
+
+    return target.current_tile, path
+
 def get_closest_pacman_point(state):
     """
     Gets the closest pacman point to pacman in terms of number of tiles in a path.
@@ -102,7 +150,10 @@ def get_direction_a_star(pointsGroup):
     mState = WorldState.getState(pointsGroup)
     direction = STAND_STILL
     if OLD_GOAL.point_exists == False:
-        OLD_GOAL, OLD_PATH = get_closest_pacman_point(mState)
+        if Character.CURRENT_MODE == FRIGHTENED_MODE:
+            OLD_GOAL, OLD_PATH = get_direction_to_closest_ghost(mState)
+        else:
+            OLD_GOAL, OLD_PATH = get_closest_pacman_point(mState)
     Character.PACMAN.goal_tile = OLD_GOAL
 
     if len(OLD_PATH) >= 2 and OLD_PATH[1] == mState.pacman_tile:
