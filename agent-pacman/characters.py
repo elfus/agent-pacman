@@ -288,14 +288,16 @@ class Character(pygame.sprite.Sprite):
             self.rect.move_ip(direction)
 
         if self.name == "Pacman":
-            points_list = pygame.sprite.spritecollide(self,pointsGroup,True,collided)
+            points_list = pygame.sprite.spritecollide(self,pointsGroup,False,collided)
             for point in points_list:
-                self.current_tile.point_exists = False
-                if point.is_energizer:
-                    self.score += 5
-                    Character.CHANGE_TO_FRIGHTENED = True
-                else:
-                    self.score += 1
+                if point.rect.center == self.rect.center:
+                    pointsGroup.remove(point)
+                    self.current_tile.point_exists = False
+                    if point.is_energizer:
+                        self.score += 5
+                        Character.CHANGE_TO_FRIGHTENED = True
+                    else:
+                        self.score += 1
             if self.score > self.highest_score:
                 self.highest_score = self.score
         return True
