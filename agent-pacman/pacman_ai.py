@@ -23,6 +23,25 @@ class WorldState:
     def getState(pointsGroup):
         return WorldState(pointsGroup)
 
+def detect_ghosts_nearby(state):
+    pac = Character.PACMAN
+    ref_tile = pac.board_matrix[pac.tile_xy[0]][pac.tile_xy[1]-5]
+    px = pac.current_tile.board_coordinate[0]
+    py = pac.current_tile.board_coordinate[1]
+    count = 0
+    for ghost in Character.GHOST_LIST:
+        ghost_tile = ghost.current_tile
+        if ghost_tile.is_in_ghost_house:
+            continue
+        gx = ghost_tile.board_coordinate[0]
+        gy = ghost_tile.board_coordinate[1]
+        if abs(px-gx) <= 7 and abs(py-gy) <= 6:
+            count += 1
+
+    if count >= 3:
+        return True
+    return False
+
 
 def get_direction_to_closest_ghost(state):
     global OLD_PATH
@@ -149,6 +168,10 @@ def get_direction_a_star(pointsGroup):
     Character.PACMAN.tile_list_options = []
     mState = WorldState.getState(pointsGroup)
     direction = STAND_STILL
+
+    if detect_ghosts_nearby(mState):
+        print '3 or more ghosts nearby!'
+
     if OLD_GOAL.point_exists == False:
         if Character.CURRENT_MODE == FRIGHTENED_MODE:
             OLD_GOAL, OLD_PATH = get_direction_to_closest_ghost(mState)
