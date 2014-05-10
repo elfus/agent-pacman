@@ -918,6 +918,7 @@ class Pacman(Character):
         self.tile_list = []
         self.tile_list_options = []
         self.goal_tile = boardMatrix[0][0]
+        self.energizer_tiles = []
         print 'Pacman constructor'
 
     def generate_name(self):

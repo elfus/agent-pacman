@@ -131,6 +131,13 @@ def reset_board_tiles(board_matrix):
             tile.point_exists = False
             tile.parent = 0
 
+def get_energizers_location(pointsGroup):
+    energizers = []
+    for point in pointsGroup:
+        if point.is_energizer:
+            energizers.append(point.board_tile)
+    return energizers
+
 def main():
     global LAST_DIRECTION
     global PENDING_DIRECTION
@@ -193,6 +200,7 @@ def main():
     render_message(screen, "Lost", ((BOARD_WIDTH-15),4), 14)
     pacman.screen = screen
     reset_old_direction()
+    pacman.energizer_tiles = get_energizers_location(pointsGroup)
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
