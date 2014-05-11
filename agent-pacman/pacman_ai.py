@@ -24,7 +24,26 @@ class WorldState:
     def getState(pointsGroup):
         return WorldState(pointsGroup)
 
-def detect_ghosts_nearby(state):
+def detect_ghosts_near_path(path):
+    if Character.CURRENT_MODE == FRIGHTENED_MODE:
+        return False
+    path = path[1:]
+    for tile in path:
+        neighbors = get_tile_neighbors(Character.PACMAN.board_matrix, tile)
+        all_neighbors = neighbors[:]
+        for n in neighbors:
+            new_neighbor = get_tile_neighbors(Character.PACMAN.board_matrix, n)
+            all_neighbors.extend(new_neighbor)
+        all_neighbors = all_neighbors[1:]
+        for ghost in Character.GHOST_LIST:
+            if ghost.current_tile == tile:
+                return True
+            if ghost.current_tile in all_neighbors:
+                return True
+
+    return False
+
+def detect_ghosts_near_pacman(state):
     if Character.CURRENT_MODE == FRIGHTENED_MODE:
         return False
     pac = Character.PACMAN
@@ -45,7 +64,7 @@ def detect_ghosts_nearby(state):
         return True
     return False
 
-def get_direction_to_closest_energizer(state):
+def get_direction_to_closest_energizer(state, ignore_goal = 0):
     list_of_lists = []
     queue = deque([state.pacman_tile])
     expanded = []
@@ -61,7 +80,7 @@ def get_direction_to_closest_energizer(state):
     elif len(h_list) == 0:
         OLD_GOAL, OLD_PATH = get_closest_pacman_point(state)
         return OLD_GOAL, OLD_PATH
-    
+
     while len(queue) > 0:
         current = queue.popleft()
         expanded.append(current)
@@ -72,6 +91,10 @@ def get_direction_to_closest_energizer(state):
                 current = current.parent
                 apath.append(current)
             apath.reverse()
+            if ignore_goal != 0:
+                if apath[-1] == ignore_goal:
+                    print 'Ignoring energizer'
+                    continue
             list_of_lists.append(apath)
             break
 
@@ -138,7 +161,7 @@ def get_direction_to_closest_ghost(state):
 
     return target.current_tile, path
 
-def get_closest_pacman_point(state):
+def get_closest_pacman_point(state, ignore_goal=0):
     """
     Gets the closest pacman point to pacman in terms of number of tiles in a path.
 
@@ -162,6 +185,10 @@ def get_closest_pacman_point(state):
                 current = current.parent
                 apath.append(current)
             apath.reverse()
+            if ignore_goal != 0:
+                if apath[-1] == ignore_goal:
+                    print 'Ignoring goal'
+                    continue
             list_of_lists.append(apath)
             options_count += 1
             # when there are a few dots cut the search when we find the first one
@@ -183,7 +210,6 @@ def get_closest_pacman_point(state):
         tile.parent = 0
 
     list_of_lists = sorted(list_of_lists,key= lambda L:len(L))
-    chosen_list = list_of_lists[0]
     # When we have two options with the same path cost (number of tiles to walk)
     # use a random index to have different games according to the system time
     random.seed()
@@ -216,17 +242,23 @@ def get_direction_a_star(pointsGroup):
     mState = WorldState.getState(pointsGroup)
     direction = STAND_STILL
     ghosts_nearby = False
-    if detect_ghosts_nearby(mState):
+    ghosts_near_path = False
+    ignore_goal = 0
+
+    if detect_ghosts_near_path(OLD_PATH):
+        print 'Ghost near path!'
+        ignore_goal = OLD_PATH[-1]
+    elif detect_ghosts_near_pacman(mState):
         print '3 or more ghosts nearby!'
         ghosts_nearby = True
 
-    if OLD_GOAL.point_exists == False:
+    if OLD_GOAL.point_exists == False or ignore_goal !=0 :
         if ghosts_nearby:
-            OLD_GOAL, OLD_PATH = get_direction_to_closest_energizer(mState)
+            OLD_GOAL, OLD_PATH = get_direction_to_closest_energizer(mState, ignore_goal)
         elif Character.CURRENT_MODE == FRIGHTENED_MODE:
             OLD_GOAL, OLD_PATH = get_direction_to_closest_ghost(mState)
         else:
-            OLD_GOAL, OLD_PATH = get_closest_pacman_point(mState)
+            OLD_GOAL, OLD_PATH = get_closest_pacman_point(mState, ignore_goal)
     Character.PACMAN.goal_tile = OLD_GOAL
 
     if len(OLD_PATH) >= 2 and OLD_PATH[1] == mState.pacman_tile:
