@@ -1,0 +1,1236 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family rmdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Agent Pac-Man: A Study in A* Search Method
+\end_layout
+
+\begin_layout Author
+Adrián Ortega García, Juan Carlos Orendain
+\end_layout
+
+\begin_layout Abstract
+This paper explores an algorithm based on A* to create an agent capable
+ of solving a game of Pac-Man.
+ Such algorithm was implemented using Python and PyGame in order to have
+ a quick implementation that could allow the authors make some experiments
+ and comparisons between a traditional breadth first search and A* based
+ algorithm.
+\end_layout
+
+\begin_layout Section
+Introduction and Background
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Introduction-and-Background"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Pac-Man is a video game developed by Namco in 1980.
+ The game was first released for arcade machines, since then it has been
+ re released in a number of different game consoles including the Nintendo
+ Game boy, the Microsoft Xbox, Anrdoid, iOS and many more.
+ For the 30th aniversyary of the game.
+ google changed its logo on its homepage to a fully playable version of
+ the game.
+ An estimation conducted by the company Twin Galaxys, which specializes
+ in tracking world records in the video game industry, named Pac-Man the
+ highest grossing game of all time
+\end_layout
+
+\begin_layout Subsection
+Pac-Man Game Design History
+\end_layout
+
+\begin_layout Standard
+Pac-Man was designed by Toru Iwatani in 1979 and released in 1980 under
+ the name Puck Man.
+ The name Puck man came from a Japanese slang word (paku paku) which describdes
+ the motion of the mouth as it eats.
+ The inspiration for the game came from a Japanese story about a creature
+ that protected children from monsters by eating them.
+ The initial idea for the shape of Puck-Man came from the word mouth in
+ Japanese, kuchi, specifically from the kanji symbol for the word which
+ is a square shape.
+ This original shape was eventually changed into the recognizable yellow
+ disk the world came to love.
+ The monsters of the stories were represented in the game by the four ghosts
+ and each was given its own name and personality.
+ The other big design element that came from the story are the power pellets
+ that allow the player to eat the ghosts.
+\begin_inset CommandInset citation
+LatexCommand cite
+key "d3"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Puck Man was released on May 22nd, 1980 to a moderate succes within the
+ japanese gaming community.
+ The cartoony appearance of the game and the color palette were too differente
+ to the Space Invaders types of games that were popular at the time.
+ The game was distributed in the United States by Midway in October, 1980.
+ Midway made a few changes to the arcade cabinet including changing the
+ name from Puck Man to Pac Man because Midway was afraid of vandalism that
+ could easily change the word Puck into a profanity.
+ Other changes included changing the color of the cabinet from white to
+ yellow and the original complex artowrk was changed for a simple design
+ that gave Pca man eyes and feet.
+ These small changes were extremely succesful at making the game stand out
+ in the arcades.
+ The lack of any other games with the same style or similar gameplay put
+ it in an incredible position to attract a wider range of players, including
+ women.
+ Most of the games up to this point in history would focus on direct conflict
+ which alienated the female demographic.
+ In 1982 the sequel, Ms Pac Man was released and the Pac Man franchise would
+ go on to become a cultural icon, with people frequently dressing up as
+ the characters of the game for halloween, cartoons a multitude of world
+ records.
+\end_layout
+
+\begin_layout Subsection
+Ghost behavior
+\end_layout
+
+\begin_layout Standard
+The game features four ghosts, Blinky, Pinky, Inky and Clyde.
+ All behavior can be separated into three modes, Scatter, Chase and Frightened.
+ The game will change behavior between scatter and chase at intervals, giving
+ the feeling of waves.
+ The frightened mode can only be triggered by the player eating a power
+ pellet.
+ The decision was made to have the ghosts change behavior between Chase
+ and Scatter to give the player a break and give the game a feeling of 
+\end_layout
+
+\begin_layout Subsubsection
+Scatter
+\end_layout
+
+\begin_layout Standard
+In the scatter behavior each ghost will go to a predetermined tile located
+ close to each corner.
+ For the first level, which this study investigates the ratios of behaviors
+ are:
+\end_layout
+
+\begin_layout Enumerate
+Scatter for 7 seconds, Chase for 20
+\end_layout
+
+\begin_layout Enumerate
+Scatter for 7 seconds, Chase for 20
+\end_layout
+
+\begin_layout Enumerate
+Scatter for 5 seconds, Chase for 20
+\end_layout
+
+\begin_layout Enumerate
+Scatter for 5 seconds, Chase permanently
+\end_layout
+
+\begin_layout Subsubsection
+Chase
+\end_layout
+
+\begin_layout Standard
+Chase behavior is when the challenge of the game begins, each ghost has
+ it own uniqe rules for its behavior.
+\end_layout
+
+\begin_layout Enumerate
+Blinky is the red ghost.
+ its behavior during chase is to target the player's current tile.
+ Blinky's speed changes as the player approaches the end of the level.
+ When there are only 20 dots left, Blinky becomes as fast as Pac-Man.
+ When there are only 10 dots left it actually moves faster than Pac-Man.
+ Another difference is that when there are only 20 dots left Blinky will
+ ignore the Scatter command and continue to chase
+\end_layout
+
+\begin_layout Enumerate
+Pinky, as its name implies is the pink ghost.
+ Pinky's behavior during chase is to target a tile offset from where the
+ player is, if the player is moving left, Pnky will target four tiles to
+ the right.
+ If the player is moving right, Pinky will target four tiles to the right.
+ If the player is moving up, in the original code Pinky would target four
+ tiles up and four tiles to the left because of a bug.
+\end_layout
+
+\begin_layout Enumerate
+Inky is the light blue ghost.
+ It's behavior during chase is the least predictable of the other ghosts.
+ Inky uses the player's tile and orientation and Blinky's current tile,
+ to determine it's target, the ghost agent looks at an offset of 2 from
+ the player and draws a vector from the position of Blinky to this offset
+ tile, then doubles the vector length and this becomes its target tile
+\end_layout
+
+\begin_layout Enumerate
+Clyde is the orange ghost.
+ Clyde's behavior in Chase changes based on the proximity to the player.
+ The agent first calculates the Euclidean distance between it and the player.
+ If the distance is 8 or more, Clyde chases the player just like Blinky.
+ If the distance is less than 8, then his behavior switches to target the
+ same corner it targets during scatter until it is far away enough to resume
+ the chase.
+\end_layout
+
+\begin_layout Subsubsection
+Frightened
+\end_layout
+
+\begin_layout Standard
+The frightened mode is triggered when the player eats a power pellet.
+ This changes the behavior of the ghosts to pseudorandomly decide where
+ to go at each intersection.
+ This proces is generated by a pseudo random number generator.
+ The numbers it creates are translated in teh direction the ghost will try
+ to go to; if that direction is not available the code goes in a clockwise
+ direction until a path is available.
+ This mode is shown to the player as the ghosts change to blue.
+ The player also knows when this mode will end when the ghosts blink.
+\end_layout
+
+\begin_layout Subsubsection
+Blinky behavior
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: Copy and paste the behavior from the class presentation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Pinky behavior
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: Copy and paste the behavior from the class presentation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Inky behavior
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: Copy and paste the behavior from the class presentation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Clyde behavior
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: Copy and paste the behavior from the class presentation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Breadth First Search and A* algorithm
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Todo: Add some brief content about Breadth first search and A* algorith,
+ just the basics not a detailed explanation.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Python and PyGame
+\end_layout
+
+\begin_layout Standard
+For this specific problem the authors decided to use Python and PyGame mostly
+ due to the ease of learning and use of such programming language and game
+ development API respectively.
+ However, some other considerations were taken into account when choosing
+ the right tools that would help solve this problem.
+ Such considerations were memory and performance complexity.
+ Python is often known as the 
+\emph on
+swiss army knife 
+\emph default
+when it comes ease of use and readability to achieve a certain task, however
+ that is not true when talking about performance and memory space usage.
+ Being Python a high level programming language, it also introduces a lot
+ of overhead with all the abstraction layers introduced in order to provide
+ a wide spectrum of functionality.
+ On the other hand PyGame is a wrapper around SDL
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://www.libsdl.org/
+\end_layout
+
+\end_inset
+
+, which in turn is another wrapper library around DirectX and OpenGL.
+ All these layer abstractions introduce several constraints in the algorithms
+ and data structures used in the final implementation.
+\end_layout
+
+\begin_layout Standard
+Despite these constrains, the authors opted to choose Python and PyGame,
+ mostly to the fact that pacman itself it's not a high performance and resource
+ consuming videogame and with careful attention on the implementation details
+ the authors would not have any problem on solving the problem in this chosen
+ platform.
+\end_layout
+
+\begin_layout Subsection
+Modifications for this study
+\end_layout
+
+\begin_layout Standard
+Some things were not added to the version of the game we used to test the
+ agent.
+ The features removed were deemed irrelevant to the behavior of the Learning
+ agent.
+ The game lacks animated sprites
+\end_layout
+
+\begin_layout Section
+The Pacman problem
+\end_layout
+
+\begin_layout Standard
+Being one of the most popular videogames in history, Pacman is a videogame
+ with some really simple and elegant design rules that when combined together
+ yield a not-so simple videogame as can be seen in 
+\begin_inset CommandInset citation
+LatexCommand citet*
+key "d2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The main purpose of Pacman is simple, eat all of the dots in the map without
+ being killed.
+ Of course, just like any other videogame besides the main purpose we want
+ to maximize the final score by getting the most points we can, which can
+ be achieved by eating the 
+\emph on
+power pellets
+\emph default
+, 
+\emph on
+pacman fruits, 
+\emph default
+and 
+\emph on
+frightened ghosts
+\emph default
+.
+\end_layout
+
+\begin_layout Subsection
+World definition
+\end_layout
+
+\begin_layout Standard
+From the description above and in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Introduction-and-Background"
+
+\end_inset
+
+ we identified the most important elements to solve the Pacman problem.
+ The elements that were chosen to have a mapping with some data structures
+ in this programming assignment were:
+\end_layout
+
+\begin_layout Itemize
+Pacman
+\end_layout
+
+\begin_layout Itemize
+Ghosts
+\end_layout
+
+\begin_layout Itemize
+Dots eaten by pacman
+\end_layout
+
+\begin_layout Itemize
+Power pellets or energizers (big dots)
+\end_layout
+
+\begin_layout Itemize
+Pacman maze
+\end_layout
+
+\begin_layout Standard
+In addition to these high level abstractions, it was really important to
+ define what kind information would be available to Pacman at all times
+ to make decisions about where to move.
+ The authors decided to make available all the information to pacman as
+ any human player would, that is the position of the ghosts, the location
+ of all the dots and power pellets, and information of th epossible moves
+ that Pacman can do, i.e.
+ move left, right, up or down.
+\end_layout
+
+\begin_layout Subsection
+Algorithms used
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Algorithms-used"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For the final implementation of Pacman AI two algorithms were chosen to
+ make some comparisons in the pacman behavior and final results of each
+ game: 
+\emph on
+Breadth First Search 
+\emph default
+and 
+\emph on
+A*
+\emph default
+ algorithms.
+ Their implementation within the context of Pacman is as follows:
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+Breadth First Search
+\noun default
+.
+ The implementation was really simple, Pacman always goes to the closest
+ dot regardless of the position of the ghosts and whether the dot is a regular
+ dot or a 
+\emph on
+power pellet
+\emph default
+.
+ However, there were several situations in which Pacman would be at the
+ same distance from two or more dots.
+ Since a regular 
+\emph on
+breadth search 
+\emph default
+was implemened, despite being at the same distance the implementation always
+ finds one dot first before the other one and add it to a list.
+ In such cases the first dot in the list was used.
+ There is another important condition to mention when Pacman is located
+ at a point where he has to decide between different paths, i.e.
+ in an intersection where Pacman has to decide wether to go left, right,
+ up or down.
+ In these cases a simple randomization function was used to generate a random
+ number and choose one of the possible paths to be taken.
+ This implementation resulted in a 
+\emph on
+pseudo-random 
+\emph default
+behavior when it comes to deciding between two dots and deciding which path
+ to take.
+ This implementation resulted in low scores in all the games played, yielding
+ some high scores in rare cases that we can regard as 
+\emph on
+lucky games
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+A*
+\noun default
+.The heuristics used for this algorithm were a little bit more complex than
+ the breadth first search, but still really simple.
+ Four heuristics were chosen that will help Pacman maximize the score while
+ keeping him alive as much time as possible, and they evaluated in the following
+ order.
+\end_layout
+
+\begin_layout Enumerate
+Pacman always goes to the closest dot.
+\end_layout
+
+\begin_layout Enumerate
+If ghost is detected near the path between pacman and the target dot, either
+ on the path or in any of the adjacent positions of the path itself, pacman
+ will choose a different dot.
+\end_layout
+
+\begin_layout Enumerate
+If there are three or more ghosts within a fixed area of Pacman, Pacman
+ will discard its current target dot and will go after a 
+\emph on
+power pellet
+\emph default
+.
+ Remember Pacman always knows their position.
+\end_layout
+
+\begin_layout Enumerate
+If the current game mode is 
+\emph on
+Frightened Mode, 
+\emph default
+Pacman will chase the ghosts and kill them.
+\end_layout
+
+\begin_layout Standard
+These four heuristics resulted in some interesting behavior from Pacman,
+ that at times seemed like human decision.
+ An example is when pacman detects there is a ghost near the dot it's about
+ to eat and the chooses to go to a different dot based on heuristic number
+ 2.
+ It is important to note that for the A* algorithm we have a function 
+\emph on
+g(n) 
+\emph default
+that determines the cost from the initial state until current state 
+\emph on
+n
+\emph default
+, and a function 
+\emph on
+h(n)
+\emph default
+ that is our heuristic function that estimates the best cost from current
+ state 
+\emph on
+n
+\emph default
+ to the 
+\emph on
+goal
+\emph default
+.
+ If we consider that our game runs at 
+\emph on
+60 frames
+\emph default
+ per second and at every frame we calculate the heuristics we just defined,
+ this that we calculate heuristics above 60 times a second, that is for
+ each heuristics of the four defined above, which gives a total of 240 heuristic
+s calculated in one second, which in turn each of the heuristics introduce
+ their own amount calculations needed to provide an output result.
+ Due to implementation details and technical limitations from Python and
+ PyGame it was decided to not implement the function 
+\emph on
+g(n)
+\emph default
+, rather just implement the heuristics.
+ This was done mostly due to big amount of data needed to be saved and processed
+ to decide which direction should Pacman go.
+ Some of this data are the position where pacman has been, the position
+ were the ghosts have been, the position of remaining and consumed dots
+ and how they were consumed including a distinction for the 
+\emph on
+power pellets
+\emph default
+.
+ If the authors had decided to save all this information and process it,
+ the performance of the game would have dropped drastically.
+ In fact, for the heuristic number one a recursive approach was implemented
+ first giving the expected results but with really bad performance, it was
+ then decided to change to an iterative implementation.
+ It was mostly due to the limitations imposed by Python that only the 
+\emph on
+h(n)
+\emph default
+ function was implemented.
+\end_layout
+
+\begin_layout Subsection
+Test results
+\end_layout
+
+\begin_layout Standard
+The set of tests that were run for the final implementation were using both
+ algorithms described in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Algorithms-used"
+
+\end_inset
+
+.
+ We executed the application and let Pacman play for 20 games with each
+ algorithm, and recorded the score for that game, the highest score for
+ all games, and number of games won or lost.
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:table1"
+
+\end_inset
+
+ shows the results for a 
+\emph on
+breadth first search 
+\emph default
+and table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:table2"
+
+\end_inset
+
+ for the 
+\emph on
+A* search
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename pacman-results-bfs.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:table1"
+
+\end_inset
+
+Breadth First Search Results
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename pacman-results-astar.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:table2"
+
+\end_inset
+
+A* Search results
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From these tables we can appreciate that for the first algorithm in table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:table1"
+
+\end_inset
+
+ the desire of Pacman to get to the closest dot regardles of the position
+ of the ghosts results in low scores, as well as for the highest score achieved
+ by the algorithm.
+ We can also that the algorithm fails to win a single game.
+ In contrast the 
+\emph on
+A*
+\emph default
+ algorithm provided better results both for the current score, highest score
+ and it was able to win a game.
+\end_layout
+
+\begin_layout Standard
+In overall, the mean for the current score using the breadth first algorithm
+ was of 
+\emph on
+116.75 points
+\emph default
+.
+ Taking into consideration this measurement we can tell that 35% of games
+ played scored above the mean, whereas 45% of the games achieved a scored
+ below the mean, with a 0% winrate.
+ The mean for the current score using the A* algorithm was of 
+\emph on
+153.8 points, 
+\emph default
+with 45% of games played scored above the mean score, and 55% of games played
+ scored below the mean score.
+ Surprisingly, the A* search was able to achieve one win which resulted
+ in a win rate of 5%.
+ This data can be summarized in the following table.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="5">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Algorithm
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+% above mean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+% below mean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Win rate
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BFS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+116.75
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+35%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+65%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+A*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+153.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+45%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+55%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Results summary
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can clearly see that the A* search provided a 
+\emph on
+31%
+\emph default
+ increase in the overall score achieved by pacman, as well as an improvement
+ in the number of games above the mean of 
+\emph on
+10%, 
+\emph default
+and surprisingly it was able to increase the winrate to 
+\emph on
+5%
+\emph default
+.
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+The A* search algorithm is regarded as one of the most popular algorithms
+ in the videogame industry, 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+May be add a reference to support this statement?
+\end_layout
+
+\end_inset
+
+ but much of its success really depends on the type of heuristics used within
+ the algorithm.
+ In this implementation of Pacman we used four simple heuristics that help
+ improve Pacman's performance to achieve an increase of 31% in the mean
+ score.
+ However these heuristics were chosen mostly due to their ease of implementation
+ rather than effectiveness in the long term.
+ At first glance such heuristics may look reasonable and they are what any
+ regular player would do.
+ 
+\end_layout
+
+\begin_layout Standard
+Our implementation can be improved by introducing more complex and better
+ heuristics, as well as improving the implementation to remove all the restricti
+ons introduced by Python and PyGame to increase the amount of computation
+ in a short amount of time.
+ However, our first implementation allowed us see the importance of the
+ heuristics to get better results.
+ A more complex heuristic would try to consume all the dots in the map by
+ 
+\emph on
+zones
+\emph default
+ making sure all the dots in a section of a map are consumed before going
+ to the next one.
+ How these sections are divided and built depends on the implementation
+ and the heuristic itself.
+ Another example of a heuristic would be when game enters into 
+\emph on
+frigthened mode
+\emph default
+, rather than chasing the ghosts to kill them it would be important to take
+ into account the distance from pacman to each of the ghosts, the time it
+ takes to get to their positions as well as trying to predict where they
+ will be (they move slower but with erratic and somewhat random behavior),
+ and also the duration of the 
+\emph on
+frigthened mode
+\emph default
+.
+ There may be situations in which due to the time and distance it is not
+ worth it chasing a ghost and it's better to finish consuming the dots in
+ the current section.
+ Remember that our implementation took away many specific details from the
+ original game such as some special intersections that cause the ghosts
+ to not move upwards, ghost movement decreased when moving through the 
+\emph on
+tunnel
+\emph default
+, random change of ghost directions, change of ghost speed depending on
+ time elapsed and dots consumed.
+ These are just some features, but there are many more from the original
+ game that would definitely impact the behavior and results of our implementatio
+n of the A* algorithm.
+ And abviously, all those features add more complexity and work to introduce
+ new heuristics that can help solve those problems.
+ And most important, introduce a heuristics which is not greedy, one that
+ learns to play in the long term by making sacrifices in the short term
+ expecting a better outcome in the future.
+\end_layout
+
+\begin_layout Appendix
+
+\end_layout
+
+\begin_layout Section*
+Instructions for getting 'Agent Pacman'
+\end_layout
+
+\begin_layout Standard
+Our implementation can be downloaded from github.com with the command line
+ 
+\family sans
+\size small
+git clone git@github.com:elfus/agent-pacman.git
+\size default
+.
+ 
+\family default
+To execute the application run the file agent-pacman/agent-pacman.py, depending
+ on your Python installation this can be done either with a double click,
+ from command line or within the Python interpreter.
+\end_layout
+
+\begin_layout Standard
+Upon opening the application you will be prompted to press key 
+\emph on
+H
+\emph default
+ for playing as human or 
+\emph on
+C
+\emph default
+ to let the pacman play on its own.
+ When playing as human you can use the keys 
+\emph on
+A, S, D, 
+\emph default
+and 
+\emph on
+W
+\emph default
+ to move pacman 
+\emph on
+left, down, right or upwards
+\emph default
+.
+ The arrow keys will move pacman too.
+\end_layout
+
+\begin_layout Standard
+The game can be paused by pressing the key 
+\emph on
+P
+\emph default
+ at any time.
+ The keys 
+\emph on
+J, K, L
+\emph default
+ will change the current game mode to 
+\emph on
+Chase mode, Scatter mode, or Frightened Mode 
+\emph default
+respectively.
+ The key 
+\emph on
+M
+\emph default
+ cycles through all game modes in order.
+ The letter 
+\emph on
+U
+\emph default
+ makes pacman win instantly (this was implemented for debugging purposes).
+ And finally the key 
+\emph on
+R 
+\emph default
+will reset the game and sent you back to the first choice screen where you
+ can choose a human player or agent pacman.
+ All these keys apply when playing either as human or as agent pacman.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "http://home.comcast.net/~jpittman2/pacman/pacmandossier.html, Pittman, Jamey"
+key "D1"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Understanding Pac Man Ghost Behavior, Birch, Chad"
+key "d2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Wolf, Mark J. P."
+key "d3"
+
+\end_inset
+
+The Video Game Explosion: A History from PONG to Playstation and Beyond
+\end_layout
+
+\end_body
+\end_document
