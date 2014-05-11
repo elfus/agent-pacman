@@ -917,7 +917,7 @@ class Pacman(Character):
         self.screen = 0
         self.tile_list = []
         self.tile_list_options = []
-        self.goal_tile = boardMatrix[0][0]
+        self.goal_tile = boardMatrix[TILE_WIDTH_COUNT-1][TILE_HEIGHT_COUNT-1]
         self.energizer_tiles = []
         print 'Pacman constructor'
 
