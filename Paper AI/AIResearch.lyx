@@ -270,74 +270,6 @@ The frightened mode is triggered when the player eats a power pellet.
  The player also knows when this mode will end when the ghosts blink.
 \end_layout
 
-\begin_layout Subsubsection
-Blinky behavior
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO: Copy and paste the behavior from the class presentation
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Pinky behavior
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO: Copy and paste the behavior from the class presentation
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Inky behavior
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO: Copy and paste the behavior from the class presentation
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Clyde behavior
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO: Copy and paste the behavior from the class presentation
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 Breadth First Search and A* algorithm
 \end_layout
@@ -1116,12 +1048,26 @@ n of the A* algorithm.
  expecting a better outcome in the future.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Appendix
 
 \end_layout
 
 \begin_layout Section*
-Instructions for getting 'Agent Pacman'
+Instructions for getting and playing 'Agent Pacman'
 \end_layout
 
 \begin_layout Standard
