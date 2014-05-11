@@ -72,8 +72,9 @@ def get_direction_to_closest_energizer(state, ignore_goal = 0):
 
     h_list = []
     for dot in state.pacman.energizer_tiles:
-        h = state.pacman.pitagorazo(pacman_tile.rect.x - dot.rect.x, pacman_tile.rect.y - dot.rect.y)
-        h_list.append((h,dot))
+        if dot in state.dots:
+            h = state.pacman.pitagorazo(pacman_tile.rect.x - dot.rect.x, pacman_tile.rect.y - dot.rect.y)
+            h_list.append((h,dot))
     if len(h_list) >= 1:
         tu = min(h_list, key=lambda item:item[0])
         target_energizer = tu[1]
@@ -170,6 +171,8 @@ def get_closest_pacman_point(state, ignore_goal=0):
     :param state:
     :return:
     """
+    global OLD_GOAL
+    global OLD_PATH
     list_of_lists = []
     queue = deque([state.pacman_tile])
     expanded = []
@@ -219,6 +222,9 @@ def get_closest_pacman_point(state, ignore_goal=0):
             i = random.randrange(3)
         if len(list_of_lists[0]) == len(list_of_lists[1]) != len(list_of_lists[2]):
             i = random.randrange(2)
+    if len(list_of_lists) == 0:
+        print 'No options found!'
+        return OLD_GOAL, OLD_PATH
 
     chosen_list = list_of_lists[i]
     Character.PACMAN.tile_list = chosen_list
